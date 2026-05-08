@@ -1,63 +1,37 @@
-"""
-Digital Dictionary — Flask Web App
-====================================
-Web version of the PDF wordbank tool with ElevenLabs TTS.
-Deploy on Render.com (free tier) and connect to your Hostinger domain.
-"""
-
 import os
 import re
 import uuid
 import json
 import tempfile
-import threading
 from pathlib import Path
 from io import BytesIO
-from flask import (
-    Flask, request, jsonify, send_file,
-    render_template, session
-)
+
+from flask import Flask, request, jsonify, send_file, render_template
 from werkzeug.utils import secure_filename
+
 import pdfplumber
-import fitz
+import fitz  # PyMuPDF
 from PIL import Image
+
 from elevenlabs.client import ElevenLabs
 from elevenlabs import VoiceSettings
 
-# ─────────────────────────────────────────────
-# APP SETUP
-# ─────────────────────────────────────────────
-
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "dictionary-secret-key-change-me")
+app.secret_key = os.environ.get("SECRET_KEY", "dictionary-secret-key")
 
 UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), "dict_uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 
-MAX_CONTENT_LENGTH = 50 * 1024 * 1024   # 50 MB upload limit
-app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
-
-# ─────────────────────────────────────────────
-# TTS CONFIG
-# ─────────────────────────────────────────────
-
-SPANISH_VOICE_ID = "pNInz6obpgDQGcFmaJgB"   # Adam
-ENGLISH_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"   # Bella
+SPANISH_VOICE_ID = "pNInz6obpgDQGcFmaJgB"
+ENGLISH_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"
 TTS_MODEL        = "eleven_multilingual_v2"
 TTS_STABILITY    = 0.75
 TTS_SIMILARITY   = 0.85
-TTS_SPEED        = 0.75                       # slower pronunciation
+TTS_SPEED        = 0.75
 
-# ─────────────────────────────────────────────
-# WORD-PAIR PARSER
-# ─────────────────────────────────────────────
 
-def parse_word_pairs(text: str) -> list[dict]:
-    """
-    Heuristic bilingual pair parser.
-    Handles: 2-space columns, dash, pipe, slash, numbered lists.
-    Returns [{es, en}, ...]
-    """
+def parse_word_pairs(text):
     pairs = []
     for line in text.splitlines():
         line = line.strip()
@@ -71,51 +45,34 @@ def parse_word_pairs(text: str) -> list[dict]:
                 break
     return pairs
 
-# ─────────────────────────────────────────────
-# PDF PROCESSING
-# ─────────────────────────────────────────────
 
-def process_pdf(pdf_path: str, session_id: str) -> dict:
-    """
-    Render pages to images, extract word pairs.
-    Stores results in UPLOAD_FOLDER/<session_id>/
-    Returns metadata dict.
-    """
+def process_pdf(pdf_path, session_id):
     out_dir = os.path.join(UPLOAD_FOLDER, session_id)
     os.makedirs(out_dir, exist_ok=True)
 
-    # Render pages
-  doc = fitz.open(pdf_path)
-    images = []
-    for page in doc:
-        mat = fitz.Matrix(150/72, 150/72)
+    doc = fitz.open(pdf_path)
+    num_pages = len(doc)
+    page_words = []
+
+    for i, page in enumerate(doc):
+        mat = fitz.Matrix(150 / 72, 150 / 72)
         pix = page.get_pixmap(matrix=mat)
         img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-        images.append(img)
-    num_pages = len(images)
+        img.save(os.path.join(out_dir, f"page_{i}.jpg"), "JPEG", quality=85)
 
-    page_words = []
-    for i, img in enumerate(images):
-        # Save page image as JPEG
-        img_path = os.path.join(out_dir, f"page_{i}.jpg")
-        img.save(img_path, "JPEG", quality=85)
+    doc.close()
 
-    # Extract words
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             text = page.extract_text() or ""
             page_words.append(parse_word_pairs(text))
 
-    # Save metadata
     meta = {"num_pages": num_pages, "page_words": page_words}
     with open(os.path.join(out_dir, "meta.json"), "w") as f:
         json.dump(meta, f)
 
     return meta
 
-# ─────────────────────────────────────────────
-# ROUTES
-# ─────────────────────────────────────────────
 
 @app.route("/")
 def index():
@@ -126,14 +83,14 @@ def index():
 def upload():
     if "pdf" not in request.files:
         return jsonify({"error": "No file provided"}), 400
-
     file = request.files["pdf"]
     if not file.filename.lower().endswith(".pdf"):
         return jsonify({"error": "Only PDF files are accepted"}), 400
 
     session_id = str(uuid.uuid4())
-    pdf_path = os.path.join(UPLOAD_FOLDER, session_id, "source.pdf")
-    os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+    pdf_dir = os.path.join(UPLOAD_FOLDER, session_id)
+    os.makedirs(pdf_dir, exist_ok=True)
+    pdf_path = os.path.join(pdf_dir, "source.pdf")
     file.save(pdf_path)
 
     try:
@@ -168,64 +125,38 @@ def get_page_words(session_id, page_num):
 
 @app.route("/speak", methods=["POST"])
 def speak():
-    """
-    Body: { api_key, spanish, english, lang }
-    lang: "es" | "en" | "both"
-    Returns: audio/mpeg stream
-    """
     data = request.get_json()
     api_key = data.get("api_key", "").strip()
-    spanish = data.get("spanish", "").strip()
-    english = data.get("english", "").strip()
-    lang    = data.get("lang", "both")
+    spanish  = data.get("spanish", "").strip()
+    english  = data.get("english", "").strip()
+    lang     = data.get("lang", "both")
 
     if not api_key:
         return jsonify({"error": "ElevenLabs API key required"}), 400
-    if not spanish and not english:
-        return jsonify({"error": "No word provided"}), 400
 
     try:
         client = ElevenLabs(api_key=api_key)
-        voice_settings = VoiceSettings(
-            stability=TTS_STABILITY,
-            similarity_boost=TTS_SIMILARITY,
-            speed=TTS_SPEED,
-        )
+        vs = VoiceSettings(stability=TTS_STABILITY,
+                           similarity_boost=TTS_SIMILARITY,
+                           speed=TTS_SPEED)
 
-        audio_chunks = []
+        def synth(text, voice_id, lang_code):
+            return b"".join(client.text_to_speech.convert(
+                voice_id=voice_id, text=text,
+                model_id=TTS_MODEL, voice_settings=vs,
+                language_code=lang_code))
 
-        def synthesize(text, voice_id, language_code):
-            gen = client.text_to_speech.convert(
-                voice_id=voice_id,
-                text=text,
-                model_id=TTS_MODEL,
-                voice_settings=voice_settings,
-                language_code=language_code,
-            )
-            return b"".join(gen)
-
+        chunks = []
         if lang in ("es", "both") and spanish:
-            audio_chunks.append(synthesize(spanish, SPANISH_VOICE_ID, "es"))
-
+            chunks.append(synth(spanish, SPANISH_VOICE_ID, "es"))
         if lang in ("en", "both") and english:
-            # Small silence gap (0.5s of silence at 44100Hz mono MP3 ≈ 4KB)
-            # We'll just concatenate — browser handles it fine
-            audio_chunks.append(synthesize(english, ENGLISH_VOICE_ID, "en"))
+            chunks.append(synth(english, ENGLISH_VOICE_ID, "en"))
 
-        combined = b"".join(audio_chunks)
-        return send_file(
-            BytesIO(combined),
-            mimetype="audio/mpeg",
-            as_attachment=False
-        )
-
+        return send_file(BytesIO(b"".join(chunks)),
+                         mimetype="audio/mpeg", as_attachment=False)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# ─────────────────────────────────────────────
-# ENTRY POINT
-# ─────────────────────────────────────────────
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
