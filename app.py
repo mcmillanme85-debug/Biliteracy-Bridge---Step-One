@@ -19,7 +19,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 import pdfplumber
-from pdf2image import convert_from_path
+import fitz
 from PIL import Image
 from elevenlabs.client import ElevenLabs
 from elevenlabs import VoiceSettings
