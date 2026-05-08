@@ -85,7 +85,13 @@ def process_pdf(pdf_path: str, session_id: str) -> dict:
     os.makedirs(out_dir, exist_ok=True)
 
     # Render pages
-    images = convert_from_path(pdf_path, dpi=150)
+  doc = fitz.open(pdf_path)
+    images = []
+    for page in doc:
+        mat = fitz.Matrix(150/72, 150/72)
+        pix = page.get_pixmap(matrix=mat)
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        images.append(img)
     num_pages = len(images)
 
     page_words = []
