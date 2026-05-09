@@ -1,4 +1,4 @@
-<templates/index.html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -6,417 +6,92 @@
   <title>Diccionario · Word Bank</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-
   <style>
-    /* ── TOKENS ── */
     :root {
-      --ink:       #1c1208;
-      --parchment: #f5efe0;
-      --cream:     #faf7f0;
-      --warm:      #e8dcc8;
-      --amber:     #c8860a;
-      --rust:      #b84c1e;
-      --sage:      #4a7c59;
-      --shadow:    rgba(28,18,8,0.14);
+      --ink: #1c1208; --parchment: #f5efe0; --cream: #faf7f0;
+      --warm: #e8dcc8; --amber: #c8860a; --rust: #b84c1e;
+      --sage: #4a7c59; --shadow: rgba(28,18,8,0.14);
       --font-display: 'Playfair Display', Georgia, serif;
-      --font-body:    'DM Sans', system-ui, sans-serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--parchment);
-      background-image:
-        radial-gradient(ellipse at 20% 0%, #e8d8b840 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 100%, #d4c4a820 0%, transparent 50%);
-      color: var(--ink);
-      font-family: var(--font-body);
-      min-height: 100vh;
-    }
-
-    /* ── HEADER ── */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.4rem 2.4rem;
-      border-bottom: 1.5px solid var(--warm);
-      background: rgba(245,239,224,0.85);
-      backdrop-filter: blur(6px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      font-family: var(--font-display);
-      font-size: 1.55rem;
-      letter-spacing: -0.01em;
-      color: var(--ink);
-    }
+    body { background: var(--parchment); color: var(--ink); font-family: var(--font-body); min-height: 100vh; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 2rem; border-bottom: 1.5px solid var(--warm); background: rgba(245,239,224,0.9); backdrop-filter: blur(6px); position: sticky; top: 0; z-index: 100; }
+    .logo { font-family: var(--font-display); font-size: 1.5rem; }
     .logo span { color: var(--rust); font-style: italic; }
-
-    .api-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .api-bar label {
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #7a6a52;
-    }
-    .api-bar input {
-      border: 1.5px solid var(--warm);
-      background: white;
-      border-radius: 6px;
-      padding: 0.42rem 0.8rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.8rem;
-      width: 240px;
-      color: var(--ink);
-      transition: border-color 0.2s;
-    }
+    .api-bar { display: flex; align-items: center; gap: 0.6rem; }
+    .api-bar label { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #7a6a52; }
+    .api-bar input { border: 1.5px solid var(--warm); background: white; border-radius: 6px; padding: 0.4rem 0.8rem; font-family: 'Courier New', monospace; font-size: 0.8rem; width: 220px; color: var(--ink); }
     .api-bar input:focus { outline: none; border-color: var(--amber); }
-
-    /* ── UPLOAD ZONE ── */
-    #upload-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 70px);
-      padding: 3rem 1rem;
-      transition: opacity 0.4s;
-    }
-
-    .upload-card {
-      background: white;
-      border: 2px dashed var(--warm);
-      border-radius: 20px;
-      padding: 3.5rem 4rem;
-      text-align: center;
-      max-width: 520px;
-      width: 100%;
-      cursor: pointer;
-      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-      box-shadow: 0 4px 24px var(--shadow);
-    }
-    .upload-card:hover, .upload-card.dragover {
-      border-color: var(--amber);
-      box-shadow: 0 8px 40px var(--shadow);
-      transform: translateY(-2px);
-    }
-
-    .upload-icon {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-    .upload-card h2 {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-    }
-    .upload-card p {
-      color: #7a6a52;
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-    .upload-card .hint {
-      margin-top: 1.4rem;
-      font-size: 0.78rem;
-      color: #b0a090;
-    }
-
+    #upload-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 70px); padding: 3rem 1rem; }
+    .upload-card { background: white; border: 2px dashed var(--warm); border-radius: 20px; padding: 3rem; text-align: center; max-width: 500px; width: 100%; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 4px 24px var(--shadow); }
+    .upload-card:hover, .upload-card.dragover { border-color: var(--amber); box-shadow: 0 8px 40px var(--shadow); }
+    .upload-card h2 { font-family: var(--font-display); font-size: 1.8rem; margin: 0.5rem 0; }
+    .upload-card p { color: #7a6a52; font-size: 0.9rem; line-height: 1.6; }
     #file-input { display: none; }
-
-    .btn-primary {
-      display: inline-block;
-      margin-top: 1.6rem;
-      padding: 0.75rem 2rem;
-      background: var(--rust);
-      color: white;
-      font-family: var(--font-body);
-      font-weight: 500;
-      font-size: 0.95rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .btn-primary:hover { background: #963d16; transform: translateY(-1px); }
-
-    /* ── MAIN LAYOUT ── */
-    #app-section {
-      display: none;
-      height: calc(100vh - 68px);
-      overflow: hidden;
-    }
-
-    .app-grid {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      height: 100%;
-    }
-
-    /* ── PAGE VIEWER ── */
-    .page-panel {
-      display: flex;
-      flex-direction: column;
-      border-right: 1.5px solid var(--warm);
-      overflow: hidden;
-    }
-
-    .page-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.7rem 1.2rem;
-      border-bottom: 1px solid var(--warm);
-      background: white;
-      flex-shrink: 0;
-    }
-
-    .nav-btn {
-      background: none;
-      border: 1.5px solid var(--warm);
-      border-radius: 6px;
-      padding: 0.35rem 1rem;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      cursor: pointer;
-      color: var(--ink);
-      transition: background 0.15s, border-color 0.15s;
-    }
+    .btn-primary { display: inline-block; margin-top: 1.4rem; padding: 0.75rem 2rem; background: var(--rust); color: white; font-family: var(--font-body); font-weight: 500; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    .btn-primary:hover { background: #963d16; }
+    #app-section { display: none; height: calc(100vh - 68px); overflow: hidden; }
+    .app-grid { display: grid; grid-template-columns: 1fr 380px; height: 100%; }
+    .page-panel { display: flex; flex-direction: column; border-right: 1.5px solid var(--warm); overflow: hidden; }
+    .page-nav { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1.2rem; border-bottom: 1px solid var(--warm); background: white; flex-shrink: 0; }
+    .nav-btn { background: none; border: 1.5px solid var(--warm); border-radius: 6px; padding: 0.35rem 1rem; font-family: var(--font-body); font-size: 0.85rem; cursor: pointer; color: var(--ink); transition: background 0.15s; }
     .nav-btn:hover:not(:disabled) { background: var(--warm); }
     .nav-btn:disabled { opacity: 0.3; cursor: default; }
-
-    .page-counter {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-style: italic;
-      color: #7a6a52;
-    }
-
-    .page-canvas {
-      flex: 1;
-      overflow: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #ede8df;
-      padding: 1rem;
-    }
-
-    .page-canvas img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      box-shadow: 0 4px 32px rgba(28,18,8,0.2);
-      border-radius: 4px;
-    }
-
-    /* ── WORD PANEL ── */
-    .word-panel {
-      display: flex;
-      flex-direction: column;
-      background: var(--cream);
-      overflow: hidden;
-    }
-
-    .word-panel-header {
-      padding: 1rem 1.2rem 0.7rem;
-      border-bottom: 1px solid var(--warm);
-      flex-shrink: 0;
-    }
-    .word-panel-header h3 {
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      font-style: italic;
-      color: #7a6a52;
-    }
-
-    /* Selected word display */
-    .word-showcase {
-      padding: 1.4rem 1.2rem 1rem;
-      border-bottom: 1px solid var(--warm);
-      text-align: center;
-      flex-shrink: 0;
-      background: white;
-    }
-
-    .word-es {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--rust);
-      line-height: 1.2;
-    }
-    .word-arrow {
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #b0a090;
-      margin: 0.3rem 0;
-    }
-    .word-en {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-style: italic;
-      color: var(--sage);
-      line-height: 1.2;
-    }
-
-    /* Playback controls */
-    .controls {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.8rem 1.2rem;
-      border-bottom: 1px solid var(--warm);
-      flex-shrink: 0;
-    }
-
-    .ctrl-btn {
-      flex: 1;
-      padding: 0.55rem 0.5rem;
-      border: none;
-      border-radius: 7px;
-      font-family: var(--font-body);
-      font-size: 0.78rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-    }
-    .ctrl-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-    .ctrl-btn:active { transform: translateY(0); }
-    .ctrl-btn.primary { background: var(--rust); color: white; }
+    .page-counter { font-family: var(--font-display); font-size: 1rem; font-style: italic; color: #7a6a52; }
+    .page-canvas { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; background: #ede8df; padding: 1rem; }
+    .page-canvas img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 4px 32px rgba(28,18,8,0.2); border-radius: 4px; }
+    .word-panel { display: flex; flex-direction: column; background: var(--cream); overflow: hidden; }
+    .word-panel-header { padding: 1rem 1.2rem 0.7rem; border-bottom: 1px solid var(--warm); flex-shrink: 0; }
+    .word-panel-header h3 { font-family: var(--font-display); font-size: 1rem; font-style: italic; color: #7a6a52; }
+    .manual-entry { padding: 1rem 1.2rem; border-bottom: 1px solid var(--warm); background: white; flex-shrink: 0; }
+    .manual-entry-label { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #b0a090; margin-bottom: 0.6rem; display: block; }
+    .manual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .manual-field { display: flex; flex-direction: column; gap: 0.25rem; }
+    .manual-field label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .manual-field label.es { color: var(--rust); }
+    .manual-field label.en { color: var(--sage); }
+    .manual-field input { border: 1.5px solid var(--warm); border-radius: 6px; padding: 0.5rem 0.7rem; font-family: var(--font-display); font-size: 1rem; color: var(--ink); background: var(--cream); transition: border-color 0.2s; width: 100%; }
+    .manual-field input:focus { outline: none; border-color: var(--amber); background: white; }
+    .manual-field input.es-input { color: var(--rust); font-weight: 700; }
+    .manual-field input.en-input { color: var(--sage); font-style: italic; }
+    .btn-speak-manual { width: 100%; padding: 0.65rem; background: var(--rust); color: white; border: none; border-radius: 8px; font-family: var(--font-body); font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: background 0.15s; }
+    .btn-speak-manual:hover { background: #963d16; }
+    .word-showcase { padding: 1rem 1.2rem 0.8rem; border-bottom: 1px solid var(--warm); text-align: center; flex-shrink: 0; background: white; }
+    .word-es { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--rust); line-height: 1.2; }
+    .word-arrow { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: #b0a090; margin: 0.25rem 0; }
+    .word-en { font-family: var(--font-display); font-size: 1.4rem; font-style: italic; color: var(--sage); line-height: 1.2; }
+    .controls { display: flex; gap: 0.5rem; padding: 0.8rem 1.2rem; border-bottom: 1px solid var(--warm); flex-shrink: 0; }
+    .ctrl-btn { flex: 1; padding: 0.55rem 0.5rem; border: none; border-radius: 7px; font-family: var(--font-body); font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+    .ctrl-btn:hover { opacity: 0.85; }
     .ctrl-btn.secondary { background: var(--sage); color: white; }
     .ctrl-btn.muted { background: var(--warm); color: var(--ink); }
-
-    /* Word list */
-    .word-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0.5rem 0;
-    }
-
-    .word-item {
-      display: flex;
-      align-items: center;
-      padding: 0.6rem 1.2rem;
-      cursor: pointer;
-      border-left: 3px solid transparent;
-      transition: background 0.12s, border-color 0.12s;
-      gap: 0.7rem;
-    }
+    .word-list { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
+    .word-item { display: flex; align-items: center; padding: 0.6rem 1.2rem; cursor: pointer; border-left: 3px solid transparent; transition: background 0.12s, border-color 0.12s; gap: 0.7rem; }
     .word-item:hover { background: var(--warm); }
-    .word-item.active {
-      background: #fdf3e8;
-      border-left-color: var(--rust);
-    }
-
-    .wi-es {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--rust);
-      min-width: 90px;
-    }
+    .word-item.active { background: #fdf3e8; border-left-color: var(--rust); }
+    .wi-es { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; color: var(--rust); min-width: 80px; }
     .wi-sep { color: #c0b090; font-size: 0.8rem; }
-    .wi-en {
-      font-family: var(--font-display);
-      font-style: italic;
-      font-size: 0.9rem;
-      color: var(--sage);
-    }
-    .wi-play {
-      margin-left: auto;
-      font-size: 1rem;
-      opacity: 0;
-      transition: opacity 0.15s;
-    }
-    .word-item:hover .wi-play { opacity: 1; }
-    .word-item.active .wi-play { opacity: 1; }
-
-    /* ── STATUS BAR ── */
-    #status-bar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      padding: 0.5rem 1.4rem;
-      background: rgba(28,18,8,0.88);
-      color: #e8d8b8;
-      font-size: 0.8rem;
-      font-family: var(--font-body);
-      display: none;
-      align-items: center;
-      gap: 0.7rem;
-      z-index: 200;
-      backdrop-filter: blur(4px);
-    }
-    #status-bar.visible { display: flex; }
-
-    .status-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--amber);
-      flex-shrink: 0;
-      animation: pulse 1.2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* ── LOADING OVERLAY ── */
-    #loading-overlay {
-      position: fixed; inset: 0;
-      background: rgba(245,239,224,0.92);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 300;
-      backdrop-filter: blur(4px);
-    }
-    #loading-overlay.visible { display: flex; }
-
-    .spinner {
-      width: 48px; height: 48px;
-      border: 3px solid var(--warm);
-      border-top-color: var(--rust);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 1rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .loading-text {
-      font-family: var(--font-display);
-      font-style: italic;
-      color: #7a6a52;
-    }
-
-    /* ── EMPTY STATE ── */
-    .empty-words {
-      padding: 2rem 1.2rem;
-      text-align: center;
-      color: #b0a090;
-    }
+    .wi-en { font-family: var(--font-display); font-style: italic; font-size: 0.9rem; color: var(--sage); }
+    .wi-play { margin-left: auto; font-size: 1rem; opacity: 0; transition: opacity 0.15s; }
+    .word-item:hover .wi-play, .word-item.active .wi-play { opacity: 1; }
+    .empty-words { padding: 1.5rem 1.2rem; text-align: center; color: #b0a090; }
     .empty-words p { font-size: 0.85rem; line-height: 1.6; }
-
-    /* ── SCROLLBAR ── */
+    #status-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 0.5rem 1.4rem; background: rgba(28,18,8,0.88); color: #e8d8b8; font-size: 0.8rem; display: none; align-items: center; gap: 0.7rem; z-index: 200; }
+    #status-bar.visible { display: flex; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex-shrink: 0; animation: pulse 1.2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    #loading-overlay { position: fixed; inset: 0; background: rgba(245,239,224,0.92); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 300; }
+    #loading-overlay.visible { display: flex; }
+    .spinner { width: 48px; height: 48px; border: 3px solid var(--warm); border-top-color: var(--rust); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-family: var(--font-display); font-style: italic; color: #7a6a52; }
     .word-list::-webkit-scrollbar { width: 4px; }
     .word-list::-webkit-scrollbar-track { background: transparent; }
     .word-list::-webkit-scrollbar-thumb { background: var(--warm); border-radius: 2px; }
   </style>
 </head>
-
 <body>
-
-  <!-- HEADER -->
   <header>
     <div class="logo">Diccion<span>ario</span></div>
     <div class="api-bar">
@@ -424,26 +99,17 @@
       <input type="password" id="api-key-input" placeholder="sk_..." autocomplete="off" />
     </div>
   </header>
-
-  <!-- UPLOAD SECTION -->
   <section id="upload-section">
     <div class="upload-card" id="drop-zone">
-      <span class="upload-icon">📖</span>
+      <span style="font-size:3rem;display:block;margin-bottom:0.5rem">📖</span>
       <h2>Open Your Wordbank</h2>
-      <p>Upload the PDF interior of your Spanish–English dictionary to begin. Each page will be displayed with its word pairs ready to pronounce.</p>
-      <p class="hint">Supports column layouts: <em>perro&nbsp;&nbsp;dog</em> · <em>perro - dog</em> · <em>perro | dog</em></p>
+      <p>Upload the PDF of your book. Each page will display and you can type words to pronounce them in Spanish and English.</p>
       <input type="file" id="file-input" accept=".pdf" />
-      <button class="btn-primary" onclick="document.getElementById('file-input').click()">
-        Choose PDF File
-      </button>
+      <button class="btn-primary" onclick="document.getElementById('file-input').click()">Choose PDF File</button>
     </div>
   </section>
-
-  <!-- APP SECTION -->
   <section id="app-section">
     <div class="app-grid">
-
-      <!-- LEFT: Page viewer -->
       <div class="page-panel">
         <div class="page-nav">
           <button class="nav-btn" id="btn-prev" disabled>← Previous</button>
@@ -454,286 +120,120 @@
           <img id="page-img" src="" alt="Dictionary page" />
         </div>
       </div>
-
-      <!-- RIGHT: Word panel -->
       <div class="word-panel">
         <div class="word-panel-header">
           <h3 id="words-found-label">Words on this page</h3>
         </div>
-
-        <!-- Selected word showcase -->
+        <div class="manual-entry">
+          <span class="manual-entry-label">✏️ Type the words for this page</span>
+          <div class="manual-row">
+            <div class="manual-field">
+              <label class="es">🇲🇽 Spanish</label>
+              <input type="text" id="manual-es" class="es-input" placeholder="Ocelote" />
+            </div>
+            <div class="manual-field">
+              <label class="en">🇺🇸 English</label>
+              <input type="text" id="manual-en" class="en-input" placeholder="Ocelot" />
+            </div>
+          </div>
+          <button class="btn-speak-manual" id="btn-speak-manual">▶ Pronounce These Words</button>
+        </div>
         <div class="word-showcase">
           <div class="word-es" id="sel-es">—</div>
           <div class="word-arrow">🇲🇽 español &nbsp;·&nbsp; english 🇺🇸</div>
           <div class="word-en" id="sel-en">—</div>
         </div>
-
-        <!-- Controls -->
         <div class="controls">
-          <button class="ctrl-btn primary" id="btn-speak-word">▶ Pronounce</button>
-          <button class="ctrl-btn secondary" id="btn-speak-all">▶▶ All Words</button>
+          <button class="ctrl-btn secondary" id="btn-speak-all">▶▶ Play All Auto-Words</button>
           <button class="ctrl-btn muted" id="btn-stop">⏹</button>
         </div>
-
-        <!-- Word list -->
         <div class="word-list" id="word-list"></div>
       </div>
-
     </div>
   </section>
-
-  <!-- STATUS BAR -->
-  <div id="status-bar">
-    <div class="status-dot"></div>
-    <span id="status-text">Ready</span>
-  </div>
-
-  <!-- LOADING OVERLAY -->
-  <div id="loading-overlay">
-    <div class="spinner"></div>
-    <p class="loading-text" id="loading-text">Processing your PDF…</p>
-  </div>
-
+  <div id="status-bar"><div class="status-dot"></div><span id="status-text">Ready</span></div>
+  <div id="loading-overlay"><div class="spinner"></div><p class="loading-text" id="loading-text">Processing…</p></div>
   <script>
-    // ─────────────────────────────────────────────
-    // STATE
-    // ─────────────────────────────────────────────
-    let state = {
-      sessionId: null,
-      numPages: 0,
-      currentPage: 0,
-      words: [],
-      selectedWordIdx: null,
-      playingAll: false,
-      audioObj: null,
-    };
-
-    // ─────────────────────────────────────────────
-    // UTILS
-    // ─────────────────────────────────────────────
+    let state = { sessionId: null, numPages: 0, currentPage: 0, words: [], selectedWordIdx: null, playingAll: false, audioObj: null };
     const $ = id => document.getElementById(id);
-
-    function showStatus(msg) {
-      $("status-bar").classList.add("visible");
-      $("status-text").textContent = msg;
-    }
-    function hideStatus() {
-      $("status-bar").classList.remove("visible");
-    }
-    function showLoading(msg = "Processing…") {
-      $("loading-text").textContent = msg;
-      $("loading-overlay").classList.add("visible");
-    }
-    function hideLoading() {
-      $("loading-overlay").classList.remove("visible");
-    }
-
-    function getApiKey() {
-      return $("api-key-input").value.trim();
-    }
-
-    // ─────────────────────────────────────────────
-    // UPLOAD
-    // ─────────────────────────────────────────────
-    const fileInput = $("file-input");
-    const dropZone  = $("drop-zone");
-
-    dropZone.addEventListener("dragover", e => {
-      e.preventDefault();
-      dropZone.classList.add("dragover");
-    });
+    function showStatus(msg) { $("status-bar").classList.add("visible"); $("status-text").textContent = msg; }
+    function hideStatus() { $("status-bar").classList.remove("visible"); }
+    function showLoading(msg) { $("loading-text").textContent = msg; $("loading-overlay").classList.add("visible"); }
+    function hideLoading() { $("loading-overlay").classList.remove("visible"); }
+    function getApiKey() { return $("api-key-input").value.trim(); }
+    const fileInput = $("file-input"), dropZone = $("drop-zone");
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("dragover"); });
     dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
-    dropZone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropZone.classList.remove("dragover");
-      const file = e.dataTransfer.files[0];
-      if (file) uploadPDF(file);
-    });
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files[0]) uploadPDF(fileInput.files[0]);
-    });
-
+    dropZone.addEventListener("drop", e => { e.preventDefault(); dropZone.classList.remove("dragover"); if (e.dataTransfer.files[0]) uploadPDF(e.dataTransfer.files[0]); });
+    fileInput.addEventListener("change", () => { if (fileInput.files[0]) uploadPDF(fileInput.files[0]); });
     async function uploadPDF(file) {
-      showLoading("Rendering pages & extracting words…");
-      const form = new FormData();
-      form.append("pdf", file);
+      showLoading("Rendering pages…");
+      const form = new FormData(); form.append("pdf", file);
       try {
-        const res  = await fetch("/upload", { method: "POST", body: form });
+        const res = await fetch("/upload", { method: "POST", body: form });
         const data = await res.json();
         if (data.error) throw new Error(data.error);
-
-        state.sessionId = data.session_id;
-        state.numPages  = data.num_pages;
-        state.currentPage = 0;
-
-        hideLoading();
-        $("upload-section").style.display = "none";
-        $("app-section").style.display = "block";
-
-        await loadPage(0);
-        showStatus(`✅ Loaded ${data.num_pages} pages · ${data.total_words} word pairs`);
-        setTimeout(hideStatus, 3000);
-      } catch (err) {
-        hideLoading();
-        alert("Error processing PDF: " + err.message);
-      }
+        state.sessionId = data.session_id; state.numPages = data.num_pages; state.currentPage = 0;
+        hideLoading(); $("upload-section").style.display = "none"; $("app-section").style.display = "block";
+        await loadPage(0); showStatus(`✅ Loaded ${data.num_pages} pages`); setTimeout(hideStatus, 3000);
+      } catch (err) { hideLoading(); alert("Error: " + err.message); }
     }
-
-    // ─────────────────────────────────────────────
-    // PAGE NAVIGATION
-    // ─────────────────────────────────────────────
     async function loadPage(idx) {
-      state.currentPage = idx;
-      state.selectedWordIdx = null;
-      state.playingAll = false;
-
-      // Update nav
+      state.currentPage = idx; state.selectedWordIdx = null; state.playingAll = false;
       $("page-counter").textContent = `Page ${idx + 1} of ${state.numPages}`;
-      $("btn-prev").disabled = idx === 0;
-      $("btn-next").disabled = idx === state.numPages - 1;
-
-      // Load image
+      $("btn-prev").disabled = idx === 0; $("btn-next").disabled = idx === state.numPages - 1;
       $("page-img").src = `/page/${state.sessionId}/${idx}`;
-
-      // Load words
-      const res   = await fetch(`/words/${state.sessionId}/${idx}`);
-      const data  = await res.json();
-      state.words = data.words || [];
-
-      renderWordList();
-      resetWordShowcase();
+      $("manual-es").value = ""; $("manual-en").value = "";
+      const res = await fetch(`/words/${state.sessionId}/${idx}`);
+      const data = await res.json(); state.words = data.words || [];
+      renderWordList(); resetShowcase();
     }
-
-    $("btn-prev").addEventListener("click", () => {
-      if (state.currentPage > 0) loadPage(state.currentPage - 1);
-    });
-    $("btn-next").addEventListener("click", () => {
-      if (state.currentPage < state.numPages - 1) loadPage(state.currentPage + 1);
-    });
-
-    // ─────────────────────────────────────────────
-    // WORD LIST
-    // ─────────────────────────────────────────────
+    $("btn-prev").addEventListener("click", () => { if (state.currentPage > 0) loadPage(state.currentPage - 1); });
+    $("btn-next").addEventListener("click", () => { if (state.currentPage < state.numPages - 1) loadPage(state.currentPage + 1); });
     function renderWordList() {
-      const list = $("word-list");
-      const count = state.words.length;
-      $("words-found-label").textContent =
-        count ? `${count} word pair${count !== 1 ? "s" : ""} on this page` : "No words detected";
-
-      if (!count) {
-        list.innerHTML = `<div class="empty-words">
-          <p>No word pairs were automatically detected on this page.<br>
-          Try a page with text in column or dash-separated format.</p>
-        </div>`;
-        return;
-      }
-
-      list.innerHTML = state.words.map((w, i) => `
-        <div class="word-item" data-idx="${i}" onclick="selectWord(${i})">
-          <span class="wi-es">${escHtml(w.es)}</span>
-          <span class="wi-sep">→</span>
-          <span class="wi-en">${escHtml(w.en)}</span>
-          <span class="wi-play" ondblclick="speakWord(${i},'both')">🔊</span>
-        </div>
-      `).join("");
-
-      // Select first word
+      const list = $("word-list"), count = state.words.length;
+      $("words-found-label").textContent = count ? `${count} word pair${count !== 1 ? "s" : ""} auto-detected` : "No words auto-detected — use the box above ↑";
+      if (!count) { list.innerHTML = `<div class="empty-words"><p>Type the Spanish and English words<br>in the boxes above, then press<br><strong>▶ Pronounce These Words</strong></p></div>`; return; }
+      list.innerHTML = state.words.map((w, i) => `<div class="word-item" data-idx="${i}" onclick="selectWord(${i})"><span class="wi-es">${esc(w.es)}</span><span class="wi-sep">→</span><span class="wi-en">${esc(w.en)}</span><span class="wi-play">🔊</span></div>`).join("");
       selectWord(0);
     }
-
     function selectWord(idx) {
       state.selectedWordIdx = idx;
-      document.querySelectorAll(".word-item").forEach((el, i) => {
-        el.classList.toggle("active", i === idx);
-      });
-      const w = state.words[idx];
-      if (w) {
-        $("sel-es").textContent = w.es;
-        $("sel-en").textContent = w.en;
-      }
-      // Scroll into view
-      const el = document.querySelector(`.word-item[data-idx="${idx}"]`);
-      if (el) el.scrollIntoView({ block: "nearest" });
+      document.querySelectorAll(".word-item").forEach((el, i) => el.classList.toggle("active", i === idx));
+      const w = state.words[idx]; if (w) { $("sel-es").textContent = w.es; $("sel-en").textContent = w.en; }
+      const el = document.querySelector(`.word-item[data-idx="${idx}"]`); if (el) el.scrollIntoView({ block: "nearest" });
     }
-
-    function resetWordShowcase() {
-      $("sel-es").textContent = "—";
-      $("sel-en").textContent = "—";
-    }
-
-    function escHtml(str) {
-      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    }
-
-    // ─────────────────────────────────────────────
-    // AUDIO PLAYBACK
-    // ─────────────────────────────────────────────
-    async function speakWord(idx, lang = "both") {
-      const apiKey = getApiKey();
-      if (!apiKey) {
-        alert("Please enter your ElevenLabs API key in the header.");
-        return;
-      }
-      const w = state.words[idx];
-      if (!w) return;
-
-      selectWord(idx);
-      showStatus(`🔊 Speaking: ${w.es} → ${w.en}…`);
-
+    function resetShowcase() { $("sel-es").textContent = "—"; $("sel-en").textContent = "—"; }
+    function esc(str) { return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    $("btn-speak-manual").addEventListener("click", () => {
+      const es = $("manual-es").value.trim(), en = $("manual-en").value.trim();
+      if (!es && !en) { alert("Type at least one word first!"); return; }
+      if (!getApiKey()) { alert("Paste your ElevenLabs API key in the top right first."); return; }
+      $("sel-es").textContent = es || "—"; $("sel-en").textContent = en || "—";
+      speakPair(es, en);
+    });
+    $("manual-es").addEventListener("keydown", e => { if (e.key === "Enter") $("btn-speak-manual").click(); });
+    $("manual-en").addEventListener("keydown", e => { if (e.key === "Enter") $("btn-speak-manual").click(); });
+    async function speakPair(spanish, english) {
+      const apiKey = getApiKey(); if (!apiKey) { alert("Enter your ElevenLabs API key first."); return; }
+      showStatus(`🔊 Speaking: ${spanish} → ${english}…`);
       try {
-        const res = await fetch("/speak", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ api_key: apiKey, spanish: w.es, english: w.en, lang })
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "TTS failed");
-        }
-
-        const blob = await res.blob();
-        const url  = URL.createObjectURL(blob);
-
-        if (state.audioObj) {
-          state.audioObj.pause();
-          state.audioObj = null;
-        }
-
-        state.audioObj = new Audio(url);
-        state.audioObj.play();
-        await new Promise(resolve => {
-          state.audioObj.onended = resolve;
-          state.audioObj.onerror = resolve;
-        });
-        URL.revokeObjectURL(url);
-        hideStatus();
-      } catch (err) {
-        hideStatus();
-        showStatus(`❌ ${err.message}`);
-        setTimeout(hideStatus, 4000);
-      }
+        const res = await fetch("/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ api_key: apiKey, spanish, english, lang: "both" }) });
+        if (!res.ok) { const e = await res.json(); throw new Error(e.error || "TTS failed"); }
+        const blob = await res.blob(), url = URL.createObjectURL(blob);
+        if (state.audioObj) { state.audioObj.pause(); state.audioObj = null; }
+        state.audioObj = new Audio(url); state.audioObj.play();
+        await new Promise(r => { state.audioObj.onended = r; state.audioObj.onerror = r; });
+        URL.revokeObjectURL(url); hideStatus();
+      } catch (err) { hideStatus(); showStatus(`❌ ${err.message}`); setTimeout(hideStatus, 4000); }
     }
-
-    $("btn-speak-word").addEventListener("click", () => {
-      if (state.selectedWordIdx !== null) speakWord(state.selectedWordIdx, "both");
-    });
-
-    $("btn-stop").addEventListener("click", () => {
-      state.playingAll = false;
-      if (state.audioObj) { state.audioObj.pause(); state.audioObj = null; }
-      hideStatus();
-    });
-
+    async function speakWord(idx) { const w = state.words[idx]; if (!w) return; selectWord(idx); await speakPair(w.es, w.en); }
+    $("btn-stop").addEventListener("click", () => { state.playingAll = false; if (state.audioObj) { state.audioObj.pause(); state.audioObj = null; } hideStatus(); });
     $("btn-speak-all").addEventListener("click", async () => {
       if (!getApiKey()) { alert("Enter your ElevenLabs API key first."); return; }
-      if (!state.words.length) return;
+      if (!state.words.length) { alert("No auto-detected words. Use the manual entry box!"); return; }
       state.playingAll = true;
-      for (let i = 0; i < state.words.length; i++) {
-        if (!state.playingAll) break;
-        await speakWord(i, "both");
-        if (state.playingAll) await new Promise(r => setTimeout(r, 600));
-      }
+      for (let i = 0; i < state.words.length; i++) { if (!state.playingAll) break; await speakWord(i); if (state.playingAll) await new Promise(r => setTimeout(r, 600)); }
       state.playingAll = false;
     });
   </script>
