@@ -168,4 +168,183 @@
   <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
     <h3>Upload Book PDF</h3>
     <p>{% if book.num_pages > 0 %}Currently {{ book.num_pages }} pages loaded. Upload again to replace.{% else %}Upload the PDF of this book to get started.{% endif %}</p>
-    <input type="file" id="pdfInput" accept=".pdf" o
+    <input type="file" id="pdfInput" accept=".pdf" onchange="uploadPDF(this)">
+    <button class="upload-btn" type="button">Choose PDF File</button>
+    <div class="upload-status" id="uploadStatus"></div>
+  </div>
+
+  {% if book.num_pages > 0 %}
+  <div class="editor-layout">
+    <div class="page-nav-panel">
+      <div class="panel-title">Pages</div>
+      <div class="page-thumb-list" id="thumbList">
+        {% for i in range(book.num_pages) %}
+        <div class="page-thumb {% if i == 0 %}active{% endif %}" id="thumb-{{ i }}" onclick="selectPage({{ i }})">
+          <img src="/api/book/{{ book_id }}/page/{{ i }}/image" alt="Page {{ i+1 }}">
+          <div>
+            <div class="page-thumb-label">Page {{ i + 1 }}</div>
+            <div class="page-thumb-count" id="thumb-count-{{ i }}">
+              {% if book.pages and i < book.pages|length and book.pages[i].content %}
+                {{ book.pages[i].content|length }} item{{ 's' if book.pages[i].content|length != 1 else '' }}
+              {% else %}
+                Empty
+              {% endif %}
+            </div>
+          </div>
+          {% if book.pages and i < book.pages|length and book.pages[i].content %}
+          <span class="thumb-check">✓</span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="content-panel">
+      <div class="content-header">
+        <h3 id="contentTitle">Page 1</h3>
+        <div class="type-toggle">
+          <button id="typeWords" class="active" onclick="setType('words')">Words</button>
+          <button id="typeSentences" onclick="setType('sentences')">Sentences</button>
+        </div>
+      </div>
+      <img id="contentImg" src="/api/book/{{ book_id }}/page/0/image" class="page-preview-img" alt="Page preview">
+      <div class="entries-section">
+        <label>Spanish · English — type what's on this page</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:6px;">
+          <div class="col-label">Spanish</div>
+          <div class="col-label">English</div>
+          <div></div>
+        </div>
+        <div id="entryRows"></div>
+        <button class="add-entry-btn" onclick="addRow()">+ Add Word / Sentence</button>
+      </div>
+      <div class="save-bar">
+        <span class="save-msg" id="saveMsg"></span>
+        <button class="save-btn" onclick="savePage()">Save This Page</button>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div style="background:#fff;border-radius:12px;border:1px solid #ddd8ce;">
+    <div class="no-pdf">
+      <p>Upload your PDF above to start adding pronunciation content.</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+const BOOK_ID   = "{{ book_id }}";
+const NUM_PAGES = {{ book.num_pages }};
+let currentPage = 0;
+let currentType = "words";
+let pageCache   = {};
+const savedPages = {{ book.pages | tojson }};
+
+function selectPage(n) {
+  if (NUM_PAGES > 0) cacheCurrentPage();
+  currentPage = n;
+  document.getElementById("contentTitle").textContent = `Page ${n + 1}`;
+  document.getElementById("contentImg").src = `/api/book/${BOOK_ID}/page/${n}/image`;
+  document.querySelectorAll(".page-thumb").forEach(t => t.classList.remove("active"));
+  document.getElementById(`thumb-${n}`).classList.add("active");
+  const pg = pageCache[n] || (savedPages && savedPages[n]) || { content: [], type: "words" };
+  currentType = pg.type || "words";
+  setTypeUI(currentType);
+  renderRows(pg.content || []);
+  document.getElementById("saveMsg").textContent = "";
+}
+
+function cacheCurrentPage() {
+  pageCache[currentPage] = { content: collectRows(), type: currentType };
+}
+
+function setType(t) { cacheCurrentPage(); currentType = t; setTypeUI(t); }
+function setTypeUI(t) {
+  document.getElementById("typeWords").classList.toggle("active", t === "words");
+  document.getElementById("typeSentences").classList.toggle("active", t === "sentences");
+}
+
+function renderRows(content) {
+  const container = document.getElementById("entryRows");
+  container.innerHTML = "";
+  if (content.length === 0) { addRow(); return; }
+  content.forEach(item => addRow(item.es, item.en));
+}
+
+function addRow(es = "", en = "") {
+  const container = document.getElementById("entryRows");
+  const div = document.createElement("div");
+  div.className = "entry-row";
+  div.innerHTML = `
+    <input type="text" placeholder="Spanish…" value="${escHtml(es)}" class="es-input">
+    <input type="text" placeholder="English…" value="${escHtml(en)}" class="en-input">
+    <button class="del-btn" onclick="this.parentElement.remove()" title="Remove">×</button>
+  `;
+  container.appendChild(div);
+}
+
+function escHtml(s) { return s.replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
+
+function collectRows() {
+  const rows = [];
+  document.querySelectorAll(".entry-row").forEach(row => {
+    const es = row.querySelector(".es-input").value.trim();
+    const en = row.querySelector(".en-input").value.trim();
+    if (es || en) rows.push({ es, en });
+  });
+  return rows;
+}
+
+async function savePage() {
+  const content = collectRows();
+  const msg = document.getElementById("saveMsg");
+  msg.textContent = "Saving…";
+  msg.style.color = "#888";
+  const res = await fetch(`/admin/book/${BOOK_ID}/save-page`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ page_num: currentPage, content, type: currentType })
+  });
+  const data = await res.json();
+  if (data.success) {
+    pageCache[currentPage] = { content, type: currentType };
+    msg.textContent = "Saved!";
+    msg.style.color = "#2a7f8f";
+    const tc = document.getElementById(`thumb-count-${currentPage}`);
+    if (tc) tc.textContent = content.length + (content.length === 1 ? " item" : " items");
+    const thumb = document.getElementById(`thumb-${currentPage}`);
+    if (thumb && !thumb.querySelector(".thumb-check")) {
+      const chk = document.createElement("span");
+      chk.className = "thumb-check";
+      chk.textContent = "✓";
+      thumb.appendChild(chk);
+    }
+    setTimeout(() => { msg.textContent = ""; }, 2500);
+  } else {
+    msg.textContent = "Error saving. Try again.";
+    msg.style.color = "#e74c3c";
+  }
+}
+
+async function uploadPDF(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const status = document.getElementById("uploadStatus");
+  status.textContent = "Uploading and processing… this may take a moment.";
+  const formData = new FormData();
+  formData.append("pdf", file);
+  const res  = await fetch(`/admin/book/${BOOK_ID}/upload-pdf`, { method: "POST", body: formData });
+  const data = await res.json();
+  if (data.success) {
+    status.textContent = `Done! ${data.num_pages} pages loaded. Refreshing…`;
+    setTimeout(() => location.reload(), 1500);
+  } else {
+    status.textContent = "Error: " + (data.error || "Upload failed.");
+  }
+}
+
+if (NUM_PAGES > 0) selectPage(0);
+</script>
+</body>
+</html>
