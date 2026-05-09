@@ -3,111 +3,131 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diccionario · Word Bank</title>
+  <title>Pronunciation Guide · Guía de Pronunciación</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #1c1208; --parchment: #f5efe0; --cream: #faf7f0;
-      --warm: #e8dcc8; --amber: #c8860a; --rust: #b84c1e;
-      --sage: #4a7c59; --shadow: rgba(28,18,8,0.14);
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-body: 'DM Sans', system-ui, sans-serif;
+      --navy: #0d2680; --navy-deep: #081a5e; --navy-mid: #1a3da8;
+      --navy-light: #2952c8; --gold: #f7c325; --gold-dark: #d4a00f;
+      --white: #ffffff; --off-white: #e8edf8; --muted: rgba(255,255,255,0.55);
+      --border: rgba(255,255,255,0.15); --card-bg: rgba(255,255,255,0.07);
+      --font: 'Inter', system-ui, sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--parchment); color: var(--ink); font-family: var(--font-body); min-height: 100vh; }
-    header { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 2rem; border-bottom: 1.5px solid var(--warm); background: rgba(245,239,224,0.9); backdrop-filter: blur(6px); position: sticky; top: 0; z-index: 100; }
-    .logo { font-family: var(--font-display); font-size: 1.5rem; }
-    .logo span { color: var(--rust); font-style: italic; }
+    body { font-family: var(--font); background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 50%, var(--navy-mid) 100%); color: var(--white); min-height: 100vh; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; border-bottom: 1px solid var(--border); background: rgba(8,26,94,0.6); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-parrot { font-size: 1.6rem; line-height: 1; }
+    .brand-text { line-height: 1.1; }
+    .brand-name { font-size: 1rem; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
+    .brand-sub { font-size: 0.72rem; color: var(--gold); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
     .api-bar { display: flex; align-items: center; gap: 0.6rem; }
-    .api-bar label { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #7a6a52; }
-    .api-bar input { border: 1.5px solid var(--warm); background: white; border-radius: 6px; padding: 0.4rem 0.8rem; font-family: 'Courier New', monospace; font-size: 0.8rem; width: 220px; color: var(--ink); }
-    .api-bar input:focus { outline: none; border-color: var(--amber); }
-    #upload-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 70px); padding: 3rem 1rem; }
-    .upload-card { background: white; border: 2px dashed var(--warm); border-radius: 20px; padding: 3rem; text-align: center; max-width: 500px; width: 100%; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 4px 24px var(--shadow); }
-    .upload-card:hover, .upload-card.dragover { border-color: var(--amber); box-shadow: 0 8px 40px var(--shadow); }
-    .upload-card h2 { font-family: var(--font-display); font-size: 1.8rem; margin: 0.5rem 0; }
-    .upload-card p { color: #7a6a52; font-size: 0.9rem; line-height: 1.6; }
+    .api-bar label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .api-bar input { background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.9rem; font-family: 'Courier New', monospace; font-size: 0.78rem; width: 210px; color: var(--white); transition: border-color 0.2s, background 0.2s; }
+    .api-bar input::placeholder { color: var(--muted); }
+    .api-bar input:focus { outline: none; border-color: var(--gold); background: rgba(255,255,255,0.15); }
+    #upload-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 68px); padding: 3rem 1rem; text-align: center; }
+    .upload-hero { margin-bottom: 2rem; }
+    .upload-hero .parrot { font-size: 5rem; display: block; margin-bottom: 1rem; filter: drop-shadow(0 8px 24px rgba(247,195,37,0.3)); }
+    .upload-hero h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+    .upload-hero h1 span { color: var(--gold); }
+    .upload-hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 440px; margin: 0 auto; }
+    .upload-card { background: var(--card-bg); border: 1.5px dashed var(--border); border-radius: 20px; padding: 2.5rem 3rem; max-width: 480px; width: 100%; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .upload-card:hover, .upload-card.dragover { border-color: var(--gold); background: rgba(247,195,37,0.07); }
+    .upload-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.2rem; }
     #file-input { display: none; }
-    .btn-primary { display: inline-block; margin-top: 1.4rem; padding: 0.75rem 2rem; background: var(--rust); color: white; font-family: var(--font-body); font-weight: 500; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
-    .btn-primary:hover { background: #963d16; }
+    .btn-gold { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2rem; background: var(--gold); color: var(--navy-deep); font-family: var(--font); font-weight: 700; font-size: 0.95rem; border: none; border-radius: 10px; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .btn-gold:hover { background: #ffd044; transform: translateY(-1px); }
+    .audience-badge { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem; padding: 0.4rem 1rem; background: rgba(255,255,255,0.08); border: 1px solid var(--border); border-radius: 20px; font-size: 0.78rem; color: var(--muted); }
     #app-section { display: none; height: calc(100vh - 68px); overflow: hidden; }
-    .app-grid { display: grid; grid-template-columns: 1fr 380px; height: 100%; }
-    .page-panel { display: flex; flex-direction: column; border-right: 1.5px solid var(--warm); overflow: hidden; }
-    .page-nav { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1.2rem; border-bottom: 1px solid var(--warm); background: white; flex-shrink: 0; }
-    .nav-btn { background: none; border: 1.5px solid var(--warm); border-radius: 6px; padding: 0.35rem 1rem; font-family: var(--font-body); font-size: 0.85rem; cursor: pointer; color: var(--ink); transition: background 0.15s; }
-    .nav-btn:hover:not(:disabled) { background: var(--warm); }
+    .app-grid { display: grid; grid-template-columns: 1fr 390px; height: 100%; }
+    .page-panel { display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; }
+    .page-nav { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.4rem; border-bottom: 1px solid var(--border); background: rgba(8,26,94,0.4); flex-shrink: 0; }
+    .nav-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 1.1rem; font-family: var(--font); font-size: 0.83rem; font-weight: 500; cursor: pointer; color: var(--white); transition: background 0.15s; }
+    .nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.18); }
     .nav-btn:disabled { opacity: 0.3; cursor: default; }
-    .page-counter { font-family: var(--font-display); font-size: 1rem; font-style: italic; color: #7a6a52; }
-    .page-canvas { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; background: #ede8df; padding: 1rem; }
-    .page-canvas img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 4px 32px rgba(28,18,8,0.2); border-radius: 4px; }
-    .word-panel { display: flex; flex-direction: column; background: var(--cream); overflow: hidden; }
-    .word-panel-header { padding: 1rem 1.2rem 0.7rem; border-bottom: 1px solid var(--warm); flex-shrink: 0; }
-    .word-panel-header h3 { font-family: var(--font-display); font-size: 1rem; font-style: italic; color: #7a6a52; }
-    .manual-entry { padding: 1rem 1.2rem; border-bottom: 1px solid var(--warm); background: white; flex-shrink: 0; }
-    .manual-entry-label { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #b0a090; margin-bottom: 0.6rem; display: block; }
-    .manual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .manual-field { display: flex; flex-direction: column; gap: 0.25rem; }
-    .manual-field label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
-    .manual-field label.es { color: var(--rust); }
-    .manual-field label.en { color: var(--sage); }
-    .manual-field input { border: 1.5px solid var(--warm); border-radius: 6px; padding: 0.5rem 0.7rem; font-family: var(--font-display); font-size: 1rem; color: var(--ink); background: var(--cream); transition: border-color 0.2s; width: 100%; }
-    .manual-field input:focus { outline: none; border-color: var(--amber); background: white; }
-    .manual-field input.es-input { color: var(--rust); font-weight: 700; }
-    .manual-field input.en-input { color: var(--sage); font-style: italic; }
-    .btn-speak-manual { width: 100%; padding: 0.65rem; background: var(--rust); color: white; border: none; border-radius: 8px; font-family: var(--font-body); font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: background 0.15s; }
-    .btn-speak-manual:hover { background: #963d16; }
-    .word-showcase { padding: 1rem 1.2rem 0.8rem; border-bottom: 1px solid var(--warm); text-align: center; flex-shrink: 0; background: white; }
-    .word-es { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--rust); line-height: 1.2; }
-    .word-arrow { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: #b0a090; margin: 0.25rem 0; }
-    .word-en { font-family: var(--font-display); font-size: 1.4rem; font-style: italic; color: var(--sage); line-height: 1.2; }
-    .controls { display: flex; gap: 0.5rem; padding: 0.8rem 1.2rem; border-bottom: 1px solid var(--warm); flex-shrink: 0; }
-    .ctrl-btn { flex: 1; padding: 0.55rem 0.5rem; border: none; border-radius: 7px; font-family: var(--font-body); font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
-    .ctrl-btn:hover { opacity: 0.85; }
-    .ctrl-btn.secondary { background: var(--sage); color: white; }
-    .ctrl-btn.muted { background: var(--warm); color: var(--ink); }
-    .word-list { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
-    .word-item { display: flex; align-items: center; padding: 0.6rem 1.2rem; cursor: pointer; border-left: 3px solid transparent; transition: background 0.12s, border-color 0.12s; gap: 0.7rem; }
-    .word-item:hover { background: var(--warm); }
-    .word-item.active { background: #fdf3e8; border-left-color: var(--rust); }
-    .wi-es { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; color: var(--rust); min-width: 80px; }
-    .wi-sep { color: #c0b090; font-size: 0.8rem; }
-    .wi-en { font-family: var(--font-display); font-style: italic; font-size: 0.9rem; color: var(--sage); }
-    .wi-play { margin-left: auto; font-size: 1rem; opacity: 0; transition: opacity 0.15s; }
+    .page-counter { font-size: 0.9rem; font-weight: 500; color: var(--muted); }
+    .page-canvas { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.25); padding: 1.2rem; }
+    .page-canvas img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 40px rgba(0,0,0,0.4); }
+    .word-panel { display: flex; flex-direction: column; background: rgba(8,26,94,0.35); overflow: hidden; border-left: 1px solid var(--border); }
+    .word-panel-header { padding: 0.9rem 1.3rem; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .word-panel-header h3 { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+    .manual-entry { padding: 1.1rem 1.3rem; border-bottom: 1px solid var(--border); background: rgba(247,195,37,0.05); flex-shrink: 0; }
+    .manual-entry-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.7rem; display: block; }
+    .manual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.7rem; }
+    .manual-field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .manual-field label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .manual-field input { background: rgba(255,255,255,0.08); border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.8rem; font-family: var(--font); font-size: 1rem; font-weight: 600; color: var(--white); transition: border-color 0.2s, background 0.2s; width: 100%; }
+    .manual-field input::placeholder { color: var(--muted); font-weight: 400; }
+    .manual-field input:focus { outline: none; border-color: var(--gold); background: rgba(255,255,255,0.12); }
+    .manual-field input.es-input { color: var(--gold); }
+    .manual-field input.en-input { color: #7dd3fc; }
+    .btn-pronounce { width: 100%; padding: 0.7rem; background: var(--gold); color: var(--navy-deep); border: none; border-radius: 10px; font-family: var(--font); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+    .btn-pronounce:hover { background: #ffd044; transform: translateY(-1px); }
+    .word-showcase { padding: 1.1rem 1.3rem; border-bottom: 1px solid var(--border); text-align: center; flex-shrink: 0; background: rgba(255,255,255,0.03); }
+    .word-es { font-size: 1.9rem; font-weight: 700; color: var(--gold); line-height: 1.2; letter-spacing: -0.01em; }
+    .word-divider { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin: 0.3rem 0; }
+    .word-en { font-size: 1.4rem; font-weight: 500; color: #7dd3fc; line-height: 1.2; }
+    .controls { display: flex; gap: 0.5rem; padding: 0.8rem 1.3rem; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .ctrl-btn { flex: 1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: background 0.15s; background: rgba(255,255,255,0.07); color: var(--white); }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.14); }
+    .ctrl-btn.stop { color: #fca5a5; border-color: rgba(252,165,165,0.3); }
+    .word-list { flex: 1; overflow-y: auto; padding: 0.4rem 0; }
+    .word-item { display: flex; align-items: center; padding: 0.6rem 1.3rem; cursor: pointer; border-left: 3px solid transparent; transition: background 0.12s, border-color 0.12s; gap: 0.6rem; }
+    .word-item:hover { background: rgba(255,255,255,0.06); }
+    .word-item.active { background: rgba(247,195,37,0.1); border-left-color: var(--gold); }
+    .wi-es { font-weight: 700; font-size: 0.9rem; color: var(--gold); min-width: 80px; }
+    .wi-sep { color: var(--muted); font-size: 0.75rem; }
+    .wi-en { font-size: 0.88rem; color: #7dd3fc; }
+    .wi-play { margin-left: auto; font-size: 0.9rem; opacity: 0; transition: opacity 0.15s; }
     .word-item:hover .wi-play, .word-item.active .wi-play { opacity: 1; }
-    .empty-words { padding: 1.5rem 1.2rem; text-align: center; color: #b0a090; }
-    .empty-words p { font-size: 0.85rem; line-height: 1.6; }
-    #status-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 0.5rem 1.4rem; background: rgba(28,18,8,0.88); color: #e8d8b8; font-size: 0.8rem; display: none; align-items: center; gap: 0.7rem; z-index: 200; }
+    .empty-words { padding: 1.5rem 1.3rem; text-align: center; }
+    .empty-words p { font-size: 0.83rem; line-height: 1.7; color: var(--muted); }
+    .empty-words strong { color: var(--gold); }
+    #status-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 0.5rem 1.4rem; background: rgba(8,26,94,0.95); border-top: 1px solid var(--border); color: var(--off-white); font-size: 0.8rem; display: none; align-items: center; gap: 0.7rem; z-index: 200; backdrop-filter: blur(8px); }
     #status-bar.visible { display: flex; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex-shrink: 0; animation: pulse 1.2s ease-in-out infinite; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; animation: pulse 1.2s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    #loading-overlay { position: fixed; inset: 0; background: rgba(245,239,224,0.92); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 300; }
+    #loading-overlay { position: fixed; inset: 0; background: rgba(8,26,94,0.92); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 300; backdrop-filter: blur(8px); }
     #loading-overlay.visible { display: flex; }
-    .spinner { width: 48px; height: 48px; border: 3px solid var(--warm); border-top-color: var(--rust); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+    .spinner { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font-family: var(--font-display); font-style: italic; color: #7a6a52; }
-    .word-list::-webkit-scrollbar { width: 4px; }
+    .loading-text { color: var(--muted); font-size: 0.9rem; }
+    .word-list::-webkit-scrollbar { width: 3px; }
     .word-list::-webkit-scrollbar-track { background: transparent; }
-    .word-list::-webkit-scrollbar-thumb { background: var(--warm); border-radius: 2px; }
+    .word-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">Diccion<span>ario</span></div>
+    <div class="brand">
+      <div class="brand-parrot">🦜</div>
+      <div class="brand-text">
+        <div class="brand-name">Biliteracy Bridge</div>
+        <div class="brand-sub">Pronunciation Guide · Guía de Pronunciación</div>
+      </div>
+    </div>
     <div class="api-bar">
       <label>ElevenLabs Key</label>
       <input type="password" id="api-key-input" placeholder="sk_..." autocomplete="off" />
     </div>
   </header>
+
   <section id="upload-section">
-    <div class="upload-card" id="drop-zone">
-      <span style="font-size:3rem;display:block;margin-bottom:0.5rem">📖</span>
-      <h2>Open Your Wordbank</h2>
-      <p>Upload the PDF of your book. Each page will display and you can type words to pronounce them in Spanish and English.</p>
-      <input type="file" id="file-input" accept=".pdf" />
-      <button class="btn-primary" onclick="document.getElementById('file-input').click()">Choose PDF File</button>
+    <div class="upload-hero">
+      <span class="parrot">🦜</span>
+      <h1>Pronunciation Guide<br><span>Guía de Pronunciación</span></h1>
+      <p style="margin-top:0.6rem">For parents &amp; teachers supporting bilingual readers at home and in the classroom.</p>
     </div>
+    <div class="upload-card" id="drop-zone">
+      <p>Upload the PDF of your Biliteracy Bridge book. Navigate each page and hear every word pronounced in both Spanish and English.</p>
+      <input type="file" id="file-input" accept=".pdf" />
+      <button class="btn-gold" onclick="document.getElementById('file-input').click()">📖 Choose Book PDF</button>
+    </div>
+    <div class="audience-badge">👨‍👩‍👧 For parents &nbsp;·&nbsp; 👩‍🏫 For teachers &nbsp;·&nbsp; 🇲🇽 🇺🇸 Bilingual</div>
   </section>
+
   <section id="app-section">
     <div class="app-grid">
       <div class="page-panel">
@@ -117,42 +137,44 @@
           <button class="nav-btn" id="btn-next" disabled>Next →</button>
         </div>
         <div class="page-canvas">
-          <img id="page-img" src="" alt="Dictionary page" />
+          <img id="page-img" src="" alt="Book page" />
         </div>
       </div>
       <div class="word-panel">
         <div class="word-panel-header">
-          <h3 id="words-found-label">Words on this page</h3>
+          <h3 id="words-found-label">Pronunciation for this page</h3>
         </div>
         <div class="manual-entry">
           <span class="manual-entry-label">✏️ Type the words for this page</span>
           <div class="manual-row">
             <div class="manual-field">
-              <label class="es">🇲🇽 Spanish</label>
+              <label>🇲🇽 Spanish</label>
               <input type="text" id="manual-es" class="es-input" placeholder="Ocelote" />
             </div>
             <div class="manual-field">
-              <label class="en">🇺🇸 English</label>
+              <label>🇺🇸 English</label>
               <input type="text" id="manual-en" class="en-input" placeholder="Ocelot" />
             </div>
           </div>
-          <button class="btn-speak-manual" id="btn-speak-manual">▶ Pronounce These Words</button>
+          <button class="btn-pronounce" id="btn-speak-manual">🔊 Pronounce These Words</button>
         </div>
         <div class="word-showcase">
           <div class="word-es" id="sel-es">—</div>
-          <div class="word-arrow">🇲🇽 español &nbsp;·&nbsp; english 🇺🇸</div>
+          <div class="word-divider">🇲🇽 español &nbsp;·&nbsp; english 🇺🇸</div>
           <div class="word-en" id="sel-en">—</div>
         </div>
         <div class="controls">
-          <button class="ctrl-btn secondary" id="btn-speak-all">▶▶ Play All Auto-Words</button>
-          <button class="ctrl-btn muted" id="btn-stop">⏹</button>
+          <button class="ctrl-btn" id="btn-speak-all">▶▶ Play All Auto-Words</button>
+          <button class="ctrl-btn stop" id="btn-stop">⏹ Stop</button>
         </div>
         <div class="word-list" id="word-list"></div>
       </div>
     </div>
   </section>
+
   <div id="status-bar"><div class="status-dot"></div><span id="status-text">Ready</span></div>
-  <div id="loading-overlay"><div class="spinner"></div><p class="loading-text" id="loading-text">Processing…</p></div>
+  <div id="loading-overlay"><div class="spinner"></div><p class="loading-text" id="loading-text">Loading your book…</p></div>
+
   <script>
     let state = { sessionId: null, numPages: 0, currentPage: 0, words: [], selectedWordIdx: null, playingAll: false, audioObj: null };
     const $ = id => document.getElementById(id);
@@ -167,24 +189,25 @@
     dropZone.addEventListener("drop", e => { e.preventDefault(); dropZone.classList.remove("dragover"); if (e.dataTransfer.files[0]) uploadPDF(e.dataTransfer.files[0]); });
     fileInput.addEventListener("change", () => { if (fileInput.files[0]) uploadPDF(fileInput.files[0]); });
     async function uploadPDF(file) {
-      showLoading("Rendering pages…");
+      showLoading("Loading your book…");
       const form = new FormData(); form.append("pdf", file);
       try {
         const res = await fetch("/upload", { method: "POST", body: form });
         const data = await res.json();
         if (data.error) throw new Error(data.error);
-        state.sessionId = data.session_id; state.numPages = data.num_pages; state.currentPage = 0;
+        state.sessionId = data.session_id; state.numPages = data.num_pages;
         hideLoading(); $("upload-section").style.display = "none"; $("app-section").style.display = "block";
-        await loadPage(0); showStatus(`✅ Loaded ${data.num_pages} pages`); setTimeout(hideStatus, 3000);
+        await loadPage(0);
+        showStatus("✅ Loaded " + data.num_pages + " pages"); setTimeout(hideStatus, 3000);
       } catch (err) { hideLoading(); alert("Error: " + err.message); }
     }
     async function loadPage(idx) {
       state.currentPage = idx; state.selectedWordIdx = null; state.playingAll = false;
-      $("page-counter").textContent = `Page ${idx + 1} of ${state.numPages}`;
+      $("page-counter").textContent = "Page " + (idx + 1) + " of " + state.numPages;
       $("btn-prev").disabled = idx === 0; $("btn-next").disabled = idx === state.numPages - 1;
-      $("page-img").src = `/page/${state.sessionId}/${idx}`;
+      $("page-img").src = "/page/" + state.sessionId + "/" + idx;
       $("manual-es").value = ""; $("manual-en").value = "";
-      const res = await fetch(`/words/${state.sessionId}/${idx}`);
+      const res = await fetch("/words/" + state.sessionId + "/" + idx);
       const data = await res.json(); state.words = data.words || [];
       renderWordList(); resetShowcase();
     }
@@ -192,19 +215,19 @@
     $("btn-next").addEventListener("click", () => { if (state.currentPage < state.numPages - 1) loadPage(state.currentPage + 1); });
     function renderWordList() {
       const list = $("word-list"), count = state.words.length;
-      $("words-found-label").textContent = count ? `${count} word pair${count !== 1 ? "s" : ""} auto-detected` : "No words auto-detected — use the box above ↑";
-      if (!count) { list.innerHTML = `<div class="empty-words"><p>Type the Spanish and English words<br>in the boxes above, then press<br><strong>▶ Pronounce These Words</strong></p></div>`; return; }
-      list.innerHTML = state.words.map((w, i) => `<div class="word-item" data-idx="${i}" onclick="selectWord(${i})"><span class="wi-es">${esc(w.es)}</span><span class="wi-sep">→</span><span class="wi-en">${esc(w.en)}</span><span class="wi-play">🔊</span></div>`).join("");
+      $("words-found-label").textContent = count ? count + " word" + (count !== 1 ? "s" : "") + " auto-detected" : "Pronunciation for this page";
+      if (!count) { list.innerHTML = '<div class="empty-words"><p>Type the Spanish and English words<br>in the boxes above, then tap<br><strong>🔊 Pronounce These Words</strong></p></div>'; return; }
+      list.innerHTML = state.words.map((w, i) => '<div class="word-item" data-idx="' + i + '" onclick="selectWord(' + i + ')"><span class="wi-es">' + esc(w.es) + '</span><span class="wi-sep">→</span><span class="wi-en">' + esc(w.en) + '</span><span class="wi-play">🔊</span></div>').join("");
       selectWord(0);
     }
     function selectWord(idx) {
       state.selectedWordIdx = idx;
       document.querySelectorAll(".word-item").forEach((el, i) => el.classList.toggle("active", i === idx));
       const w = state.words[idx]; if (w) { $("sel-es").textContent = w.es; $("sel-en").textContent = w.en; }
-      const el = document.querySelector(`.word-item[data-idx="${idx}"]`); if (el) el.scrollIntoView({ block: "nearest" });
+      const el = document.querySelector('.word-item[data-idx="' + idx + '"]'); if (el) el.scrollIntoView({ block: "nearest" });
     }
     function resetShowcase() { $("sel-es").textContent = "—"; $("sel-en").textContent = "—"; }
-    function esc(str) { return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    function esc(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
     $("btn-speak-manual").addEventListener("click", () => {
       const es = $("manual-es").value.trim(), en = $("manual-en").value.trim();
       if (!es && !en) { alert("Type at least one word first!"); return; }
@@ -216,7 +239,7 @@
     $("manual-en").addEventListener("keydown", e => { if (e.key === "Enter") $("btn-speak-manual").click(); });
     async function speakPair(spanish, english) {
       const apiKey = getApiKey(); if (!apiKey) { alert("Enter your ElevenLabs API key first."); return; }
-      showStatus(`🔊 Speaking: ${spanish} → ${english}…`);
+      showStatus("🔊 " + spanish + " → " + english);
       try {
         const res = await fetch("/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ api_key: apiKey, spanish, english, lang: "both" }) });
         if (!res.ok) { const e = await res.json(); throw new Error(e.error || "TTS failed"); }
@@ -225,7 +248,7 @@
         state.audioObj = new Audio(url); state.audioObj.play();
         await new Promise(r => { state.audioObj.onended = r; state.audioObj.onerror = r; });
         URL.revokeObjectURL(url); hideStatus();
-      } catch (err) { hideStatus(); showStatus(`❌ ${err.message}`); setTimeout(hideStatus, 4000); }
+      } catch (err) { hideStatus(); showStatus("❌ " + err.message); setTimeout(hideStatus, 4000); }
     }
     async function speakWord(idx) { const w = state.words[idx]; if (!w) return; selectWord(idx); await speakPair(w.es, w.en); }
     $("btn-stop").addEventListener("click", () => { state.playingAll = false; if (state.audioObj) { state.audioObj.pause(); state.audioObj = null; } hideStatus(); });
