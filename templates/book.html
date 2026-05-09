@@ -1,1 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ book.title }} — Pronunciation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #1b3a5c;
+    --gold:   #c8893a;
+    --teal:   #2a7f8f;
+    --cream:  #f7f4ee;
+    --white:  #ffffff;
+    --border: #ddd8ce;
+    --text:   #2d2d2d;
+    --muted:  #6b6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 18px 28px;
+    border-bottom: 4px solid var(--gold);
+  }
+  header .brand { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+  header h1 { font-family: 'Playfair Display', serif; font-size: 1.25rem; line-height: 1.3; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+  .page-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+  }
+  .page-image-wrap {
+    background: #f0ece3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  .page-image-wrap img {
+    width: 100%;
+    display: block;
+    object-fit: contain;
+    max-height: 420px;
+  }
+  .page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .page-nav button {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .page-nav button:hover { background: var(--teal); }
+  .page-nav button:disabled { background: #ccc; cursor: default; }
+  .page-counter { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+  .pronun-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    overflow: hidden;
+  }
+  .pronun-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pronun-header h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+  .play-all-btn {
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .play-all-btn:hover { opacity: .85; }
+  .play-all-btn:disabled { opacity: .5; cursor: default; }
+  .word-list { padding: 12px; }
+  .word-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    transition: background .15s;
+  }
+  .word-item:hover { background: var(--cream); }
+  .word-es { font-weight: 600; font-size: 1rem; color: var(--navy); }
+  .word-en { font-size: 1rem; color: var(--teal); font-weight: 500; }
+  .lang-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); display: block; }
+  .speak-btn {
+    background: none;
+    border: 2px solid var(--teal);
+    color: var(--teal);
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { background: var(--teal); color: var(--white); }
+  .speak-btn.playing { background: var(--gold); border-color: var(--gold); color: var(--white); }
+  .empty-state { padding: 48px 20px; text-align: center; color: var(--muted); }
+  .status-bar {
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: center;
+    min-height: 38px;
+  }
+</style>
+</head>
+<body>
 
+<header>
+  <div class="brand">Biliteracy Bridge · Pronunciation Guide</div>
+  <h1>{{ book.title }}</h1>
+</header>
+
+<div class="container">
+  <div class="layout">
+
+    <div class="page-card">
+      <div class="page-image-wrap">
+        <img id="pageImg" src="" alt="Book page">
+      </div>
+      <div class="page-nav">
+        <button id="prevBtn" onclick="changePage(-1)" disabled>← Previous</button>
+        <span class="page-counter" id="pageCounter">Page 1 of {{ book.num_pages }}</span>
+        <button id="nextBtn" onclick="changePage(1)">Next →</button>
+      </div>
+    </div>
+
+    <div class="pronun-card">
+      <div class="pronun-header">
+        <h2>Pronunciation</h2>
+        <button class="play-all-btn" id="playAllBtn" onclick="playAll()">▶ Play All</button>
+      </div>
+      <div class="word-list" id="wordList">
+        <div style="padding:20px;text-align:center;color:#999;">Loading…</div>
+      </div>
+      <div class="status-bar" id="statusBar">Ready</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const BOOK_ID   = "{{ book_id }}";
+const NUM_PAGES = {{ book.num_pages }};
+let currentPage  = 0;
+let isPlaying    = false;
+let currentAudio = null;
+let activeBtn    = null;
+
+function setStatus(msg) { document.getElementById("statusBar").textContent = msg; }
+
+async function loadPage(n) {
+  currentPage = n;
+  document.getElementById("pageCounter").textContent = `Page ${n + 1} of ${NUM_PAGES}`;
+  document.getElementById("prevBtn").disabled = n === 0;
+  document.getElementById("nextBtn").disabled = n === NUM_PAGES - 1;
+  document.getElementById("pageImg").src = `/api/book/${BOOK_ID}/page/${n}/image`;
+
+  const wl = document.getElementById("wordList");
+  wl.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">Loading…</div>';
+
+  const res  = await fetch(`/api/book/${BOOK_ID}/page/${n}/content`);
+  const data = await res.json();
+
+  if (!data.content || data.content.length === 0) {
+    wl.innerHTML = '<div class="empty-state"><p>No pronunciation content for this page yet.</p></div>';
+    return;
+  }
+
+  wl.innerHTML = "";
+  data.content.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.className = "word-item";
+    div.innerHTML = `
+      <div>
+        <span class="lang-label">Español</span>
+        <span class="word-es">${item.es}</span>
+      </div>
+      <div>
+        <span class="lang-label">English</span>
+        <span class="word-en">${item.en}</span>
+      </div>
+      <button class="speak-btn" id="btn-${i}" onclick="speakItem(${i}, '${esc(item.es)}', '${esc(item.en)}')">▶</button>
+    `;
+    wl.appendChild(div);
+  });
+  setStatus("Tap ▶ next to any word to hear it, or press Play All");
+}
+
+function esc(s) { return s.replace(/'/g, "\\'"); }
+function changePage(dir) { stopAll(); loadPage(currentPage + dir); }
+
+async function speakItem(idx, es, en, fromQueue = false) {
+  if (!fromQueue) stopAll();
+  const btn = document.getElementById(`btn-${idx}`);
+  if (activeBtn) activeBtn.classList.remove("playing");
+  activeBtn = btn;
+  if (btn) btn.classList.add("playing");
+  setStatus(`Playing: ${es} · ${en}`);
+  try {
+    const res = await fetch("/api/speak", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ spanish: es, english: en, lang: "both" })
+    });
+    if (!res.ok) { setStatus("Audio error — please try again."); return; }
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    currentAudio = new Audio(url);
+    await new Promise(resolve => {
+      currentAudio.onended = resolve;
+      currentAudio.onerror = resolve;
+      currentAudio.play();
+    });
+    URL.revokeObjectURL(url);
+  } catch(e) { setStatus("Could not load audio."); }
+  if (btn) btn.classList.remove("playing");
+  activeBtn = null;
+  if (!fromQueue) setStatus("Ready");
+}
+
+async function playAll() {
+  stopAll();
+  const rows = Array.from(document.querySelectorAll(".word-item"));
+  if (rows.length === 0) return;
+  isPlaying = true;
+  const btn = document.getElementById("playAllBtn");
+  btn.disabled = true;
+  btn.textContent = "■ Stop";
+  btn.onclick = stopAll;
+  for (let i = 0; i < rows.length; i++) {
+    if (!isPlaying) break;
+    const es = rows[i].querySelector(".word-es").textContent;
+    const en = rows[i].querySelector(".word-en").textContent;
+    await speakItem(i, es, en, true);
+    await new Promise(r => setTimeout(r, 400));
+  }
+  stopAll();
+}
+
+function stopAll() {
+  isPlaying = false;
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (activeBtn) { activeBtn.classList.remove("playing"); activeBtn = null; }
+  const btn = document.getElementById("playAllBtn");
+  if (btn) { btn.disabled = false; btn.textContent = "▶ Play All"; btn.onclick = playAll; }
+  setStatus("Ready");
+}
+
+if (NUM_PAGES > 0) loadPage(0);
+else document.getElementById("wordList").innerHTML =
+  '<div class="empty-state"><p>This book is being set up. Please check back soon.</p></div>';
+</script>
+</body>
+</html>
