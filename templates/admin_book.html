@@ -1,1 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Book — {{ book.title }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: #f7f4ee; color: #2d2d2d; }
+  header {
+    background: #1b3a5c;
+    color: #fff;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 4px solid #c8893a;
+  }
+  .header-left .brand { font-size: 0.7rem; letter-spacing: .12em; text-transform: uppercase; color: #c8893a; }
+  .header-left h1 { font-family: 'Playfair Display', serif; font-size: 1.1rem; max-width: 600px; line-height: 1.3; }
+  .header-right { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+  .btn-back { color: #aac4d8; text-decoration: none; font-size: 0.85rem; }
+  .btn-back:hover { color: #fff; }
+  .btn-preview {
+    background: #2a7f8f; color: #fff; text-decoration: none;
+    padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+  }
+  .container { max-width: 1050px; margin: 0 auto; padding: 32px 20px; }
+  .upload-zone {
+    background: #fff;
+    border: 2px dashed #c8893a;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 32px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .upload-zone:hover { background: #fdf8f0; }
+  .upload-zone h3 { font-family: 'Playfair Display', serif; color: #1b3a5c; margin-bottom: 8px; }
+  .upload-zone p { color: #6b6b6b; font-size: 0.9rem; margin-bottom: 16px; }
+  #pdfInput { display: none; }
+  .upload-btn {
+    background: #1b3a5c; color: #fff; border: none; border-radius: 8px;
+    padding: 10px 24px; font-family: inherit; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer;
+  }
+  .upload-status { margin-top: 14px; font-size: 0.9rem; color: #2a7f8f; font-weight: 500; }
+  .editor-layout { display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 680px) { .editor-layout { grid-template-columns: 1fr; } }
+  .page-nav-panel {
+    background: #fff;
+    border: 1px solid #ddd8ce;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    position: sticky;
+    top: 20px;
+  }
+  .panel-title {
+    background: #1b3a5c;
+    color: #fff;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+  .page-thumb-list { padding: 8px; max-height: 520px; overflow-y: auto; }
+  .page-thumb {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px;
+    cursor: pointer; transition: background .15s; margin-bottom: 4px;
+  }
+  .page-thumb:hover { background: #f0ece3; }
+  .page-thumb.active { background: #ddeef4; }
+  .page-thumb img { width: 48px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+  .page-thumb-label { font-size: 0.85rem; font-weight: 500; color: #1b3a5c; }
+  .page-thumb-count { font-size: 0.75rem; color: #999; }
+  .thumb-check { color: #2a7f8f; font-size: 1rem; margin-left: auto; }
+  .content-panel {
+    background: #fff;
+    border: 1px solid #ddd8ce;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .content-header {
+    background: #1b3a5c; color: #fff;
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .content-header h3 { font-family: 'Playfair Display', serif; font-size: 1rem; }
+  .type-toggle { display: flex; gap: 0; border: 1px solid #aac4d8; border-radius: 6px; overflow: hidden; }
+  .type-toggle button {
+    background: transparent; color: #aac4d8; border: none;
+    padding: 5px 12px; font-size: 0.8rem; font-family: inherit; cursor: pointer;
+    transition: all .2s;
+  }
+  .type-toggle button.active { background: #2a7f8f; color: #fff; }
+  .page-preview-img {
+    width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    background: #f0ece3;
+    display: block;
+    border-bottom: 1px solid #ddd8ce;
+  }
+  .entries-section { padding: 20px; }
+  .entries-section label {
+    font-size: 0.8rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .07em; color: #6b6b6b; margin-bottom: 10px; display: block;
+  }
+  .entry-row {
+    display: grid; grid-template-columns: 1fr 1fr auto;
+    gap: 10px; margin-bottom: 10px; align-items: center;
+  }
+  .entry-row input {
+    padding: 10px 14px; border: 2px solid #ddd8ce; border-radius: 8px;
+    font-family: inherit; font-size: 0.95rem; outline: none; transition: border .2s;
+  }
+  .entry-row input:focus { border-color: #2a7f8f; }
+  .entry-row input::placeholder { color: #bbb; }
+  .col-label { font-size: 0.7rem; color: #999; margin-bottom: 3px; }
+  .del-btn {
+    background: none; border: 2px solid #eee; border-radius: 8px;
+    width: 38px; height: 38px; color: #ccc; font-size: 1.1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .del-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+  .add-entry-btn {
+    background: none; border: 2px dashed #c8893a; border-radius: 8px;
+    padding: 9px; width: 100%; font-family: inherit; font-size: 0.9rem;
+    color: #c8893a; cursor: pointer; margin-top: 4px; transition: background .2s;
+    font-weight: 600;
+  }
+  .add-entry-btn:hover { background: #fdf8f0; }
+  .save-bar {
+    padding: 16px 20px;
+    border-top: 1px solid #ddd8ce;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .save-btn {
+    background: #c8893a; color: #fff; border: none; border-radius: 8px;
+    padding: 10px 28px; font-family: inherit; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .save-btn:hover { opacity: .85; }
+  .save-msg { font-size: 0.87rem; color: #2a7f8f; font-weight: 500; }
+  .no-pdf { padding: 48px 20px; text-align: center; color: #999; }
+</style>
+</head>
+<body>
 
+<header>
+  <div class="header-left">
+    <div class="brand">Biliteracy Bridge · Admin</div>
+    <h1>{{ book.title }}</h1>
+  </div>
+  <div class="header-right">
+    <a href="/admin" class="btn-back">← Dashboard</a>
+    <a href="/book/{{ book_id }}" target="_blank" class="btn-preview">Preview ↗</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
+    <h3>Upload Book PDF</h3>
+    <p>{% if book.num_pages > 0 %}Currently {{ book.num_pages }} pages loaded. Upload again to replace.{% else %}Upload the PDF of this book to get started.{% endif %}</p>
+    <input type="file" id="pdfInput" accept=".pdf" o
