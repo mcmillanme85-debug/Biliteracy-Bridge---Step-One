@@ -17,137 +17,100 @@
     --muted:  #6b6b6b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
   header {
-    background: var(--navy);
-    color: var(--white);
-    padding: 18px 28px;
-    border-bottom: 4px solid var(--gold);
+    background: var(--navy); color: var(--white);
+    padding: 18px 28px; border-bottom: 4px solid var(--gold);
   }
   header .brand { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
   header h1 { font-family: 'Playfair Display', serif; font-size: 1.25rem; line-height: 1.3; }
+
   .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
   .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
   @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Book page viewer */
   .page-card {
-    background: var(--white);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    background: var(--white); border-radius: 12px; border: 1px solid var(--border);
+    overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.07);
   }
   .page-image-wrap {
-    background: #f0ece3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
+    background: #f0ece3; display: flex; align-items: center;
+    justify-content: center; min-height: 300px;
   }
-  .page-image-wrap img {
-    width: 100%;
-    display: block;
-    object-fit: contain;
-    max-height: 420px;
-  }
+  .page-image-wrap img { width: 100%; display: block; object-fit: contain; max-height: 420px; }
   .page-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-top: 1px solid var(--border);
   }
   .page-nav button {
-    background: var(--navy);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 20px;
-    font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .2s;
+    background: var(--navy); color: var(--white); border: none; border-radius: 8px;
+    padding: 8px 20px; font-family: inherit; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: background .2s;
   }
   .page-nav button:hover { background: var(--teal); }
   .page-nav button:disabled { background: #ccc; cursor: default; }
   .page-counter { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+
+  /* Pronunciation panel */
   .pronun-card {
-    background: var(--white);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 20px rgba(0,0,0,.07);
-    overflow: hidden;
+    background: var(--white); border-radius: 12px; border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,.07); overflow: hidden;
   }
   .pronun-header {
-    background: var(--navy);
-    color: var(--white);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background: var(--navy); color: var(--white); padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
   }
   .pronun-header h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
   .play-all-btn {
-    background: var(--gold);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity .2s;
+    background: var(--gold); color: var(--white); border: none; border-radius: 8px;
+    padding: 8px 16px; font-family: inherit; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: opacity .2s;
   }
   .play-all-btn:hover { opacity: .85; }
   .play-all-btn:disabled { opacity: .5; cursor: default; }
+
   .word-list { padding: 12px; }
   .word-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 8px;
-    align-items: center;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    margin-bottom: 8px;
-    transition: background .15s;
+    display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px;
+    align-items: center; padding: 12px; border-radius: 8px;
+    border: 1px solid var(--border); margin-bottom: 8px; transition: background .15s;
   }
   .word-item:hover { background: var(--cream); }
   .word-es { font-weight: 600; font-size: 1rem; color: var(--navy); }
   .word-en { font-size: 1rem; color: var(--teal); font-weight: 500; }
   .lang-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); display: block; }
   .speak-btn {
-    background: none;
-    border: 2px solid var(--teal);
-    color: var(--teal);
-    border-radius: 8px;
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all .2s;
-    flex-shrink: 0;
+    background: none; border: 2px solid var(--teal); color: var(--teal);
+    border-radius: 8px; width: 40px; height: 40px; font-size: 1.1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .2s; flex-shrink: 0;
   }
   .speak-btn:hover { background: var(--teal); color: var(--white); }
   .speak-btn.playing { background: var(--gold); border-color: var(--gold); color: var(--white); }
+
+  /* Teacher Note */
+  .teacher-note-box {
+    margin: 0 12px 12px;
+    background: #fffbf2;
+    border: 1.5px solid var(--gold);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: none;
+  }
+  .teacher-note-box.visible { display: block; }
+  .teacher-note-label {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--gold); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  }
+  .teacher-note-label::before { content: "★"; }
+  .teacher-note-text { font-size: 0.92rem; color: #5a4010; line-height: 1.55; }
+
   .empty-state { padding: 48px 20px; text-align: center; color: var(--muted); }
   .status-bar {
-    background: var(--cream);
-    border-top: 1px solid var(--border);
-    padding: 10px 20px;
-    font-size: 0.8rem;
-    color: var(--muted);
-    text-align: center;
-    min-height: 38px;
+    background: var(--cream); border-top: 1px solid var(--border);
+    padding: 10px 20px; font-size: 0.8rem; color: var(--muted); text-align: center; min-height: 38px;
   }
 </style>
 </head>
@@ -161,6 +124,7 @@
 <div class="container">
   <div class="layout">
 
+    <!-- Book page viewer -->
     <div class="page-card">
       <div class="page-image-wrap">
         <img id="pageImg" src="" alt="Book page">
@@ -172,6 +136,7 @@
       </div>
     </div>
 
+    <!-- Pronunciation panel -->
     <div class="pronun-card">
       <div class="pronun-header">
         <h2>Pronunciation</h2>
@@ -180,6 +145,13 @@
       <div class="word-list" id="wordList">
         <div style="padding:20px;text-align:center;color:#999;">Loading…</div>
       </div>
+
+      <!-- Teacher Note box (hidden until a note exists) -->
+      <div class="teacher-note-box" id="teacherNoteBox">
+        <div class="teacher-note-label">Biliteracy Bridge Teacher Note</div>
+        <div class="teacher-note-text" id="teacherNoteText"></div>
+      </div>
+
       <div class="status-bar" id="statusBar">Ready</div>
     </div>
 
@@ -206,35 +178,46 @@ async function loadPage(n) {
   const wl = document.getElementById("wordList");
   wl.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">Loading…</div>';
 
+  // Hide teacher note while loading
+  const noteBox  = document.getElementById("teacherNoteBox");
+  const noteText = document.getElementById("teacherNoteText");
+  noteBox.classList.remove("visible");
+
   const res  = await fetch(`/api/book/${BOOK_ID}/page/${n}/content`);
   const data = await res.json();
 
+  // Render word/sentence list
   if (!data.content || data.content.length === 0) {
     wl.innerHTML = '<div class="empty-state"><p>No pronunciation content for this page yet.</p></div>';
-    return;
+  } else {
+    wl.innerHTML = "";
+    data.content.forEach((item, i) => {
+      const div = document.createElement("div");
+      div.className = "word-item";
+      div.innerHTML = `
+        <div>
+          <span class="lang-label">Español</span>
+          <span class="word-es">${item.es}</span>
+        </div>
+        <div>
+          <span class="lang-label">English</span>
+          <span class="word-en">${item.en}</span>
+        </div>
+        <button class="speak-btn" id="btn-${i}" onclick="speakItem(${i},'${esc(item.es)}','${esc(item.en)}')">▶</button>
+      `;
+      wl.appendChild(div);
+    });
+    setStatus("Tap ▶ next to any word to hear it, or press Play All");
   }
 
-  wl.innerHTML = "";
-  data.content.forEach((item, i) => {
-    const div = document.createElement("div");
-    div.className = "word-item";
-    div.innerHTML = `
-      <div>
-        <span class="lang-label">Español</span>
-        <span class="word-es">${item.es}</span>
-      </div>
-      <div>
-        <span class="lang-label">English</span>
-        <span class="word-en">${item.en}</span>
-      </div>
-      <button class="speak-btn" id="btn-${i}" onclick="speakItem(${i}, '${esc(item.es)}', '${esc(item.en)}')">▶</button>
-    `;
-    wl.appendChild(div);
-  });
-  setStatus("Tap ▶ next to any word to hear it, or press Play All");
+  // Show teacher note if present
+  if (data.teacher_note) {
+    noteText.textContent = data.teacher_note;
+    noteBox.classList.add("visible");
+  }
 }
 
-function esc(s) { return s.replace(/'/g, "\\'"); }
+function esc(s) { return (s||"").replace(/'/g,"\\'"); }
 function changePage(dir) { stopAll(); loadPage(currentPage + dir); }
 
 async function speakItem(idx, es, en, fromQueue = false) {
@@ -246,9 +229,9 @@ async function speakItem(idx, es, en, fromQueue = false) {
   setStatus(`Playing: ${es} · ${en}`);
   try {
     const res = await fetch("/api/speak", {
-      method: "POST",
+      method:  "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ spanish: es, english: en, lang: "both" })
+      body:    JSON.stringify({ spanish: es, english: en, lang: "both" })
     });
     if (!res.ok) { setStatus("Audio error — please try again."); return; }
     const blob = await res.blob();
@@ -269,12 +252,10 @@ async function speakItem(idx, es, en, fromQueue = false) {
 async function playAll() {
   stopAll();
   const rows = Array.from(document.querySelectorAll(".word-item"));
-  if (rows.length === 0) return;
+  if (!rows.length) return;
   isPlaying = true;
   const btn = document.getElementById("playAllBtn");
-  btn.disabled = true;
-  btn.textContent = "■ Stop";
-  btn.onclick = stopAll;
+  btn.disabled = true; btn.textContent = "■ Stop"; btn.onclick = stopAll;
   for (let i = 0; i < rows.length; i++) {
     if (!isPlaying) break;
     const es = rows[i].querySelector(".word-es").textContent;
