@@ -22,7 +22,6 @@
 
   .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
 
-  /* Upload row */
   .upload-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
   @media (max-width: 700px) { .upload-row { grid-template-columns: 1fr; } }
 
@@ -37,17 +36,12 @@
     background: #1b3a5c; color: #fff; border: none; border-radius: 8px;
     padding: 9px 20px; font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer;
   }
-  .upload-status { margin-top: 12px; font-size: 0.85rem; color: #2a7f8f; font-weight: 500; min-height: 20px; }
-
+  .upload-status { margin-top: 12px; font-size: 0.85rem; font-weight: 500; min-height: 20px; color: #2a7f8f; }
   .csv-zone { border-color: #2a7f8f; }
   .csv-zone .upload-btn { background: #2a7f8f; }
-
-  .csv-template {
-    margin-top: 10px; font-size: 0.78rem; color: #888;
-  }
+  .csv-template { margin-top: 10px; font-size: 0.78rem; color: #888; }
   .csv-template a { color: #2a7f8f; text-decoration: underline; cursor: pointer; }
 
-  /* Editor layout */
   .editor-layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; }
   @media (max-width: 680px) { .editor-layout { grid-template-columns: 1fr; } }
 
@@ -95,7 +89,6 @@
     font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
     letter-spacing: .07em; color: #6b6b6b; margin-bottom: 10px; display: block;
   }
-
   .entry-row {
     display: grid; grid-template-columns: 1fr 1fr auto;
     gap: 10px; margin-bottom: 8px; align-items: center;
@@ -120,24 +113,17 @@
   }
   .add-entry-btn:hover { background: #fdf8f0; }
 
-  /* Teacher note */
   .note-section {
-    padding: 0 20px 18px;
+    padding: 16px 20px 18px;
     border-top: 1px dashed #ddd8ce;
-    margin-top: 4px;
-    padding-top: 16px;
   }
-  .note-toggle {
-    display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px;
-  }
+  .note-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px; }
   .note-toggle input[type="checkbox"] { width: 16px; height: 16px; accent-color: #c8893a; cursor: pointer; }
   .note-toggle-label { font-size: 0.85rem; font-weight: 600; color: #c8893a; cursor: pointer; }
   .note-toggle-sub { font-size: 0.78rem; color: #999; margin-left: 26px; margin-bottom: 10px; }
   .teacher-note-input {
-    width: 100%; padding: 10px 14px;
-    border: 2px solid #c8893a; border-radius: 8px;
-    font-family: inherit; font-size: 0.92rem; outline: none;
-    resize: vertical; min-height: 80px; transition: border .2s;
+    width: 100%; padding: 10px 14px; border: 2px solid #c8893a; border-radius: 8px;
+    font-family: inherit; font-size: 0.92rem; outline: none; resize: vertical; min-height: 80px;
     background: #fffdf8;
   }
   .teacher-note-input:focus { border-color: #a06a20; }
@@ -178,16 +164,16 @@
       <h3>Upload Book PDF</h3>
       <p>{% if book.num_pages > 0 %}{{ book.num_pages }} pages loaded. Upload again to replace.{% else %}Upload the PDF of your book first.{% endif %}</p>
       <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="uploadPDF(this)">
-      <button class="upload-btn" type="button">Choose PDF File</button>
+      <button class="upload-btn" type="button" onclick="event.stopPropagation(); document.getElementById('pdfInput').click()">Choose PDF File</button>
       <div class="upload-status" id="pdfStatus"></div>
     </div>
 
     <!-- CSV Upload -->
     <div class="upload-zone csv-zone" onclick="document.getElementById('csvInput').click()">
       <h3>Bulk Upload Words via CSV</h3>
-      <p>Upload a spreadsheet with all your words at once — no typing page by page!</p>
+      <p>Upload a spreadsheet with all your words — no typing page by page!</p>
       <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="uploadCSV(this)">
-      <button class="upload-btn" type="button">Choose CSV File</button>
+      <button class="upload-btn" type="button" onclick="event.stopPropagation(); document.getElementById('csvInput').click()">Choose CSV File</button>
       <div class="upload-status" id="csvStatus"></div>
       <div class="csv-template">
         <a onclick="event.stopPropagation(); downloadTemplate()">Download CSV template</a>
@@ -212,8 +198,8 @@
               {% if pg and pg.content %}{{ pg.content|length }} item{{ 's' if pg.content|length != 1 else '' }}{% else %}Empty{% endif %}
             </div>
           </div>
-          {% if pg and pg.content %}<span class="thumb-check">✓</span>{% endif %}
-          {% if pg and pg.teacher_note %}<span class="thumb-note" title="Has teacher note">★</span>{% endif %}
+          {% if pg and pg.content %}<span class="thumb-check">&#10003;</span>{% endif %}
+          {% if pg and pg.teacher_note %}<span class="thumb-note" title="Has teacher note">&#9733;</span>{% endif %}
         </div>
         {% endfor %}
       </div>
@@ -232,10 +218,10 @@
       <img id="contentImg" src="/api/book/{{ book_id }}/page/0/image" class="page-preview-img" alt="Page preview">
 
       <div class="entries-section">
-        <span class="section-label">Spanish · English — type what's on this page</span>
+        <span class="section-label">Spanish &middot; English &mdash; type what is on this page</span>
         <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:6px;">
-          <div class="col-label">🇲🇽 Spanish</div>
-          <div class="col-label">🇺🇸 English</div>
+          <div class="col-label">Spanish</div>
+          <div class="col-label">English</div>
           <div></div>
         </div>
         <div id="entryRows"></div>
@@ -246,11 +232,11 @@
       <div class="note-section">
         <div class="note-toggle">
           <input type="checkbox" id="noteToggle" onchange="toggleNote(this)">
-          <label class="note-toggle-label" for="noteToggle">★ Add a Biliteracy Bridge Teacher Note for this page</label>
+          <label class="note-toggle-label" for="noteToggle">&#9733; Add a Biliteracy Bridge Teacher Note for this page</label>
         </div>
-        <div class="note-toggle-sub">Optional — only shows on pages where you add one. Visible to parents.</div>
+        <div class="note-toggle-sub">Optional &mdash; only shows on pages where you add one. Visible to parents.</div>
         <textarea id="teacherNote" class="teacher-note-input" style="display:none"
-          placeholder="e.g. Cognates are words that look and sound similar in both Spanish and English and share the same meaning. Help your child notice the connection between both languages!"></textarea>
+          placeholder="e.g. Cognates are words that look and sound similar in both Spanish and English. Help your child notice the connection!"></textarea>
       </div>
 
       <div class="save-bar">
@@ -279,20 +265,19 @@ const savedPages = {{ book.pages | tojson }};
 function selectPage(n) {
   if (NUM_PAGES > 0) cacheCurrentPage();
   currentPage = n;
-  document.getElementById("contentTitle").textContent = `Page ${n + 1}`;
-  document.getElementById("contentImg").src = `/api/book/${BOOK_ID}/page/${n}/image`;
-  document.querySelectorAll(".page-thumb").forEach(t => t.classList.remove("active"));
-  document.getElementById(`thumb-${n}`).classList.add("active");
+  document.getElementById("contentTitle").textContent = "Page " + (n + 1);
+  document.getElementById("contentImg").src = "/api/book/" + BOOK_ID + "/page/" + n + "/image";
+  document.querySelectorAll(".page-thumb").forEach(function(t) { t.classList.remove("active"); });
+  document.getElementById("thumb-" + n).classList.add("active");
 
-  const pg = pageCache[n] || (savedPages && savedPages[n]) || { content: [], type: "words", teacher_note: "" };
+  var pg = pageCache[n] || (savedPages && savedPages[n]) || { content: [], type: "words", teacher_note: "" };
   currentType = pg.type || "words";
   setTypeUI(currentType);
   renderRows(pg.content || []);
 
-  // Teacher note
-  const note = pg.teacher_note || "";
-  const cb   = document.getElementById("noteToggle");
-  const ta   = document.getElementById("teacherNote");
+  var note = pg.teacher_note || "";
+  var cb   = document.getElementById("noteToggle");
+  var ta   = document.getElementById("teacherNote");
   cb.checked       = !!note;
   ta.style.display = note ? "block" : "none";
   ta.value         = note;
@@ -309,13 +294,13 @@ function cacheCurrentPage() {
 }
 
 function getNoteValue() {
-  const cb = document.getElementById("noteToggle");
-  const ta = document.getElementById("teacherNote");
+  var cb = document.getElementById("noteToggle");
+  var ta = document.getElementById("teacherNote");
   return (cb && cb.checked) ? ta.value.trim() : "";
 }
 
 function toggleNote(cb) {
-  const ta = document.getElementById("teacherNote");
+  var ta = document.getElementById("teacherNote");
   ta.style.display = cb.checked ? "block" : "none";
   if (cb.checked) ta.focus();
 }
@@ -327,124 +312,166 @@ function setTypeUI(t) {
 }
 
 function renderRows(content) {
-  const c = document.getElementById("entryRows");
+  var c = document.getElementById("entryRows");
   c.innerHTML = "";
   if (!content.length) { addRow(); return; }
-  content.forEach(item => addRow(item.es, item.en));
+  content.forEach(function(item) { addRow(item.es, item.en); });
 }
 
-function addRow(es = "", en = "") {
-  const c   = document.getElementById("entryRows");
-  const div = document.createElement("div");
+function addRow(es, en) {
+  es = es || ""; en = en || "";
+  var c   = document.getElementById("entryRows");
+  var div = document.createElement("div");
   div.className = "entry-row";
-  div.innerHTML = `
-    <input type="text" placeholder="Spanish…" value="${escHtml(es)}" class="es-input">
-    <input type="text" placeholder="English…" value="${escHtml(en)}" class="en-input">
-    <button class="del-btn" onclick="this.parentElement.remove()" title="Remove">×</button>
-  `;
+  div.innerHTML =
+    '<input type="text" placeholder="Spanish..." value="' + escHtml(es) + '" class="es-input">' +
+    '<input type="text" placeholder="English..." value="' + escHtml(en) + '" class="en-input">' +
+    '<button class="del-btn" onclick="this.parentElement.remove()" title="Remove">&times;</button>';
   c.appendChild(div);
 }
 
-function escHtml(s) { return (s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
+function escHtml(s) { return (s || "").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
 
 function collectRows() {
-  const rows = [];
-  document.querySelectorAll(".entry-row").forEach(row => {
-    const es = row.querySelector(".es-input").value.trim();
-    const en = row.querySelector(".en-input").value.trim();
-    if (es || en) rows.push({ es, en });
+  var rows = [];
+  document.querySelectorAll(".entry-row").forEach(function(row) {
+    var es = row.querySelector(".es-input").value.trim();
+    var en = row.querySelector(".en-input").value.trim();
+    if (es || en) rows.push({ es: es, en: en });
   });
   return rows;
 }
 
 async function savePage() {
-  const content      = collectRows();
-  const teacher_note = getNoteValue();
-  const msg          = document.getElementById("saveMsg");
-  msg.textContent    = "Saving…";
-  msg.style.color    = "#888";
+  var content      = collectRows();
+  var teacher_note = getNoteValue();
+  var msg          = document.getElementById("saveMsg");
+  msg.textContent  = "Saving...";
+  msg.style.color  = "#888";
 
-  const res  = await fetch(`/admin/book/${BOOK_ID}/save-page`, {
-    method:  "POST",
-    headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ page_num: currentPage, content, type: currentType, teacher_note })
-  });
-  const data = await res.json();
+  try {
+    var res  = await fetch("/admin/book/" + BOOK_ID + "/save-page", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ page_num: currentPage, content: content, type: currentType, teacher_note: teacher_note })
+    });
+    var data = await res.json();
 
-  if (data.success) {
-    pageCache[currentPage] = { content, type: currentType, teacher_note };
-    msg.textContent = "Saved!";
-    msg.style.color = "#2a7f8f";
+    if (data.success) {
+      pageCache[currentPage] = { content: content, type: currentType, teacher_note: teacher_note };
+      msg.textContent = "Saved!";
+      msg.style.color = "#2a7f8f";
 
-    const tc = document.getElementById(`thumb-count-${currentPage}`);
-    if (tc) tc.textContent = content.length + (content.length === 1 ? " item" : " items");
+      var tc = document.getElementById("thumb-count-" + currentPage);
+      if (tc) tc.textContent = content.length + (content.length === 1 ? " item" : " items");
 
-    const thumb = document.getElementById(`thumb-${currentPage}`);
-    if (thumb) {
-      if (content.length && !thumb.querySelector(".thumb-check")) {
-        const chk = document.createElement("span");
-        chk.className = "thumb-check"; chk.textContent = "✓";
-        thumb.appendChild(chk);
+      var thumb = document.getElementById("thumb-" + currentPage);
+      if (thumb) {
+        if (content.length && !thumb.querySelector(".thumb-check")) {
+          var chk = document.createElement("span");
+          chk.className = "thumb-check"; chk.textContent = "\u2713";
+          thumb.appendChild(chk);
+        }
+        var existingNote = thumb.querySelector(".thumb-note");
+        if (teacher_note && !existingNote) {
+          var n = document.createElement("span");
+          n.className = "thumb-note"; n.title = "Has teacher note"; n.textContent = "\u2605";
+          thumb.appendChild(n);
+        } else if (!teacher_note && existingNote) {
+          existingNote.remove();
+        }
       }
-      const existingNote = thumb.querySelector(".thumb-note");
-      if (teacher_note && !existingNote) {
-        const n = document.createElement("span");
-        n.className = "thumb-note"; n.title = "Has teacher note"; n.textContent = "★";
-        thumb.appendChild(n);
-      } else if (!teacher_note && existingNote) {
-        existingNote.remove();
-      }
+      setTimeout(function() { msg.textContent = ""; }, 2500);
+    } else {
+      msg.textContent = "Error saving. Try again.";
+      msg.style.color = "#e74c3c";
     }
-    setTimeout(() => { msg.textContent = ""; }, 2500);
-  } else {
-    msg.textContent = "Error saving. Try again.";
+  } catch(e) {
+    msg.textContent = "Network error. Try again.";
     msg.style.color = "#e74c3c";
   }
 }
 
 async function uploadPDF(input) {
-  const file = input.files[0];
+  var file = input.files[0];
   if (!file) return;
-  const status = document.getElementById("pdfStatus");
-  status.textContent = "Uploading and processing… please wait.";
-  const fd = new FormData();
-  fd.append("pdf", file);
-  const res  = await fetch(`/admin/book/${BOOK_ID}/upload-pdf`, { method: "POST", body: fd });
-  const data = await res.json();
-  if (data.success) {
-    status.textContent = `Done! ${data.num_pages} pages loaded. Refreshing…`;
-    setTimeout(() => location.reload(), 1500);
-  } else {
-    status.textContent = "Error: " + (data.error || "Upload failed.");
+  var status = document.getElementById("pdfStatus");
+  status.style.color = "#2a7f8f";
+  status.textContent = "Uploading and processing... please wait.";
+  try {
+    var fd = new FormData();
+    fd.append("pdf", file);
+    var res  = await fetch("/admin/book/" + BOOK_ID + "/upload-pdf", { method: "POST", body: fd });
+    var data = await res.json();
+    if (data.success) {
+      status.textContent = "Done! " + data.num_pages + " pages loaded. Refreshing...";
+      setTimeout(function() { location.reload(); }, 1500);
+    } else {
+      status.style.color = "#e74c3c";
+      status.textContent = "Error: " + (data.error || "Upload failed.");
+    }
+  } catch(e) {
+    status.style.color = "#e74c3c";
+    status.textContent = "Network error. Try again.";
   }
 }
 
 async function uploadCSV(input) {
-  const file = input.files[0];
+  var file = input.files[0];
   if (!file) return;
-  const status = document.getElementById("csvStatus");
-  status.textContent = "Uploading words…";
-  const fd = new FormData();
-  fd.append("csv", file);
-  const res  = await fetch(`/admin/book/${BOOK_ID}/upload-csv`, { method: "POST", body: fd });
-  const data = await res.json();
-  if (data.success) {
-    status.textContent = `Done! Words loaded for ${data.pages_filled} page(s). Refreshing…`;
-    setTimeout(() => location.reload(), 1800);
-  } else {
-    status.textContent = "Error: " + (data.error || "Upload failed.");
+  var status = document.getElementById("csvStatus");
+
+  if (NUM_PAGES === 0) {
+    status.style.color = "#e74c3c";
+    status.textContent = "Please upload your PDF first, then upload the CSV.";
+    input.value = "";
+    return;
+  }
+
+  status.style.color = "#2a7f8f";
+  status.textContent = "Uploading words... please wait.";
+
+  try {
+    var fd = new FormData();
+    fd.append("csv", file);
+    var res = await fetch("/admin/book/" + BOOK_ID + "/upload-csv", { method: "POST", body: fd });
+
+    if (!res.ok) {
+      status.style.color = "#e74c3c";
+      status.textContent = "Server error (" + res.status + "). Try again.";
+      return;
+    }
+
+    var data = await res.json();
+
+    if (data.success) {
+      if (data.pages_filled === 0) {
+        status.style.color = "#e74c3c";
+        status.textContent = "No words imported. Make sure your CSV columns are named exactly: page, spanish, english";
+      } else {
+        status.style.color = "#2a7f8f";
+        status.textContent = "Done! Words loaded for " + data.pages_filled + " page(s). Refreshing...";
+        setTimeout(function() { location.reload(); }, 1800);
+      }
+    } else {
+      status.style.color = "#e74c3c";
+      status.textContent = "Error: " + (data.error || "Upload failed.");
+    }
+  } catch(e) {
+    status.style.color = "#e74c3c";
+    status.textContent = "Network error. Check your connection and try again.";
   }
 }
 
 function downloadTemplate() {
-  const num = NUM_PAGES || 5;
-  let csv = "page,spanish,english\n";
-  for (let i = 1; i <= num; i++) {
-    csv += `${i},,\n`;
+  var num = NUM_PAGES || 5;
+  var csv = "page,spanish,english\n";
+  for (var i = 1; i <= num; i++) {
+    csv += i + ",,\n";
   }
-  const blob = new Blob([csv], { type: "text/csv" });
-  const a    = document.createElement("a");
-  a.href     = URL.createObjectURL(blob);
+  var blob = new Blob([csv], { type: "text/csv" });
+  var a    = document.createElement("a");
+  a.href   = URL.createObjectURL(blob);
   a.download = "words-template.csv";
   a.click();
 }
