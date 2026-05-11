@@ -1,4 +1,4 @@
-import os, json, uuid, re
+import os, json, uuid, re, csv, io
 from pathlib import Path
 from io import BytesIO
 from functools import wraps
@@ -22,10 +22,10 @@ BOOKS_FILE        = DATA_DIR / "books.json"
 ELEVENLABS_KEY    = os.environ.get("ELEVENLABS_API_KEY", "")
 ADMIN_PASSWORD    = os.environ.get("ADMIN_PASSWORD", "")
 
-SPANISH_VOICE_ID  = "pNInz6obpgDQGcFmaJgB"
-ENGLISH_VOICE_ID  = "EXAVITQu4vr4xnSDxMaL"
+SPANISH_VOICE_ID  = os.environ.get("SPANISH_VOICE_ID", "2Lb1en5ujrODDIqmp7F3")  # Jhenny
+ENGLISH_VOICE_ID  = os.environ.get("ENGLISH_VOICE_ID", "2EUn20N7uqcXUxqGrJEF")  # Britney
 TTS_MODEL         = "eleven_multilingual_v2"
-TTS_STABILITY     = 0.75
+TTS_STABILITY     = 0.80
 TTS_SIMILARITY    = 0.85
 TTS_SPEED         = 0.75
 
@@ -49,7 +49,7 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# ── Public: Book page ─────────────────────────────────────────────
+# ── Public ────────────────────────────────────────────────────────
 
 @app.route("/book/<book_id>")
 def book_page(book_id):
@@ -74,9 +74,13 @@ def page_content(book_id, page_num):
         return jsonify({"error": "Book not found"}), 404
     pages = book.get("pages", [])
     if page_num >= len(pages):
-        return jsonify({"content": [], "type": "words"})
+        return jsonify({"content": [], "type": "words", "teacher_note": ""})
     pg = pages[page_num]
-    return jsonify({"content": pg.get("content", []), "type": pg.get("type", "words")})
+    return jsonify({
+        "content":      pg.get("content", []),
+        "type":         pg.get("type", "words"),
+        "teacher_note": pg.get("teacher_note", "")
+    })
 
 @app.route("/api/speak", methods=["POST"])
 def speak():
@@ -148,7 +152,7 @@ def admin_new_book():
             if book_id in books:
                 error = "That URL ID is already in use. Choose another."
             else:
-                books[book_id] = {"title": title, "subtitle": "", "num_pages": 0, "pages": []}
+                books[book_id] = {"title": title, "num_pages": 0, "pages": []}
                 save_books(books)
                 return redirect(url_for("admin_book", book_id=book_id))
     return render_template("admin_new_book.html", error=error)
@@ -168,7 +172,6 @@ def admin_upload_pdf(book_id):
     books = load_books()
     if book_id not in books:
         return jsonify({"error": "Book not found"}), 404
-
     if "pdf" not in request.files:
         return jsonify({"error": "No file provided"}), 400
     file = request.files["pdf"]
@@ -177,7 +180,6 @@ def admin_upload_pdf(book_id):
 
     pdf_path = PDFS_DIR / f"{book_id}.pdf"
     file.save(pdf_path)
-
     pages_dir = PAGES_DIR / book_id
     pages_dir.mkdir(exist_ok=True)
 
@@ -190,19 +192,60 @@ def admin_upload_pdf(book_id):
         img.save(pages_dir / f"page_{i}.jpg", "JPEG", quality=85)
     doc.close()
 
-    existing = books[book_id].get("pages", [])
+    existing  = books[book_id].get("pages", [])
     new_pages = []
     for i in range(num_pages):
         if i < len(existing):
             new_pages.append(existing[i])
         else:
-            new_pages.append({"content": [], "type": "words"})
+            new_pages.append({"content": [], "type": "words", "teacher_note": ""})
 
     books[book_id]["num_pages"] = num_pages
     books[book_id]["pages"]     = new_pages
     save_books(books)
-
     return jsonify({"num_pages": num_pages, "success": True})
+
+@app.route("/admin/book/<book_id>/upload-csv", methods=["POST"])
+@admin_required
+def admin_upload_csv(book_id):
+    """
+    CSV columns: page, spanish, english  (page is 1-based)
+    Accepts Excel exports (UTF-8 BOM handled).
+    """
+    books = load_books()
+    if book_id not in books:
+        return jsonify({"error": "Book not found"}), 404
+    if "csv" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    raw    = request.files["csv"].read().decode("utf-8-sig")
+    reader = csv.DictReader(io.StringIO(raw))
+
+    page_data = {}
+    for row in reader:
+        norm = {k.strip().lower(): v.strip() for k, v in row.items() if k}
+        try:
+            page_idx = int(norm.get("page", 0)) - 1
+        except ValueError:
+            continue
+        es = norm.get("spanish", norm.get("español", norm.get("es", ""))).strip()
+        en = norm.get("english", norm.get("inglés", norm.get("en", ""))).strip()
+        if not es and not en:
+            continue
+        page_data.setdefault(page_idx, []).append({"es": es, "en": en})
+
+    pages     = books[book_id].get("pages", [])
+    num_pages = books[book_id].get("num_pages", 0)
+    while len(pages) < num_pages:
+        pages.append({"content": [], "type": "words", "teacher_note": ""})
+
+    for page_idx, items in page_data.items():
+        if 0 <= page_idx < num_pages:
+            pages[page_idx]["content"] = items
+
+    books[book_id]["pages"] = pages
+    save_books(books)
+    return jsonify({"success": True, "pages_filled": len(page_data)})
 
 @app.route("/admin/book/<book_id>/save-page", methods=["POST"])
 @admin_required
@@ -215,15 +258,19 @@ def admin_save_page(book_id):
     page_num     = int(data.get("page_num", 0))
     content      = data.get("content", [])
     content_type = data.get("type", "words")
+    teacher_note = data.get("teacher_note", "").strip()
 
     pages = books[book_id].get("pages", [])
     while len(pages) <= page_num:
-        pages.append({"content": [], "type": "words"})
+        pages.append({"content": [], "type": "words", "teacher_note": ""})
 
-    pages[page_num] = {"content": content, "type": content_type}
+    pages[page_num] = {
+        "content":      content,
+        "type":         content_type,
+        "teacher_note": teacher_note
+    }
     books[book_id]["pages"] = pages
     save_books(books)
-
     return jsonify({"success": True})
 
 @app.route("/admin/book/<book_id>/delete", methods=["POST"])
