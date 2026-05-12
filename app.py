@@ -98,16 +98,16 @@ def speak():
                                similarity_boost=TTS_SIMILARITY,
                                speed=TTS_SPEED)
 
-def synth(text, voice_id):
-    return b"".join(client.text_to_speech.convert(
-        voice_id=voice_id, text=text,
-        model_id=TTS_MODEL, voice_settings=vs))
+        def synth(text, voice_id):
+            return b"".join(client.text_to_speech.convert(
+                voice_id=voice_id, text=text,
+                model_id=TTS_MODEL, voice_settings=vs))
 
-chunks = []
-if lang in ("es", "both") and spanish:
-    chunks.append(synth(spanish, SPANISH_VOICE_ID))
-if lang in ("en", "both") and english:
-    chunks.append(synth(english, ENGLISH_VOICE_ID))
+        chunks = []
+        if lang in ("es", "both") and spanish:
+            chunks.append(synth(spanish, SPANISH_VOICE_ID))
+        if lang in ("en", "both") and english:
+            chunks.append(synth(english, ENGLISH_VOICE_ID))
 
         return send_file(BytesIO(b"".join(chunks)), mimetype="audio/mpeg")
     except Exception as e:
