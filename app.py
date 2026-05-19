@@ -12,7 +12,7 @@ from elevenlabs import VoiceSettings
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "biliteracy-bridge-secret-2025")
 
-DATA_DIR   = Path("data")
+DATA_DIR = Path("/var/data")
 PDFS_DIR   = DATA_DIR / "pdfs"
 PAGES_DIR  = DATA_DIR / "pages"
 for d in [DATA_DIR, PDFS_DIR, PAGES_DIR]:
