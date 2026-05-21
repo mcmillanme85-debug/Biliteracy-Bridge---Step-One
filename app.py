@@ -1,4 +1,4 @@
-import os, json, uuid, re, csv, io
+import os, json, uuid, re, csv, io, secrets, string
 from pathlib import Path
 from io import BytesIO
 from functools import wraps
@@ -12,24 +12,25 @@ from elevenlabs import VoiceSettings
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "biliteracy-bridge-secret-2025")
 
-DATA_DIR = Path("/var/data")
-PDFS_DIR   = DATA_DIR / "pdfs"
-PAGES_DIR  = DATA_DIR / "pages"
+DATA_DIR  = Path("/var/data")
+PDFS_DIR  = DATA_DIR / "pdfs"
+PAGES_DIR = DATA_DIR / "pages"
 for d in [DATA_DIR, PDFS_DIR, PAGES_DIR]:
     d.mkdir(exist_ok=True)
 
-BOOKS_FILE        = DATA_DIR / "books.json"
-ELEVENLABS_KEY    = os.environ.get("ELEVENLABS_API_KEY", "")
-ADMIN_PASSWORD    = os.environ.get("ADMIN_PASSWORD", "")
+BOOKS_FILE     = DATA_DIR / "books.json"
+CODES_FILE     = DATA_DIR / "codes.json"
+ELEVENLABS_KEY = os.environ.get("ELEVENLABS_API_KEY", "")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 
-SPANISH_VOICE_ID  = os.environ.get("SPANISH_VOICE_ID", "2Lb1en5ujrODDIqmp7F3")  # Jhenny
-ENGLISH_VOICE_ID  = os.environ.get("ENGLISH_VOICE_ID", "2EUn20N7uqcXUxqGrJEF")  # Britney
-TTS_MODEL         = "eleven_multilingual_v2"
-TTS_STABILITY     = 0.80
-TTS_SIMILARITY    = 0.85
-TTS_SPEED         = 0.75
+SPANISH_VOICE_ID = os.environ.get("SPANISH_VOICE_ID", "2Lb1en5ujrODDIqmp7F3")
+ENGLISH_VOICE_ID = os.environ.get("ENGLISH_VOICE_ID", "2EUn20N7uqcXUxqGrJEF")
+TTS_MODEL        = "eleven_multilingual_v2"
+TTS_STABILITY    = 0.80
+TTS_SIMILARITY   = 0.85
+TTS_SPEED        = 0.75
 
-# ── Data helpers ─────────────────────────────────────────────────
+# ── Data helpers ──────────────────────────────────────────────────
 
 def load_books():
     if BOOKS_FILE.exists():
@@ -41,6 +42,16 @@ def save_books(books):
     with open(BOOKS_FILE, "w", encoding="utf-8") as f:
         json.dump(books, f, indent=2, ensure_ascii=False)
 
+def load_codes():
+    if CODES_FILE.exists():
+        with open(CODES_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def save_codes(codes):
+    with open(CODES_FILE, "w", encoding="utf-8") as f:
+        json.dump(codes, f, indent=2, ensure_ascii=False)
+
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -49,7 +60,24 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# ── Public ────────────────────────────────────────────────────────
+def has_book_access(book_id, book):
+    """Book 1 (marked free) is always accessible. Others need a code in session."""
+    if book.get("free", False):
+        return True
+    unlocked = session.get("unlocked_books", [])
+    return book_id in unlocked
+
+def generate_code(length=8):
+    chars = string.ascii_uppercase + string.digits
+    return "".join(secrets.choice(chars) for _ in range(length))
+
+# ── Public routes ─────────────────────────────────────────────────
+
+@app.route("/")
+def index():
+    books = load_books()
+    unlocked = session.get("unlocked_books", [])
+    return render_template("home.html", books=books, unlocked=unlocked)
 
 @app.route("/book/<book_id>")
 def book_page(book_id):
@@ -57,10 +85,42 @@ def book_page(book_id):
     book  = books.get(book_id)
     if not book:
         abort(404)
+    if not has_book_access(book_id, book):
+        return redirect(url_for("access_page", book_id=book_id))
     return render_template("book.html", book=book, book_id=book_id)
+
+@app.route("/access/<book_id>", methods=["GET", "POST"])
+def access_page(book_id):
+    books = load_books()
+    book  = books.get(book_id)
+    if not book:
+        abort(404)
+    if has_book_access(book_id, book):
+        return redirect(url_for("book_page", book_id=book_id))
+
+    error = None
+    if request.method == "POST":
+        entered = request.form.get("code", "").strip().upper().replace("-", "").replace(" ", "")
+        codes   = load_codes()
+        valid_codes = [c.upper().replace("-","").replace(" ","") for c in codes.get(book_id, [])]
+        if entered in valid_codes:
+            unlocked = session.get("unlocked_books", [])
+            if book_id not in unlocked:
+                unlocked.append(book_id)
+            session["unlocked_books"] = unlocked
+            session.modified = True
+            return redirect(url_for("book_page", book_id=book_id))
+        else:
+            error = "That code doesn't match — double-check the inside cover of your book!"
+
+    return render_template("access.html", book=book, book_id=book_id, error=error)
 
 @app.route("/api/book/<book_id>/page/<int:page_num>/image")
 def page_image(book_id, page_num):
+    books = load_books()
+    book  = books.get(book_id)
+    if not book or not has_book_access(book_id, book):
+        abort(403)
     img_path = PAGES_DIR / book_id / f"page_{page_num}.jpg"
     if not img_path.exists():
         abort(404)
@@ -70,8 +130,8 @@ def page_image(book_id, page_num):
 def page_content(book_id, page_num):
     books = load_books()
     book  = books.get(book_id)
-    if not book:
-        return jsonify({"error": "Book not found"}), 404
+    if not book or not has_book_access(book_id, book):
+        return jsonify({"error": "Access denied"}), 403
     pages = book.get("pages", [])
     if page_num >= len(pages):
         return jsonify({"content": [], "type": "words", "teacher_note": ""})
@@ -134,7 +194,8 @@ def admin_logout():
 @admin_required
 def admin_dashboard():
     books = load_books()
-    return render_template("admin_dashboard.html", books=books)
+    codes = load_codes()
+    return render_template("admin_dashboard.html", books=books, codes=codes)
 
 @app.route("/admin/book/new", methods=["GET", "POST"])
 @admin_required
@@ -143,6 +204,7 @@ def admin_new_book():
     if request.method == "POST":
         title   = request.form.get("title", "").strip()
         book_id = request.form.get("book_id", "").strip().lower()
+        is_free = request.form.get("is_free") == "on"
         book_id = re.sub(r"[^a-z0-9\-]", "-", book_id).strip("-")
         if not title or not book_id:
             error = "Both fields are required."
@@ -151,7 +213,12 @@ def admin_new_book():
             if book_id in books:
                 error = "That URL ID is already in use. Choose another."
             else:
-                books[book_id] = {"title": title, "num_pages": 0, "pages": []}
+                books[book_id] = {
+                    "title": title,
+                    "num_pages": 0,
+                    "pages": [],
+                    "free": is_free
+                }
                 save_books(books)
                 return redirect(url_for("admin_book", book_id=book_id))
     return render_template("admin_new_book.html", error=error)
@@ -165,6 +232,48 @@ def admin_book(book_id):
         abort(404)
     return render_template("admin_book.html", book=book, book_id=book_id)
 
+@app.route("/admin/book/<book_id>/set-free", methods=["POST"])
+@admin_required
+def admin_set_free(book_id):
+    books = load_books()
+    if book_id not in books:
+        abort(404)
+    books[book_id]["free"] = request.form.get("free") == "true"
+    save_books(books)
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/codes", methods=["GET", "POST"])
+@admin_required
+def admin_codes():
+    books = load_books()
+    codes = load_codes()
+    message = None
+    if request.method == "POST":
+        action  = request.form.get("action")
+        book_id = request.form.get("book_id", "").strip()
+        if action == "generate":
+            new_code = generate_code()
+            codes.setdefault(book_id, []).append(new_code)
+            save_codes(codes)
+            message = f"Generated code for {books.get(book_id, {}).get('title', book_id)}: {new_code}"
+        elif action == "set":
+            raw = request.form.get("code", "").strip().upper()
+            if raw:
+                codes.setdefault(book_id, []).append(raw)
+                save_codes(codes)
+                message = f"Code '{raw}' added for {books.get(book_id, {}).get('title', book_id)}"
+        elif action == "delete":
+            code_to_del = request.form.get("code", "").strip()
+            if book_id in codes and code_to_del in codes[book_id]:
+                codes[book_id].remove(code_to_del)
+                save_codes(codes)
+                message = f"Code deleted."
+        elif action == "clear":
+            codes[book_id] = []
+            save_codes(codes)
+            message = "All codes cleared."
+    return render_template("admin_codes.html", books=books, codes=codes, message=message)
+
 @app.route("/admin/book/<book_id>/upload-pdf", methods=["POST"])
 @admin_required
 def admin_upload_pdf(book_id):
@@ -177,7 +286,7 @@ def admin_upload_pdf(book_id):
     if not file.filename.lower().endswith(".pdf"):
         return jsonify({"error": "PDF files only"}), 400
 
-    pdf_path = PDFS_DIR / f"{book_id}.pdf"
+    pdf_path  = PDFS_DIR / f"{book_id}.pdf"
     file.save(pdf_path)
     pages_dir = PAGES_DIR / book_id
     pages_dir.mkdir(exist_ok=True)
@@ -207,10 +316,6 @@ def admin_upload_pdf(book_id):
 @app.route("/admin/book/<book_id>/upload-csv", methods=["POST"])
 @admin_required
 def admin_upload_csv(book_id):
-    """
-    CSV columns: page, spanish, english  (page is 1-based)
-    Accepts Excel exports (UTF-8 BOM handled).
-    """
     books = load_books()
     if book_id not in books:
         return jsonify({"error": "Book not found"}), 404
@@ -279,10 +384,6 @@ def admin_delete_book(book_id):
     books.pop(book_id, None)
     save_books(books)
     return redirect(url_for("admin_dashboard"))
-
-@app.route("/")
-def index():
-    return redirect(url_for("admin_login"))
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
