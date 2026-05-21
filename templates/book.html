@@ -1,283 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ book.title }} — Pronunciation Guide</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy:   #1b3a5c;
-    --gold:   #c8893a;
-    --teal:   #2a7f8f;
-    --cream:  #f7f4ee;
-    --white:  #ffffff;
-    --border: #ddd8ce;
-    --text:   #2d2d2d;
-    --muted:  #6b6b6b;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Source Sans 3', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>{{ book.title }} · Biliteracy Bridge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy: #0d2680; --navy-deep: #081a5e; --navy-mid: #1a3da8;
+      --gold: #f7c325; --gold-dark: #d4a00f;
+      --white: #ffffff; --muted: rgba(255,255,255,0.55);
+      --border: rgba(255,255,255,0.14); --card-bg: rgba(255,255,255,0.07);
+      --font: 'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, var(--navy-mid) 100%);
+      color: var(--white); display: flex; flex-direction: column;
+    }
 
-  header {
-    background: var(--navy); color: var(--white);
-    padding: 18px 28px; border-bottom: 4px solid var(--gold);
-  }
-  header .brand { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
-  header h1 { font-family: 'Playfair Display', serif; font-size: 1.25rem; line-height: 1.3; }
+    /* ── Header ── */
+    header {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
+      background: rgba(8,26,94,0.8); backdrop-filter: blur(12px);
+      flex-shrink: 0; z-index: 100;
+    }
+    .back-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--white); text-decoration: none; font-size: 1rem;
+      flex-shrink: 0; transition: background 0.15s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.18); }
+    .header-title { flex: 1; min-width: 0; }
+    .header-title .book-name {
+      font-size: 0.9rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .header-title .page-info { font-size: 0.7rem; color: var(--muted); }
+    .parrot-icon { font-size: 1.4rem; flex-shrink: 0; }
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
-  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
-  @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+    /* ── Main layout: desktop two-col, mobile single-col ── */
+    .app-layout {
+      flex: 1; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
 
-  /* Book page viewer */
-  .page-card {
-    background: var(--white); border-radius: 12px; border: 1px solid var(--border);
-    overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.07);
-  }
-  .page-image-wrap {
-    background: #f0ece3; display: flex; align-items: center;
-    justify-content: center; min-height: 300px;
-  }
-  .page-image-wrap img { width: 100%; display: block; object-fit: contain; max-height: 420px; }
-  .page-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px; border-top: 1px solid var(--border);
-  }
-  .page-nav button {
-    background: var(--navy); color: var(--white); border: none; border-radius: 8px;
-    padding: 8px 20px; font-family: inherit; font-size: 0.9rem; font-weight: 600;
-    cursor: pointer; transition: background .2s;
-  }
-  .page-nav button:hover { background: var(--teal); }
-  .page-nav button:disabled { background: #ccc; cursor: default; }
-  .page-counter { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+    /* Desktop */
+    @media (min-width: 700px) {
+      .app-layout { flex-direction: row; }
+      .page-panel {
+        flex: 1; display: flex; flex-direction: column;
+        border-right: 1px solid var(--border);
+      }
+      .word-panel {
+        width: 360px; display: flex; flex-direction: column;
+        overflow: hidden;
+      }
+      .page-canvas { flex: 1; overflow: auto; }
+    }
 
-  /* Pronunciation panel */
-  .pronun-card {
-    background: var(--white); border-radius: 12px; border: 1px solid var(--border);
-    box-shadow: 0 4px 20px rgba(0,0,0,.07); overflow: hidden;
-  }
-  .pronun-header {
-    background: var(--navy); color: var(--white); padding: 16px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .pronun-header h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
-  .play-all-btn {
-    background: var(--gold); color: var(--white); border: none; border-radius: 8px;
-    padding: 8px 16px; font-family: inherit; font-size: 0.85rem; font-weight: 600;
-    cursor: pointer; transition: opacity .2s;
-  }
-  .play-all-btn:hover { opacity: .85; }
-  .play-all-btn:disabled { opacity: .5; cursor: default; }
+    /* Mobile */
+    @media (max-width: 699px) {
+      .app-layout { overflow-y: auto; }
+      .page-panel { flex-shrink: 0; }
+      .page-canvas { max-height: 55vw; }
+      .word-panel { flex-shrink: 0; }
+    }
 
-  .word-list { padding: 12px; }
-  .word-item {
-    display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px;
-    align-items: center; padding: 12px; border-radius: 8px;
-    border: 1px solid var(--border); margin-bottom: 8px; transition: background .15s;
-  }
-  .word-item:hover { background: var(--cream); }
-  .word-es { font-weight: 600; font-size: 1rem; color: var(--navy); }
-  .word-en { font-size: 1rem; color: var(--teal); font-weight: 500; }
-  .lang-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); display: block; }
-  .speak-btn {
-    background: none; border: 2px solid var(--teal); color: var(--teal);
-    border-radius: 8px; width: 40px; height: 40px; font-size: 1.1rem;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all .2s; flex-shrink: 0;
-  }
-  .speak-btn:hover { background: var(--teal); color: var(--white); }
-  .speak-btn.playing { background: var(--gold); border-color: var(--gold); color: var(--white); }
+    /* ── Page panel ── */
+    .page-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 1rem; border-bottom: 1px solid var(--border);
+      background: rgba(8,26,94,0.4); flex-shrink: 0; gap: 0.5rem;
+    }
+    .nav-btn {
+      display: flex; align-items: center; justify-content: center;
+      min-width: 90px; padding: 0.65rem 1rem;
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+      border-radius: 10px; font-family: var(--font); font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; color: var(--white);
+      transition: background 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.18); }
+    .nav-btn:active:not(:disabled) { background: rgba(255,255,255,0.25); }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+    .page-counter { font-size: 0.85rem; font-weight: 600; color: var(--muted);
+      white-space: nowrap; }
+    .page-canvas {
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.3); padding: 1rem;
+      overflow: hidden;
+    }
+    .page-canvas img {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      border-radius: 8px; box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+    }
+    .no-image {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 3rem 1rem; color: var(--muted);
+      text-align: center; gap: 0.5rem;
+    }
+    .no-image span { font-size: 3rem; }
+    .no-image p { font-size: 0.85rem; line-height: 1.6; }
 
-  /* Teacher Note */
-  .teacher-note-box {
-    margin: 0 12px 12px;
-    background: #fffbf2;
-    border: 1.5px solid var(--gold);
-    border-radius: 10px;
-    padding: 14px 16px;
-    display: none;
-  }
-  .teacher-note-box.visible { display: block; }
-  .teacher-note-label {
-    font-size: 0.7rem; text-transform: uppercase; letter-spacing: .1em;
-    color: var(--gold); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
-  }
-  .teacher-note-label::before { content: "★"; }
-  .teacher-note-text { font-size: 0.92rem; color: #5a4010; line-height: 1.55; }
+    /* ── Word panel ── */
+    .word-panel-header {
+      padding: 0.8rem 1rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,26,94,0.4); flex-shrink: 0;
+    }
+    .word-panel-header h3 {
+      font-size: 0.68rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+    }
 
-  .empty-state { padding: 48px 20px; text-align: center; color: var(--muted); }
-  .status-bar {
-    background: var(--cream); border-top: 1px solid var(--border);
-    padding: 10px 20px; font-size: 0.8rem; color: var(--muted); text-align: center; min-height: 38px;
-  }
-</style>
+    /* Current word showcase */
+    .word-showcase {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 1rem; border-bottom: 1px solid var(--border);
+      background: rgba(247,195,37,0.05); flex-shrink: 0; gap: 0.8rem;
+    }
+    .showcase-words { flex: 1; min-width: 0; }
+    .word-es {
+      font-size: 1.6rem; font-weight: 800; color: var(--gold);
+      line-height: 1.2; letter-spacing: -0.01em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .word-divider { font-size: 0.6rem; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--muted); margin: 0.15rem 0; }
+    .word-en {
+      font-size: 1.15rem; font-weight: 500; color: #7dd3fc;
+      line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .btn-play-big {
+      width: 56px; height: 56px; flex-shrink: 0;
+      background: var(--gold); color: var(--navy-deep);
+      border: none; border-radius: 50%;
+      font-size: 1.3rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-play-big:hover { background: #ffd044; transform: scale(1.05); }
+    .btn-play-big:active { transform: scale(0.96); }
+    .btn-play-big.loading { animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+    /* Playback controls */
+    .controls {
+      display: flex; gap: 0.5rem; padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .ctrl-btn {
+      flex: 1; padding: 0.6rem 0.5rem;
+      border: 1px solid var(--border); border-radius: 10px;
+      font-family: var(--font); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; color: var(--white);
+      background: rgba(255,255,255,0.07);
+      transition: background 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.13); }
+    .ctrl-btn:active { background: rgba(255,255,255,0.2); }
+    .ctrl-btn.stop { color: #fca5a5; border-color: rgba(252,165,165,0.3); }
+
+    /* Teacher note */
+    .teacher-note {
+      margin: 0; padding: 0.7rem 1rem;
+      background: rgba(125,211,252,0.07); border-bottom: 1px solid var(--border);
+      display: none; flex-shrink: 0;
+    }
+    .teacher-note.visible { display: block; }
+    .teacher-note-label {
+      font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #7dd3fc; margin-bottom: 0.3rem;
+    }
+    .teacher-note-text { font-size: 0.83rem; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+    /* Word list */
+    .word-list { overflow-y: auto; flex: 1; padding: 0.3rem 0; }
+    .word-item {
+      display: flex; align-items: center; padding: 0.75rem 1rem;
+      cursor: pointer; border-left: 3px solid transparent;
+      transition: background 0.1s, border-color 0.1s; gap: 0.6rem;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 52px; /* big enough touch target */
+    }
+    .word-item:hover { background: rgba(255,255,255,0.06); }
+    .word-item:active { background: rgba(255,255,255,0.1); }
+    .word-item.active {
+      background: rgba(247,195,37,0.1); border-left-color: var(--gold);
+    }
+    .wi-es { font-weight: 700; font-size: 0.95rem; color: var(--gold); min-width: 90px; }
+    .wi-sep { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; }
+    .wi-en { font-size: 0.9rem; color: #7dd3fc; flex: 1; }
+    .wi-play {
+      font-size: 1rem; opacity: 0; transition: opacity 0.12s;
+      padding: 0.3rem; flex-shrink: 0;
+    }
+    .word-item:hover .wi-play, .word-item.active .wi-play { opacity: 1; }
+    @media (max-width: 699px) { .wi-play { opacity: 0.5; } }
+
+    .empty-words {
+      padding: 2rem 1rem; text-align: center; color: var(--muted);
+    }
+    .empty-words p { font-size: 0.85rem; line-height: 1.7; }
+    .empty-words strong { color: var(--gold); }
+
+    /* Status bar */
+    #status-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 0.6rem 1rem; background: rgba(8,26,94,0.97);
+      border-top: 1px solid var(--border); color: rgba(255,255,255,0.85);
+      font-size: 0.82rem; display: none; align-items: center;
+      gap: 0.6rem; z-index: 200; backdrop-filter: blur(8px);
+    }
+    #status-bar.visible { display: flex; }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+      animation: sdot 1.2s ease-in-out infinite;
+    }
+    @keyframes sdot { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+    /* Loading overlay */
+    #loading-overlay {
+      position: fixed; inset: 0; background: rgba(8,26,94,0.93);
+      display: none; flex-direction: column; align-items: center;
+      justify-content: center; z-index: 300; backdrop-filter: blur(8px);
+    }
+    #loading-overlay.visible { display: flex; }
+    .spinner {
+      width: 44px; height: 44px; border: 3px solid var(--border);
+      border-top-color: var(--gold); border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin-bottom: 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--muted); font-size: 0.9rem; }
+
+    /* Scrollbars */
+    .word-list::-webkit-scrollbar { width: 3px; }
+    .word-list::-webkit-scrollbar-track { background: transparent; }
+    .word-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
 </head>
 <body>
+  <!-- Header -->
+  <header>
+    <a href="/" class="back-btn">←</a>
+    <div class="header-title">
+      <div class="book-name">{{ book.title }}</div>
+      <div class="page-info" id="page-info">Loading…</div>
+    </div>
+    <div class="parrot-icon">🦜</div>
+  </header>
 
-<header>
-  <div class="brand">Biliteracy Bridge · Pronunciation Guide</div>
-  <h1>{{ book.title }}</h1>
-</header>
+  <!-- Main layout -->
+  <div class="app-layout">
 
-<div class="container">
-  <div class="layout">
-
-    <!-- Book page viewer -->
-    <div class="page-card">
-      <div class="page-image-wrap">
-        <img id="pageImg" src="" alt="Book page">
-      </div>
+    <!-- Left: book page -->
+    <div class="page-panel">
       <div class="page-nav">
-        <button id="prevBtn" onclick="changePage(-1)" disabled>← Previous</button>
-        <span class="page-counter" id="pageCounter">Page 1 of {{ book.num_pages }}</span>
-        <button id="nextBtn" onclick="changePage(1)">Next →</button>
+        <button class="nav-btn" id="btn-prev" disabled>← Prev</button>
+        <span class="page-counter" id="page-counter">Page 1</span>
+        <button class="nav-btn" id="btn-next" disabled>Next →</button>
+      </div>
+      <div class="page-canvas" id="page-canvas">
+        <div class="no-image">
+          <span>📖</span>
+          <p>Loading book…</p>
+        </div>
       </div>
     </div>
 
-    <!-- Pronunciation panel -->
-    <div class="pronun-card">
-      <div class="pronun-header">
-        <h2>Pronunciation</h2>
-        <button class="play-all-btn" id="playAllBtn" onclick="playAll()">▶ Play All</button>
-      </div>
-      <div class="word-list" id="wordList">
-        <div style="padding:20px;text-align:center;color:#999;">Loading…</div>
+    <!-- Right: words -->
+    <div class="word-panel">
+      <div class="word-panel-header">
+        <h3 id="words-label">Words on this page</h3>
       </div>
 
-      <!-- Teacher Note box (hidden until a note exists) -->
-      <div class="teacher-note-box" id="teacherNoteBox">
-        <div class="teacher-note-label">Biliteracy Bridge Teacher Note</div>
-        <div class="teacher-note-text" id="teacherNoteText"></div>
+      <div class="word-showcase">
+        <div class="showcase-words">
+          <div class="word-es" id="sel-es">—</div>
+          <div class="word-divider">🇲🇽 español · english 🇺🇸</div>
+          <div class="word-en" id="sel-en">—</div>
+        </div>
+        <button class="btn-play-big" id="btn-play-selected" title="Pronounce this word">🔊</button>
       </div>
 
-      <div class="status-bar" id="statusBar">Ready</div>
+      <div class="controls">
+        <button class="ctrl-btn" id="btn-speak-all">▶ Play All Words</button>
+        <button class="ctrl-btn stop" id="btn-stop">⏹ Stop</button>
+      </div>
+
+      <div class="teacher-note" id="teacher-note">
+        <div class="teacher-note-label">👩‍🏫 Teacher Tip</div>
+        <div class="teacher-note-text" id="teacher-note-text"></div>
+      </div>
+
+      <div class="word-list" id="word-list">
+        <div class="empty-words"><p>Loading…</p></div>
+      </div>
     </div>
 
+  </div><!-- /.app-layout -->
+
+  <div id="status-bar">
+    <div class="status-dot"></div>
+    <span id="status-text">Ready</span>
   </div>
-</div>
 
-<script>
-const BOOK_ID   = "{{ book_id }}";
-const NUM_PAGES = {{ book.num_pages }};
-let currentPage  = 0;
-let isPlaying    = false;
-let currentAudio = null;
-let activeBtn    = null;
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p class="loading-text" id="loading-text">Loading…</p>
+  </div>
 
-function setStatus(msg) { document.getElementById("statusBar").textContent = msg; }
+  <script>
+    const BOOK_ID   = {{ book_id | tojson }};
+    const NUM_PAGES = {{ book.num_pages | default(0) }};
 
-async function loadPage(n) {
-  currentPage = n;
-  document.getElementById("pageCounter").textContent = `Page ${n + 1} of ${NUM_PAGES}`;
-  document.getElementById("prevBtn").disabled = n === 0;
-  document.getElementById("nextBtn").disabled = n === NUM_PAGES - 1;
-  document.getElementById("pageImg").src = `/api/book/${BOOK_ID}/page/${n}/image`;
+    let state = {
+      currentPage: 0,
+      words: [],
+      selectedIdx: null,
+      playingAll: false,
+      audioObj: null,
+    };
 
-  const wl = document.getElementById("wordList");
-  wl.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">Loading…</div>';
+    const $ = id => document.getElementById(id);
 
-  // Hide teacher note while loading
-  const noteBox  = document.getElementById("teacherNoteBox");
-  const noteText = document.getElementById("teacherNoteText");
-  noteBox.classList.remove("visible");
+    function showStatus(msg) {
+      $("status-bar").classList.add("visible");
+      $("status-text").textContent = msg;
+    }
+    function hideStatus() { $("status-bar").classList.remove("visible"); }
+    function showLoading(msg) {
+      $("loading-text").textContent = msg || "Loading…";
+      $("loading-overlay").classList.add("visible");
+    }
+    function hideLoading() { $("loading-overlay").classList.remove("visible"); }
 
-  const res  = await fetch(`/api/book/${BOOK_ID}/page/${n}/content`);
-  const data = await res.json();
+    function esc(s) {
+      return String(s)
+        .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
 
-  // Render word/sentence list
-  if (!data.content || data.content.length === 0) {
-    wl.innerHTML = '<div class="empty-state"><p>No pronunciation content for this page yet.</p></div>';
-  } else {
-    wl.innerHTML = "";
-    data.content.forEach((item, i) => {
-      const div = document.createElement("div");
-      div.className = "word-item";
-      div.innerHTML = `
-        <div>
-          <span class="lang-label">Español</span>
-          <span class="word-es">${item.es}</span>
-        </div>
-        <div>
-          <span class="lang-label">English</span>
-          <span class="word-en">${item.en}</span>
-        </div>
-        <button class="speak-btn" id="btn-${i}" onclick="speakItem(${i},'${esc(item.es)}','${esc(item.en)}')">▶</button>
-      `;
-      wl.appendChild(div);
+    // ── Page loading ──────────────────────────────────────────────
+
+    async function loadPage(idx) {
+      if (NUM_PAGES === 0) return;
+      stopAll();
+      state.currentPage = idx;
+      state.selectedIdx = null;
+
+      $("page-counter").textContent = `Page ${idx + 1} of ${NUM_PAGES}`;
+      $("page-info").textContent     = `Page ${idx + 1} of ${NUM_PAGES}`;
+      $("btn-prev").disabled = idx === 0;
+      $("btn-next").disabled = idx === NUM_PAGES - 1;
+
+      // Load page image
+      const canvas = $("page-canvas");
+      canvas.innerHTML = `
+        <div class="no-image">
+          <span>⏳</span><p>Loading page…</p>
+        </div>`;
+      const img = new Image();
+      img.alt = `Page ${idx + 1}`;
+      img.style.maxWidth = "100%";
+      img.style.maxHeight = "100%";
+      img.style.objectFit = "contain";
+      img.style.borderRadius = "8px";
+      img.style.boxShadow = "0 6px 30px rgba(0,0,0,0.4)";
+      img.onload = () => {
+        canvas.innerHTML = "";
+        canvas.appendChild(img);
+      };
+      img.onerror = () => {
+        canvas.innerHTML = `
+          <div class="no-image">
+            <span>📄</span>
+            <p>No page image.<br>Words are still available below.</p>
+          </div>`;
+      };
+      img.src = `/api/book/${BOOK_ID}/page/${idx}/image`;
+
+      // Load word content
+      try {
+        const res  = await fetch(`/api/book/${BOOK_ID}/page/${idx}/content`);
+        const data = await res.json();
+        state.words = data.content || [];
+
+        // Teacher note
+        const tn = $("teacher-note");
+        if (data.teacher_note) {
+          $("teacher-note-text").textContent = data.teacher_note;
+          tn.classList.add("visible");
+        } else {
+          tn.classList.remove("visible");
+        }
+
+        renderWordList();
+        resetShowcase();
+      } catch (e) {
+        state.words = [];
+        renderWordList();
+      }
+    }
+
+    function renderWordList() {
+      const list  = $("word-list");
+      const count = state.words.length;
+      $("words-label").textContent = count
+        ? `${count} word${count !== 1 ? "s" : ""} on this page`
+        : "Words on this page";
+
+      if (!count) {
+        list.innerHTML = `
+          <div class="empty-words">
+            <p>No words saved for this page yet.<br>
+            <strong>More coming soon!</strong></p>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = state.words.map((w, i) => `
+        <div class="word-item" data-idx="${i}" onclick="selectWord(${i})">
+          <span class="wi-es">${esc(w.es)}</span>
+          <span class="wi-sep">→</span>
+          <span class="wi-en">${esc(w.en)}</span>
+          <span class="wi-play">🔊</span>
+        </div>`).join("");
+
+      selectWord(0);
+    }
+
+    function selectWord(idx) {
+      state.selectedIdx = idx;
+      document.querySelectorAll(".word-item").forEach((el, i) =>
+        el.classList.toggle("active", i === idx));
+      const w = state.words[idx];
+      if (w) {
+        $("sel-es").textContent = w.es;
+        $("sel-en").textContent = w.en;
+      }
+      const el = document.querySelector(`.word-item[data-idx="${idx}"]`);
+      if (el) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+
+    function resetShowcase() {
+      $("sel-es").textContent = "—";
+      $("sel-en").textContent = "—";
+    }
+
+    // ── Audio ─────────────────────────────────────────────────────
+
+    async function speakPair(spanish, english) {
+      showStatus(`🔊 ${spanish} · ${english}`);
+      $("btn-play-big").classList.add("loading");
+      try {
+        const res = await fetch("/api/speak", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ spanish, english, lang: "both" })
+        });
+        if (!res.ok) {
+          const e = await res.json();
+          throw new Error(e.error || "Audio failed");
+        }
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+        if (state.audioObj) { state.audioObj.pause(); state.audioObj = null; }
+        state.audioObj = new Audio(url);
+        state.audioObj.play();
+        await new Promise(r => {
+          state.audioObj.onended = r;
+          state.audioObj.onerror = r;
+        });
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        showStatus("❌ " + err.message);
+        setTimeout(hideStatus, 3500);
+        return;
+      } finally {
+        $("btn-play-big").classList.remove("loading");
+      }
+      hideStatus();
+    }
+
+    async function speakWord(idx) {
+      const w = state.words[idx];
+      if (!w) return;
+      selectWord(idx);
+      await speakPair(w.es, w.en);
+    }
+
+    function stopAll() {
+      state.playingAll = false;
+      if (state.audioObj) { state.audioObj.pause(); state.audioObj = null; }
+      hideStatus();
+      $("btn-play-big").classList.remove("loading");
+    }
+
+    // ── Button events ─────────────────────────────────────────────
+
+    $("btn-prev").addEventListener("click", () => {
+      if (state.currentPage > 0) loadPage(state.currentPage - 1);
     });
-    setStatus("Tap ▶ next to any word to hear it, or press Play All");
-  }
-
-  // Show teacher note if present
-  if (data.teacher_note) {
-    noteText.textContent = data.teacher_note;
-    noteBox.classList.add("visible");
-  }
-}
-
-function esc(s) { return (s||"").replace(/'/g,"\\'"); }
-function changePage(dir) { stopAll(); loadPage(currentPage + dir); }
-
-async function speakItem(idx, es, en, fromQueue = false) {
-  if (!fromQueue) stopAll();
-  const btn = document.getElementById(`btn-${idx}`);
-  if (activeBtn) activeBtn.classList.remove("playing");
-  activeBtn = btn;
-  if (btn) btn.classList.add("playing");
-  setStatus(`Playing: ${es} · ${en}`);
-  try {
-    const res = await fetch("/api/speak", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ spanish: es, english: en, lang: "both" })
+    $("btn-next").addEventListener("click", () => {
+      if (state.currentPage < NUM_PAGES - 1) loadPage(state.currentPage + 1);
     });
-    if (!res.ok) { setStatus("Audio error — please try again."); return; }
-    const blob = await res.blob();
-    const url  = URL.createObjectURL(blob);
-    currentAudio = new Audio(url);
-    await new Promise(resolve => {
-      currentAudio.onended = resolve;
-      currentAudio.onerror = resolve;
-      currentAudio.play();
+
+    $("btn-play-selected").addEventListener("click", () => {
+      const idx = state.selectedIdx;
+      if (idx !== null && state.words[idx]) {
+        speakWord(idx);
+      }
     });
-    URL.revokeObjectURL(url);
-  } catch(e) { setStatus("Could not load audio."); }
-  if (btn) btn.classList.remove("playing");
-  activeBtn = null;
-  if (!fromQueue) setStatus("Ready");
-}
 
-async function playAll() {
-  stopAll();
-  const rows = Array.from(document.querySelectorAll(".word-item"));
-  if (!rows.length) return;
-  isPlaying = true;
-  const btn = document.getElementById("playAllBtn");
-  btn.disabled = true; btn.textContent = "■ Stop"; btn.onclick = stopAll;
-  for (let i = 0; i < rows.length; i++) {
-    if (!isPlaying) break;
-    const es = rows[i].querySelector(".word-es").textContent;
-    const en = rows[i].querySelector(".word-en").textContent;
-    await speakItem(i, es, en, true);
-    await new Promise(r => setTimeout(r, 400));
-  }
-  stopAll();
-}
+    $("btn-stop").addEventListener("click", stopAll);
 
-function stopAll() {
-  isPlaying = false;
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-  if (activeBtn) { activeBtn.classList.remove("playing"); activeBtn = null; }
-  const btn = document.getElementById("playAllBtn");
-  if (btn) { btn.disabled = false; btn.textContent = "▶ Play All"; btn.onclick = playAll; }
-  setStatus("Ready");
-}
+    $("btn-speak-all").addEventListener("click", async () => {
+      if (!state.words.length) return;
+      state.playingAll = true;
+      for (let i = 0; i < state.words.length; i++) {
+        if (!state.playingAll) break;
+        await speakWord(i);
+        if (state.playingAll) await new Promise(r => setTimeout(r, 700));
+      }
+      state.playingAll = false;
+    });
 
-if (NUM_PAGES > 0) loadPage(0);
-else document.getElementById("wordList").innerHTML =
-  '<div class="empty-state"><p>This book is being set up. Please check back soon.</p></div>';
-</script>
+    // ── Swipe support (mobile) ────────────────────────────────────
+    let touchStartX = 0;
+    document.addEventListener("touchstart", e => {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    document.addEventListener("touchend", e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) < 60) return;
+      if (dx < 0 && state.currentPage < NUM_PAGES - 1) loadPage(state.currentPage + 1);
+      if (dx > 0 && state.currentPage > 0) loadPage(state.currentPage - 1);
+    }, { passive: true });
+
+    // ── Init ──────────────────────────────────────────────────────
+    if (NUM_PAGES > 0) {
+      loadPage(0);
+    } else {
+      $("page-canvas").innerHTML = `
+        <div class="no-image">
+          <span>📖</span>
+          <p>This book is being set up.<br>Check back soon!</p>
+        </div>`;
+      $("page-info").textContent = "Coming soon";
+      $("word-list").innerHTML = `
+        <div class="empty-words">
+          <p>Content coming soon!</p>
+        </div>`;
+    }
+  </script>
 </body>
 </html>

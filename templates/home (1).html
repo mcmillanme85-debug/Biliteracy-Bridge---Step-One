@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Biliteracy Bridge · Pronunciation Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy: #0d2680; --navy-deep: #081a5e; --navy-mid: #1a3da8;
+      --gold: #f7c325; --gold-dark: #d4a00f;
+      --white: #ffffff; --muted: rgba(255,255,255,0.6);
+      --border: rgba(255,255,255,0.15); --card-bg: rgba(255,255,255,0.07);
+      --font: 'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, var(--navy-mid) 100%);
+      color: var(--white); min-height: 100vh;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+      background: rgba(8,26,94,0.7); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .brand { display: flex; align-items: center; gap: 0.6rem; }
+    .brand-parrot { font-size: 1.5rem; }
+    .brand-name { font-size: 1rem; font-weight: 700; }
+    .brand-sub { font-size: 0.65rem; color: var(--gold); font-weight: 500;
+      letter-spacing: 0.05em; text-transform: uppercase; }
+    main { max-width: 680px; margin: 0 auto; padding: 2rem 1.2rem 4rem; }
+    .hero { text-align: center; padding: 2rem 0 2.5rem; }
+    .hero .parrot { font-size: 4rem; display: block; margin-bottom: 0.8rem;
+      filter: drop-shadow(0 6px 20px rgba(247,195,37,0.3)); }
+    .hero h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.5rem; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6;
+      max-width: 420px; margin: 0 auto; }
+    .books-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted); margin-bottom: 1rem; }
+    .book-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.4rem 1.5rem;
+      margin-bottom: 1rem; display: flex; align-items: center;
+      gap: 1.2rem; transition: background 0.2s, border-color 0.2s;
+    }
+    .book-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
+    .book-icon { font-size: 2.4rem; flex-shrink: 0; }
+    .book-info { flex: 1; min-width: 0; }
+    .book-title { font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+      margin-bottom: 0.25rem; }
+    .book-meta { font-size: 0.8rem; color: var(--muted); }
+    .book-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.25rem 0.7rem; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.05em; margin-bottom: 0.4rem;
+    }
+    .badge-free { background: rgba(74,222,128,0.15); color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.3); }
+    .badge-locked { background: rgba(247,195,37,0.1); color: var(--gold);
+      border: 1px solid rgba(247,195,37,0.25); }
+    .badge-unlocked { background: rgba(74,222,128,0.15); color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.3); }
+    .btn-access {
+      flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.75rem 1.3rem; border-radius: 12px; border: none;
+      font-family: var(--font); font-weight: 700; font-size: 0.9rem;
+      cursor: pointer; text-decoration: none; transition: transform 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn-access:hover { transform: translateY(-1px); opacity: 0.92; }
+    .btn-free { background: var(--gold); color: var(--navy-deep); }
+    .btn-locked { background: rgba(255,255,255,0.12); color: var(--white);
+      border: 1px solid var(--border); }
+    .btn-unlocked { background: var(--gold); color: var(--navy-deep); }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    .empty-state p { font-size: 0.9rem; line-height: 1.6; }
+    .info-box {
+      margin-top: 2rem; background: rgba(247,195,37,0.07);
+      border: 1px solid rgba(247,195,37,0.2); border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+    }
+    .info-box h3 { font-size: 0.85rem; font-weight: 700; color: var(--gold);
+      margin-bottom: 0.5rem; }
+    .info-box p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-parrot">🦜</div>
+      <div>
+        <div class="brand-name">Biliteracy Bridge</div>
+        <div class="brand-sub">Pronunciation Guide · Guía de Pronunciación</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <span class="parrot">🦜</span>
+      <h1>Hear Every Word <span>in Both Languages</span></h1>
+      <p>Interactive pronunciation guides for parents and teachers supporting bilingual readers.</p>
+    </div>
+
+    {% if books %}
+      <div class="books-label">📚 Available Books</div>
+
+      {% for book_id, book in books.items() %}
+        <div class="book-card">
+          <div class="book-icon">📖</div>
+          <div class="book-info">
+            {% if book.get('free') %}
+              <div class="book-badge badge-free">✓ Free Access</div>
+            {% elif book_id in unlocked %}
+              <div class="book-badge badge-unlocked">✓ Unlocked</div>
+            {% else %}
+              <div class="book-badge badge-locked">🔒 Book Code Required</div>
+            {% endif %}
+            <div class="book-title">{{ book.title }}</div>
+            <div class="book-meta">
+              {% if book.get('num_pages', 0) > 0 %}
+                {{ book.num_pages }} pages
+              {% else %}
+                Coming soon
+              {% endif %}
+            </div>
+          </div>
+          {% if book.get('free') or book_id in unlocked %}
+            <a href="/book/{{ book_id }}" class="btn-access btn-{% if book.get('free') %}free{% else %}unlocked{% endif %}">
+              ▶ Open
+            </a>
+          {% else %}
+            <a href="/access/{{ book_id }}" class="btn-access btn-locked">
+              🔑 Enter Code
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="info-box">
+        <h3>🔑 How access codes work</h3>
+        <p>Book 1 is always free! For Books 2 and 3, find your unique access code printed inside the front cover of your book. Enter it once and the app remembers your access.</p>
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <span class="icon">📚</span>
+        <p>Books are being added soon.<br>Check back shortly!</p>
+      </div>
+    {% endif %}
+  </main>
+</body>
+</html>

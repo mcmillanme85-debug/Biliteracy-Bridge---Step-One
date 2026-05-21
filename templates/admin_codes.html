@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Access Codes · Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy: #0d2680; --navy-deep: #081a5e; --gold: #f7c325;
+      --white: #fff; --muted: rgba(255,255,255,0.55);
+      --border: rgba(255,255,255,0.14); --font: 'Inter', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: linear-gradient(160deg, var(--navy-deep), var(--navy));
+      color: var(--white); min-height: 100vh; padding: 2rem 1.2rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+    .back-btn { color: var(--muted); text-decoration: none; font-size: 0.85rem; }
+    .back-btn:hover { color: var(--white); }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    .message {
+      background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3);
+      border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+      color: #4ade80; font-size: 0.88rem;
+    }
+    .book-section {
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.3rem; margin-bottom: 1.2rem;
+    }
+    .book-header { display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .book-title { font-size: 1rem; font-weight: 700; }
+    .free-badge { background: rgba(74,222,128,0.15); color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.3); border-radius: 20px;
+      padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600; }
+    .code-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .code-tag {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(247,195,37,0.1); border: 1px solid rgba(247,195,37,0.25);
+      border-radius: 8px; padding: 0.35rem 0.7rem;
+      font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: 700;
+      color: var(--gold); letter-spacing: 0.05em;
+    }
+    .code-del { background: none; border: none; color: rgba(252,165,165,0.7);
+      cursor: pointer; font-size: 0.8rem; padding: 0; line-height: 1; }
+    .code-del:hover { color: #fca5a5; }
+    .no-codes { color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem; }
+    .add-code { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .add-code input {
+      flex: 1; min-width: 140px; padding: 0.6rem 0.9rem;
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--white); font-family: 'Courier New', monospace;
+      font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .add-code input::placeholder { color: var(--muted); text-transform: none; letter-spacing: 0; }
+    .add-code input:focus { outline: none; border-color: var(--gold); }
+    .btn { padding: 0.6rem 1.1rem; border: none; border-radius: 8px;
+      font-family: var(--font); font-weight: 600; font-size: 0.85rem;
+      cursor: pointer; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-gold { background: var(--gold); color: var(--navy-deep); }
+    .btn-ghost { background: rgba(255,255,255,0.1); color: var(--white);
+      border: 1px solid var(--border); }
+    .hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.5; }
+    .hint strong { color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <a href="/admin" class="back-btn">← Dashboard</a>
+    <h1>🔑 Access Codes</h1>
+  </header>
+
+  {% if message %}
+    <div class="message">✓ {{ message }}</div>
+  {% endif %}
+
+  {% for book_id, book in books.items() %}
+    <div class="book-section">
+      <div class="book-header">
+        <div class="book-title">{{ book.title }}</div>
+        {% if book.get('free') %}
+          <span class="free-badge">✓ Free — no code needed</span>
+        {% endif %}
+      </div>
+
+      {% if not book.get('free') %}
+        <!-- Current codes -->
+        {% if codes.get(book_id) %}
+          <div class="code-list">
+            {% for code in codes[book_id] %}
+              <span class="code-tag">
+                {{ code }}
+                <form method="POST" style="display:inline">
+                  <input type="hidden" name="action" value="delete"/>
+                  <input type="hidden" name="book_id" value="{{ book_id }}"/>
+                  <input type="hidden" name="code" value="{{ code }}"/>
+                  <button type="submit" class="code-del" title="Delete code">✕</button>
+                </form>
+              </span>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="no-codes">No codes set yet for this book.</p>
+        {% endif %}
+
+        <!-- Add/generate code -->
+        <div class="add-code">
+          <form method="POST" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <input type="hidden" name="action" value="set"/>
+            <input type="hidden" name="book_id" value="{{ book_id }}"/>
+            <input type="text" name="code" placeholder="Type your own code…" maxlength="20"/>
+            <button type="submit" class="btn btn-gold">+ Add Code</button>
+          </form>
+          <form method="POST">
+            <input type="hidden" name="action" value="generate"/>
+            <input type="hidden" name="book_id" value="{{ book_id }}"/>
+            <button type="submit" class="btn btn-ghost">⚡ Generate Random</button>
+          </form>
+        </div>
+        <p class="hint">
+          💡 <strong>Tip:</strong> Create one memorable code to print inside all copies of this book
+          (e.g. <strong>BRIDGE2025</strong>). You can have multiple codes active at once.
+        </p>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+</body>
+</html>

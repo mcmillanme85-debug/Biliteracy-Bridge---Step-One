@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enter Code · {{ book.title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy: #0d2680; --navy-deep: #081a5e; --navy-mid: #1a3da8;
+      --gold: #f7c325; --gold-dark: #d4a00f;
+      --white: #ffffff; --muted: rgba(255,255,255,0.6);
+      --border: rgba(255,255,255,0.15); --card-bg: rgba(255,255,255,0.07);
+      --font: 'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, var(--navy-mid) 100%);
+      color: var(--white); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 2rem 1.2rem;
+    }
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2.5rem 2rem;
+      width: 100%; max-width: 420px; text-align: center;
+    }
+    .parrot { font-size: 3.5rem; display: block; margin-bottom: 1rem;
+      filter: drop-shadow(0 4px 16px rgba(247,195,37,0.3)); }
+    h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 0.4rem; }
+    .subtitle { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem;
+      line-height: 1.5; }
+    .subtitle strong { color: var(--gold); }
+    label { display: block; text-align: left; font-size: 0.75rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      margin-bottom: 0.5rem; }
+    input[type="text"] {
+      width: 100%; padding: 1rem 1.2rem;
+      background: rgba(255,255,255,0.1); border: 2px solid var(--border);
+      border-radius: 12px; color: var(--white); font-family: var(--font);
+      font-size: 1.3rem; font-weight: 700; letter-spacing: 0.1em;
+      text-align: center; text-transform: uppercase;
+      transition: border-color 0.2s, background 0.2s; margin-bottom: 1rem;
+    }
+    input[type="text"]::placeholder { color: rgba(255,255,255,0.3);
+      font-size: 0.95rem; font-weight: 400; letter-spacing: 0.05em; }
+    input[type="text"]:focus { outline: none; border-color: var(--gold);
+      background: rgba(255,255,255,0.15); }
+    .error-msg {
+      background: rgba(252,165,165,0.15); border: 1px solid rgba(252,165,165,0.3);
+      border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem;
+      color: #fca5a5; font-size: 0.85rem; line-height: 1.5; text-align: left;
+    }
+    .btn-submit {
+      width: 100%; padding: 1rem; background: var(--gold); color: var(--navy-deep);
+      border: none; border-radius: 12px; font-family: var(--font);
+      font-weight: 800; font-size: 1rem; cursor: pointer;
+      transition: background 0.15s, transform 0.1s; margin-bottom: 1.2rem;
+    }
+    .btn-submit:hover { background: #ffd044; transform: translateY(-1px); }
+    .hint { font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+      background: rgba(247,195,37,0.06); border: 1px solid rgba(247,195,37,0.15);
+      border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; }
+    .hint strong { color: var(--gold); }
+    .back-link { color: var(--muted); font-size: 0.82rem; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.3rem; }
+    .back-link:hover { color: var(--white); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="parrot">🔑</span>
+    <h1>Enter Your Book Code</h1>
+    <p class="subtitle">
+      To access <strong>{{ book.title }}</strong>, enter the code printed
+      inside the front cover of your book.
+    </p>
+
+    {% if error %}
+      <div class="error-msg">❌ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/access/{{ book_id }}">
+      <label for="code">Your Access Code</label>
+      <input type="text" id="code" name="code"
+             placeholder="e.g. BRIDGE2025"
+             autocomplete="off" autocorrect="off"
+             autocapitalize="characters" spellcheck="false"
+             autofocus maxlength="20" />
+
+      <div class="hint">
+        💡 <strong>Where to find your code:</strong> Open your copy of
+        <em>{{ book.title }}</em> and look inside the front cover.
+        The code is printed there for you!
+      </div>
+
+      <button type="submit" class="btn-submit">🦜 Unlock Pronunciation Guide</button>
+    </form>
+
+    <a href="/" class="back-link">← Back to all books</a>
+  </div>
+</body>
+</html>
