@@ -3,480 +3,376 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edit Book — {{ book.title }}</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Edit · {{ book.title }}</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Source Sans 3', sans-serif; background: #f7f4ee; color: #2d2d2d; }
-  header {
-    background: #1b3a5c; color: #fff;
-    padding: 16px 32px; border-bottom: 4px solid #c8893a;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .header-left .brand { font-size: 0.7rem; letter-spacing: .12em; text-transform: uppercase; color: #c8893a; }
-  .header-left h1 { font-family: 'Playfair Display', serif; font-size: 1.1rem; max-width: 600px; line-height: 1.3; }
-  .header-right { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
-  .btn-back { color: #aac4d8; text-decoration: none; font-size: 0.85rem; }
-  .btn-back:hover { color: #fff; }
-  .btn-preview { background: #2a7f8f; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; }
-
-  .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
-
-  .upload-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
-  @media (max-width: 700px) { .upload-row { grid-template-columns: 1fr; } }
-
-  .upload-zone {
-    background: #fff; border: 2px dashed #c8893a; border-radius: 12px;
-    padding: 28px 24px; text-align: center; cursor: pointer; transition: background .2s;
-  }
-  .upload-zone:hover { background: #fdf8f0; }
-  .upload-zone h3 { font-family: 'Playfair Display', serif; color: #1b3a5c; margin-bottom: 6px; font-size: 1rem; }
-  .upload-zone p { color: #6b6b6b; font-size: 0.85rem; margin-bottom: 14px; }
-  .upload-btn {
-    background: #1b3a5c; color: #fff; border: none; border-radius: 8px;
-    padding: 9px 20px; font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer;
-  }
-  .upload-status { margin-top: 12px; font-size: 0.85rem; font-weight: 500; min-height: 20px; color: #2a7f8f; }
-  .csv-zone { border-color: #2a7f8f; }
-  .csv-zone .upload-btn { background: #2a7f8f; }
-  .csv-template { margin-top: 10px; font-size: 0.78rem; color: #888; }
-  .csv-template a { color: #2a7f8f; text-decoration: underline; cursor: pointer; }
-
-  .editor-layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; }
-  @media (max-width: 680px) { .editor-layout { grid-template-columns: 1fr; } }
-
-  .page-nav-panel {
-    background: #fff; border: 1px solid #ddd8ce; border-radius: 12px;
-    overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.05); position: sticky; top: 20px;
-  }
-  .panel-title { background: #1b3a5c; color: #fff; padding: 12px 16px; font-size: 0.85rem; font-weight: 600; }
-  .page-thumb-list { padding: 8px; max-height: 540px; overflow-y: auto; }
-  .page-thumb {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: background .15s; margin-bottom: 4px;
-  }
-  .page-thumb:hover { background: #f0ece3; }
-  .page-thumb.active { background: #ddeef4; }
-  .page-thumb img { width: 44px; height: 56px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
-  .page-thumb-label { font-size: 0.85rem; font-weight: 500; color: #1b3a5c; }
-  .page-thumb-count { font-size: 0.75rem; color: #999; }
-  .thumb-check { color: #2a7f8f; font-size: 0.95rem; margin-left: auto; flex-shrink: 0; }
-  .thumb-note { color: #c8893a; font-size: 0.85rem; margin-left: 4px; flex-shrink: 0; }
-
-  .content-panel {
-    background: #fff; border: 1px solid #ddd8ce; border-radius: 12px;
-    overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.05);
-  }
-  .content-header {
-    background: #1b3a5c; color: #fff; padding: 14px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .content-header h3 { font-family: 'Playfair Display', serif; font-size: 1rem; }
-  .type-toggle { display: flex; border: 1px solid #aac4d8; border-radius: 6px; overflow: hidden; }
-  .type-toggle button {
-    background: transparent; color: #aac4d8; border: none;
-    padding: 5px 12px; font-size: 0.8rem; font-family: inherit; cursor: pointer; transition: all .2s;
-  }
-  .type-toggle button.active { background: #2a7f8f; color: #fff; }
-
-  .page-preview-img {
-    width: 100%; max-height: 260px; object-fit: contain;
-    background: #f0ece3; display: block; border-bottom: 1px solid #ddd8ce;
-  }
-
-  .entries-section { padding: 18px 20px; }
-  .section-label {
-    font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
-    letter-spacing: .07em; color: #6b6b6b; margin-bottom: 10px; display: block;
-  }
-  .entry-row {
-    display: grid; grid-template-columns: 1fr 1fr auto;
-    gap: 10px; margin-bottom: 8px; align-items: center;
-  }
-  .entry-row input {
-    padding: 9px 12px; border: 2px solid #ddd8ce; border-radius: 8px;
-    font-family: inherit; font-size: 0.93rem; outline: none; transition: border .2s;
-  }
-  .entry-row input:focus { border-color: #2a7f8f; }
-  .entry-row input::placeholder { color: #bbb; }
-  .col-label { font-size: 0.7rem; color: #999; margin-bottom: 3px; }
-  .del-btn {
-    background: none; border: 2px solid #eee; border-radius: 8px;
-    width: 36px; height: 36px; color: #ccc; font-size: 1.1rem;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s;
-  }
-  .del-btn:hover { border-color: #e74c3c; color: #e74c3c; }
-  .add-entry-btn {
-    background: none; border: 2px dashed #c8893a; border-radius: 8px;
-    padding: 8px; width: 100%; font-family: inherit; font-size: 0.88rem;
-    color: #c8893a; cursor: pointer; margin-top: 4px; transition: background .2s; font-weight: 600;
-  }
-  .add-entry-btn:hover { background: #fdf8f0; }
-
-  .note-section {
-    padding: 16px 20px 18px;
-    border-top: 1px dashed #ddd8ce;
-  }
-  .note-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 10px; }
-  .note-toggle input[type="checkbox"] { width: 16px; height: 16px; accent-color: #c8893a; cursor: pointer; }
-  .note-toggle-label { font-size: 0.85rem; font-weight: 600; color: #c8893a; cursor: pointer; }
-  .note-toggle-sub { font-size: 0.78rem; color: #999; margin-left: 26px; margin-bottom: 10px; }
-  .teacher-note-input {
-    width: 100%; padding: 10px 14px; border: 2px solid #c8893a; border-radius: 8px;
-    font-family: inherit; font-size: 0.92rem; outline: none; resize: vertical; min-height: 80px;
-    background: #fffdf8;
-  }
-  .teacher-note-input:focus { border-color: #a06a20; }
-  .teacher-note-input::placeholder { color: #ccc; }
-
-  .save-bar {
-    padding: 14px 20px; border-top: 1px solid #ddd8ce;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .save-btn {
-    background: #c8893a; color: #fff; border: none; border-radius: 8px;
-    padding: 10px 28px; font-family: inherit; font-size: 0.95rem; font-weight: 600;
-    cursor: pointer; transition: opacity .2s;
-  }
-  .save-btn:hover { opacity: .85; }
-  .save-msg { font-size: 0.87rem; color: #2a7f8f; font-weight: 500; }
-  .no-pdf { padding: 48px 20px; text-align: center; color: #999; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f7f7f7;color:#1a1a1a}
+header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{height:38px;width:auto}
+.brand-text{font-size:14px;font-weight:700;color:#F9C12E}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.code-pill{background:#F9C12E;color:#1a1a1a;font-size:14px;font-weight:800;padding:5px 14px;border-radius:20px;letter-spacing:3px}
+.btn-hdr{font-size:12px;padding:6px 12px;border-radius:8px;border:1px solid #444;background:transparent;cursor:pointer;color:#ccc}
+.btn-hdr:hover{border-color:#F9C12E;color:#F9C12E}
+.layout{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 58px)}
+@media(max-width:680px){.layout{grid-template-columns:1fr}}
+.sidebar{background:#fff;border-right:1px solid #eee;padding:14px 10px;overflow-y:auto;max-height:calc(100vh - 58px);position:sticky;top:58px}
+.sidebar-title{font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.6px;padding:0 8px;margin-bottom:10px}
+.pg-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:7px 10px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:13px;color:#555;text-align:left;transition:all .12s}
+.pg-btn:hover{background:#FFF8E1;color:#1a1a1a}
+.pg-btn.active{background:#F9C12E;color:#1a1a1a;font-weight:700}
+.pg-btn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-filled{background:#4CAF50}
+.dot-empty{background:#e0e0e0}
+.pg-btn.active .dot-filled,.pg-btn.active .dot-empty{background:#1a1a1a;opacity:.4}
+.main{padding:22px;max-width:760px}
+.card{background:#fff;border-radius:14px;border:1px solid #eee;padding:20px;margin-bottom:16px}
+.card h2{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.field input[type=text],.field textarea{width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:8px;font-size:14px;color:#1a1a1a;outline:none;transition:border-color .15s;font-family:inherit}
+.field input[type=text]:focus,.field textarea:focus{border-color:#F9C12E;box-shadow:0 0 0 3px rgba(249,193,46,.1)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.55}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tip-box{background:#FFFDF5;border:1.5px solid #FFE082;border-radius:10px;padding:14px}
+.tip-box .default-preview{font-size:12px;color:#aaa;margin-bottom:10px;font-style:italic;line-height:1.5;padding:8px 10px;background:#f9f9f9;border-radius:6px;border-left:3px solid #FFE082}
+.tip-box .default-preview b{color:#E65100;font-style:normal}
+.check-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#555;padding:4px 0}
+.check-row input{width:16px;height:16px;accent-color:#F9C12E;cursor:pointer}
+.btn-save{background:#F9C12E;color:#1a1a1a;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;transition:background .15s}
+.btn-save:hover{background:#e6b020}
+.save-msg{font-size:13px;color:#aaa;margin-left:10px}
+.save-msg.ok{color:#2E7D32}
+.save-msg.err{color:#c62828}
+.page-img{max-width:280px;width:100%;border-radius:10px;border:1px solid #eee;display:block;margin-bottom:14px}
+.upload-zone{border:2px dashed #e0e0e0;border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:border-color .15s;background:#fafafa}
+.upload-zone:hover{border-color:#F9C12E;background:#FFFDF5}
+.upload-zone input{display:none}
+.upload-zone p{font-size:13px;color:#bbb;margin-top:6px}
+.upload-zone .icon{font-size:28px}
+.upload-msg{font-size:13px;margin-top:8px}
+.upload-msg.ok{color:#2E7D32}
+.upload-msg.err{color:#c62828}
+.code-display{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.code-big{font-size:32px;font-weight:900;letter-spacing:6px;color:#1a1a1a;background:#FFF8E1;padding:10px 20px;border-radius:10px;border:2px solid #F9C12E}
+.btn-regen{background:#fff;color:#1a1a1a;border:2px solid #F9C12E;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-regen:hover{background:#F9C12E}
+.info{background:#E3F2FD;border-radius:8px;padding:11px 14px;font-size:13px;color:#1565C0;line-height:1.5;margin-top:10px}
+.csv-template{font-size:12px;color:#aaa;margin-top:6px}
+.csv-template a{color:#F9C12E;text-decoration:none}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="header-left">
-    <div class="brand">Biliteracy Bridge · Admin</div>
-    <h1>{{ book.title }}</h1>
+  <div class="brand">
+    <img src="/static/logo.png" alt="Biliteracy Bridge">
+    <div class="brand-text">Admin · Book Editor</div>
   </div>
   <div class="header-right">
-    <a href="/admin" class="btn-back">← Dashboard</a>
-    <a href="/book/{{ book_id }}" target="_blank" class="btn-preview">Preview ↗</a>
+    {% if book.access_code %}<div class="code-pill">{{ book.access_code }}</div>{% endif %}
+    <a href="/book/{{ book_id }}" target="_blank"><button class="btn-hdr">👁 Preview</button></a>
+    <a href="/admin"><button class="btn-hdr">← Dashboard</button></a>
   </div>
 </header>
 
-<div class="container">
-
-  <div class="upload-row">
-    <!-- PDF Upload -->
-    <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
-      <h3>Upload Book PDF</h3>
-      <p>{% if book.num_pages > 0 %}{{ book.num_pages }} pages loaded. Upload again to replace.{% else %}Upload the PDF of your book first.{% endif %}</p>
-      <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="uploadPDF(this)">
-      <button class="upload-btn" type="button" onclick="event.stopPropagation(); document.getElementById('pdfInput').click()">Choose PDF File</button>
-      <div class="upload-status" id="pdfStatus"></div>
-    </div>
-
-    <!-- CSV Upload -->
-    <div class="upload-zone csv-zone" onclick="document.getElementById('csvInput').click()">
-      <h3>Bulk Upload Words via CSV</h3>
-      <p>Upload a spreadsheet with all your words — no typing page by page!</p>
-      <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="uploadCSV(this)">
-      <button class="upload-btn" type="button" onclick="event.stopPropagation(); document.getElementById('csvInput').click()">Choose CSV File</button>
-      <div class="upload-status" id="csvStatus"></div>
-      <div class="csv-template">
-        <a onclick="event.stopPropagation(); downloadTemplate()">Download CSV template</a>
-      </div>
-    </div>
+<div class="layout">
+  <!-- Sidebar page list -->
+  <div class="sidebar">
+    <div class="sidebar-title">Pages ({{ book.num_pages }})</div>
+    {% for i in range(book.num_pages) %}
+    {% set p = book.pages[i] if i < book.pages|length else {} %}
+    <button class="pg-btn{% if i == 0 %} active{% endif %}" id="pgbtn_{{ i }}" onclick="loadPage({{ i }})">
+      <span>{{ i + 1 }}</span>
+      <span class="dot {% if p.get('english') %}dot-filled{% else %}dot-empty{% endif %}"></span>
+    </button>
+    {% endfor %}
   </div>
 
-  {% if book.num_pages > 0 %}
-  <div class="editor-layout">
+  <!-- Main editor -->
+  <div class="main">
 
-    <!-- Page list -->
-    <div class="page-nav-panel">
-      <div class="panel-title">Pages</div>
-      <div class="page-thumb-list" id="thumbList">
-        {% for i in range(book.num_pages) %}
-        {% set pg = book.pages[i] if book.pages and i < book.pages|length else None %}
-        <div class="page-thumb {% if i == 0 %}active{% endif %}" id="thumb-{{ i }}" onclick="selectPage({{ i }})">
-          <img src="/api/book/{{ book_id }}/page/{{ i }}/image" alt="Page {{ i+1 }}">
-          <div>
-            <div class="page-thumb-label">Page {{ i + 1 }}</div>
-            <div class="page-thumb-count" id="thumb-count-{{ i }}">
-              {% if pg and pg.content %}{{ pg.content|length }} item{{ 's' if pg.content|length != 1 else '' }}{% else %}Empty{% endif %}
-            </div>
-          </div>
-          {% if pg and pg.content %}<span class="thumb-check">&#10003;</span>{% endif %}
-          {% if pg and pg.teacher_note %}<span class="thumb-note" title="Has teacher note">&#9733;</span>{% endif %}
+    <!-- Book setup card -->
+    <div class="card">
+      <h2>⚙️ Book Setup</h2>
+
+      <!-- Access code -->
+      <div class="field">
+        <label>Parent Access Code</label>
+        <div class="code-display">
+          <div class="code-big" id="codeDisplay">{{ book.access_code or '—' }}</div>
+          <button class="btn-regen" onclick="regenCode()">🔄 New Code</button>
         </div>
-        {% endfor %}
+        <div class="info">
+          📋 Print this code inside the front cover of your book. Parents enter it in the app to unlock pronunciation.
+        </div>
+      </div>
+
+      <!-- PDF upload -->
+      <div class="field" style="margin-top:16px">
+        <label>Upload PDF (Book Pages)</label>
+        <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
+          <div class="icon">📄</div>
+          <strong>Click to upload your PDF</strong>
+          <p>{{ book.num_pages }} pages loaded · Upload again to replace</p>
+          <input type="file" id="pdfInput" accept=".pdf" onchange="uploadPDF(this)">
+        </div>
+        <div class="upload-msg" id="pdfMsg"></div>
+      </div>
+
+      <!-- CSV upload -->
+      <div class="field">
+        <label>Bulk Upload Words via CSV</label>
+        <div class="upload-zone" onclick="document.getElementById('csvInput').click()">
+          <div class="icon">📊</div>
+          <strong>Click to upload CSV</strong>
+          <p>Columns: page, english, spanish</p>
+          <input type="file" id="csvInput" accept=".csv" onchange="uploadCSV(this)">
+        </div>
+        <div class="upload-msg" id="csvMsg"></div>
+        <div class="csv-template">Format: page number (1-based), English word, Spanish word. <a href="#" onclick="downloadTemplate()">Download template ↓</a></div>
       </div>
     </div>
 
-    <!-- Content editor -->
-    <div class="content-panel">
-      <div class="content-header">
-        <h3 id="contentTitle">Page 1</h3>
-        <div class="type-toggle">
-          <button id="typeWords" class="active" onclick="setType('words')">Words</button>
-          <button id="typeSentences" onclick="setType('sentences')">Sentences</button>
+    <!-- Page word editor -->
+    <div class="card">
+      <h2>✏️ Page <span id="pageNum">1</span> of {{ book.num_pages }}</h2>
+
+      <img class="page-img" id="pageImg" src="/page-image/{{ book_id }}/0" alt="Page preview" onerror="this.style.display='none'">
+
+      <div class="field-row">
+        <div class="field">
+          <label>🇺🇸 English Word</label>
+          <input type="text" id="enWord" placeholder="e.g. Elephant">
+        </div>
+        <div class="field">
+          <label>🇲🇽 Spanish Word</label>
+          <input type="text" id="esWord" placeholder="e.g. Elefante">
         </div>
       </div>
 
-      <img id="contentImg" src="/api/book/{{ book_id }}/page/0/image" class="page-preview-img" alt="Page preview">
-
-      <div class="entries-section">
-        <span class="section-label">Spanish &middot; English &mdash; type what is on this page</span>
-        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:6px;">
-          <div class="col-label">Spanish</div>
-          <div class="col-label">English</div>
-          <div></div>
+      <div class="field" style="margin-top:4px">
+        <label>💡 Custom Teaching Tip <span style="font-weight:400;color:#bbb">(optional — overrides the default)</span></label>
+        <div class="tip-box">
+          <div class="default-preview" id="defaultTipPreview">Enter an English word above to see the built-in tip, or write your own below.</div>
+          <textarea id="customTip" placeholder="Leave blank to use the built-in tip automatically. Or write a custom tip here that will show instead — great for personalising the experience for your audience!"></textarea>
         </div>
-        <div id="entryRows"></div>
-        <button class="add-entry-btn" onclick="addRow()">+ Add Word / Sentence</button>
       </div>
 
-      <!-- Teacher Note -->
-      <div class="note-section">
-        <div class="note-toggle">
-          <input type="checkbox" id="noteToggle" onchange="toggleNote(this)">
-          <label class="note-toggle-label" for="noteToggle">&#9733; Add a Biliteracy Bridge Teacher Note for this page</label>
+      <div class="field">
+        <div class="check-row">
+          <input type="checkbox" id="teacherNote">
+          <label for="teacherNote">Mark this page as having a special teacher note ⭐</label>
         </div>
-        <div class="note-toggle-sub">Optional &mdash; only shows on pages where you add one. Visible to parents.</div>
-        <textarea id="teacherNote" class="teacher-note-input" style="display:none"
-          placeholder="e.g. Cognates are words that look and sound similar in both Spanish and English. Help your child notice the connection!"></textarea>
       </div>
 
-      <div class="save-bar">
+      <div style="display:flex;align-items:center">
+        <button class="btn-save" onclick="savePage()">💾 Save Page</button>
         <span class="save-msg" id="saveMsg"></span>
-        <button class="save-btn" onclick="savePage()">Save This Page</button>
       </div>
     </div>
-
   </div>
-  {% else %}
-  <div style="background:#fff;border-radius:12px;border:1px solid #ddd8ce;">
-    <div class="no-pdf"><p>Upload your PDF above to start adding content.</p></div>
-  </div>
-  {% endif %}
-
 </div>
 
 <script>
-const BOOK_ID    = "{{ book_id }}";
-const NUM_PAGES  = {{ book.num_pages }};
-let currentPage  = 0;
-let currentType  = "words";
-let pageCache    = {};
-const savedPages = {{ book.pages | tojson }};
+const BOOK_ID = "{{ book_id }}";
+const PAGES = {{ book.pages | tojson }};
+let currentPage = 0;
 
-function selectPage(n) {
-  if (NUM_PAGES > 0) cacheCurrentPage();
-  currentPage = n;
-  document.getElementById("contentTitle").textContent = "Page " + (n + 1);
-  document.getElementById("contentImg").src = "/api/book/" + BOOK_ID + "/page/" + n + "/image";
-  document.querySelectorAll(".page-thumb").forEach(function(t) { t.classList.remove("active"); });
-  document.getElementById("thumb-" + n).classList.add("active");
+const DEFAULT_TIPS = {
+"armadillo":"The double L in Spanish makes a 'y' sound: ar-ma-DEE-yo. Tell your child 'armadillo' means 'little armored one' in Spanish — tap fingers along your arm like armor plates!",
+"buffalo":"Nearly identical! Count syllables together: Buf-fa-lo (3) / Bú-fa-lo (3). The accent mark over ú tells you exactly where to stress — your built-in pronunciation guide.",
+"baboon":"Listen for the shared 'ba' at the start! English ends with 'boon,' Spanish adds 'wee-no': ba-bwee-NO. Can your child hear the 'ba' hiding in both words?",
+"crocodile":"Point out the shared letters C-R-O-C / C-O-C-O — they got rearranged! Clap syllables: Croc-o-dile / Co-co-dri-lo. Both have 4 syllables.",
+"camel":"Spot the double L in 'camello' — it sounds like 'y': ka-MEY-yo! How many humps on a camel? 1 or 2? Count the Ls in camello: 2!",
+"dinosaur":"Spanish adds 'io' at the end! Cover the 'io' in dinosaurio with your finger — the English word is hiding inside.",
+"dolphin":"The accent mark over í tells you to say 'FEEN' — long, clear vowel! English: DOL-fin; Spanish: del-FEEN.",
+"elephant":"Both start with 'ele' — point that out! The 'ph' in English makes an 'f' sound, and Spanish spells it with a plain F.",
+"flamingo":"In Spanish 'flamenco' means BOTH the bird AND the famous dance! The dance was named after the bird's graceful elegance.",
+"giraffe":"IMPORTANT RULE: Spanish J sounds like English H! So 'Jirafa' = hee-RAH-fah. Once your child knows J=H, they unlock dozens of Spanish words.",
+"gorilla":"English has double L; Spanish has single L — but they sound almost the same! Great for showing spelling differences don't always change pronunciation.",
+"hippopotamus":"Both are 5 syllables — count on fingers! Hip-po-pot-a-mus / Hi-po-pó-ta-mo. Same rhythm, same number of beats.",
+"iguana":"PERFECT COGNATE! Barely any difference. English: ih-GWAH-na; Spanish: ee-GWAH-nah. This word needs zero translation!",
+"insect":"Spanish adds 'o': in-sect + o = insecto! Many English words ending in a consonant become Spanish words ending in '-o.'",
+"jaguar":"PERFECT COGNATE — same spelling! English J sounds hard; Spanish J = H, so: hah-GWAR. Same word, tiny pronunciation difference.",
+"koala":"PERFECT COGNATE! Absolutely identical in both languages — from the Dharug Aboriginal language of Australia.",
+"lion":"The accent mark (ó) tells you to stress the LAST syllable: le-ON. English stresses the first: LYE-un.",
+"monkey":"DIFFERENT WORDS — an important lesson! 'Mono' is used across most of Latin America; 'Mico' is common in Colombia.",
+"ocelot":"Spanish adds 'e': ocelot → ocelote. Say them back-to-back: O-se-lot / o-se-LO-te. Very common near-cognate pattern.",
+"panther":"English 'th' becomes 't' in Spanish — very common! PAN-ther → pan-TE-ra. Count syllables: English 2, Spanish 3.",
+"penguin":"The ü (diéresis) tells you to pronounce the U: pin-GWEE-no. Without those dots, 'gu' before 'i' would be silent!",
+"rhinoceros":"English uses 'rh' at the start; Spanish uses plain 'r' — Spanish never uses 'rh.' Both come from the same Greek word about horns.",
+"salamander":"Almost perfect! English ends in '-er'; Spanish ends in '-ra': sala-MAN-der / sala-MAN-dra. Just the last two letters swapped!",
+"tiger":"Consonants T-G-R stay in both words. In Spanish every letter is pronounced — that final 'e' in tigre is always spoken.",
+"tortoise":"Not strong cognates — different paths from Latin. But 'Tortuga' is the famous pirate island name! Great cultural conversation.",
+"uakari":"PERFECT COGNATE from a Brazilian indigenous language! Both pronounced nearly identically. Celebrates indigenous heritage.",
+"viper":"Both trace to Latin 'vipera.' Spanish 'v' is very soft — almost like a 'b': VEE-bo-rah.",
+"yak":"PERFECT COGNATE! Identical in both languages, borrowed from Tibetan unchanged.",
+"cactus":"PERFECT COGNATE! Same spelling, nearly same pronunciation. English: KAK-tus; Spanish: KAHK-toos.",
+"canyon":"English borrowed 'canyon' FROM Spanish 'cañón'! The ñ makes the 'ny' sound. Spanish explorers named canyons across the American West.",
+"island":"Both come from Latin 'insula.' English 'island' has a SILENT S — added in the 1500s to look Latin! Spanish 'isla' is more phonetic.",
+"desert":"English: DEZ-ert (2 syllables); Spanish: de-SYEHR-to (4 syllables). The 'ie' in Spanish is a diphthong — two vowels gliding together.",
+"meteor":"Spanish adds 'o': meteor + o = meteoro! The -or → -oro pattern is very common in science words.",
+"palm":"English 'palm' often has a silent L. Spanish 'palma' always pronounces it. Spanish adds 'a' making it feminine (la palma).",
+"ocean":"English smooshes 'ocean' into 2 syllables (OH-shun). Spanish opens it to 4 clear syllables: o-SEH-ah-no.",
+"planet":"Spanish adds 'a': planet + a = planeta! Both from Greek 'planetes' (wanderer).",
+"safari":"PERFECT COGNATE from Arabic 'safar' (journey)! Both languages borrowed it identically.",
+"tornado":"PERFECT COGNATE! English borrowed 'tornado' FROM Spanish! English: tor-NEI-do; Spanish: tor-NAH-do.",
+"volcano":"Unusual: English ADDS 'o'; Spanish is SHORTER! vol-KAY-no vs vol-KAHN. Both from the Roman god Vulcanus.",
+"banana":"PERFECT COGNATE! Identical in both languages, from West African languages through Portuguese.",
+"broccoli":"Both borrowed from Italian 'broccoli'! Nearly identical — great example of English and Spanish agreeing on Italian food words.",
+"cacao":"PERFECT COGNATE from Nahuatl (Aztec)! This word has barely changed in hundreds of years. Chocolate comes from cacao!",
+"cereal":"PERFECT COGNATE from the Roman goddess Ceres. Same spelling, different rhythm — accent mark on á shows where to stress.",
+"chocolate":"PERFECT COGNATE from Nahuatl! English: 3 syllables. Spanish: 4 syllables. Spanish speaks every syllable!",
+"coconut":"Spanish uses just 'coco'! 'Coconut' in English = 'coco' in Spanish. Sometimes one language is more concise.",
+"fruit":"Both from Latin 'fructus.' Spanish adds 'a' — making it feminine (la fruta). Point to all the fruits on the page!",
+"hamburger":"Both named after Hamburg, Germany! Find 'hambur' in both — that's the shared root. Same city, same food.",
+"kiwi":"PERFECT COGNATE from Māori (New Zealand)! KEE-wee in both languages.",
+"lemon":"The accent mark shows last-syllable stress: lee-MOHN. Both from Arabic 'laymun' via the spice trade.",
+"mango":"PERFECT COGNATE from Tamil/Sanskrit! Identical in both languages, via Portuguese trade routes.",
+"melon":"Accent on last syllable in Spanish: me-LOHN. English: MEL-on. Same letters, different stress — accent mark is your guide!",
+"papaya":"PERFECT COGNATE from Taíno (Caribbean indigenous language)! Honoring Caribbean indigenous heritage.",
+"pasta":"PERFECT COGNATE from Italian! Food words from Italy almost always become perfect cognates.",
+"salmon":"The L is completely SILENT in English — SAM-un! Spanish pronounces every letter: sal-MOHN.",
+"soup":"Both share S-P at their core! SouP / SoPa. Both from Latin 'suppa.' Finding the shared core is a great metalinguistic skill.",
+"tomato":"From Nahuatl 'tomatl'! This is the word that inspired 'You say to-MAY-to, I say to-MAH-to!'",
+"vanilla":"Two rules at once: Spanish 'v' sounds like 'b' AND double-ll sounds like 'y.' So: bai-NEE-ya. From Nahuatl!",
+"yogurt":"Spanish drops the final 't': yogurt → yogur! Both from Turkish. Spanish is actually closer to the original Turkish."
+};
 
-  var pg = pageCache[n] || (savedPages && savedPages[n]) || { content: [], type: "words", teacher_note: "" };
-  currentType = pg.type || "words";
-  setTypeUI(currentType);
-  renderRows(pg.content || []);
-
-  var note = pg.teacher_note || "";
-  var cb   = document.getElementById("noteToggle");
-  var ta   = document.getElementById("teacherNote");
-  cb.checked       = !!note;
-  ta.style.display = note ? "block" : "none";
-  ta.value         = note;
-
+function loadPage(idx) {
+  currentPage = idx;
+  document.querySelectorAll(".pg-btn").forEach((b,i) => b.classList.toggle("active", i === idx));
+  document.getElementById("pageNum").textContent = idx + 1;
+  document.getElementById("pageImg").src = `/page-image/${BOOK_ID}/${idx}`;
+  document.getElementById("pageImg").style.display = "block";
+  const p = PAGES[idx] || {};
+  document.getElementById("enWord").value = p.english || "";
+  document.getElementById("esWord").value = p.spanish || "";
+  document.getElementById("customTip").value = p.custom_tip || "";
+  document.getElementById("teacherNote").checked = p.teacher_note || false;
+  updateDefaultPreview(p.english || "");
   document.getElementById("saveMsg").textContent = "";
 }
 
-function cacheCurrentPage() {
-  pageCache[currentPage] = {
-    content:      collectRows(),
-    type:         currentType,
-    teacher_note: getNoteValue()
-  };
-}
+document.getElementById("enWord").addEventListener("input", function() {
+  updateDefaultPreview(this.value);
+});
 
-function getNoteValue() {
-  var cb = document.getElementById("noteToggle");
-  var ta = document.getElementById("teacherNote");
-  return (cb && cb.checked) ? ta.value.trim() : "";
-}
-
-function toggleNote(cb) {
-  var ta = document.getElementById("teacherNote");
-  ta.style.display = cb.checked ? "block" : "none";
-  if (cb.checked) ta.focus();
-}
-
-function setType(t) { cacheCurrentPage(); currentType = t; setTypeUI(t); }
-function setTypeUI(t) {
-  document.getElementById("typeWords").classList.toggle("active", t === "words");
-  document.getElementById("typeSentences").classList.toggle("active", t === "sentences");
-}
-
-function renderRows(content) {
-  var c = document.getElementById("entryRows");
-  c.innerHTML = "";
-  if (!content.length) { addRow(); return; }
-  content.forEach(function(item) { addRow(item.es, item.en); });
-}
-
-function addRow(es, en) {
-  es = es || ""; en = en || "";
-  var c   = document.getElementById("entryRows");
-  var div = document.createElement("div");
-  div.className = "entry-row";
-  div.innerHTML =
-    '<input type="text" placeholder="Spanish..." value="' + escHtml(es) + '" class="es-input">' +
-    '<input type="text" placeholder="English..." value="' + escHtml(en) + '" class="en-input">' +
-    '<button class="del-btn" onclick="this.parentElement.remove()" title="Remove">&times;</button>';
-  c.appendChild(div);
-}
-
-function escHtml(s) { return (s || "").replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
-
-function collectRows() {
-  var rows = [];
-  document.querySelectorAll(".entry-row").forEach(function(row) {
-    var es = row.querySelector(".es-input").value.trim();
-    var en = row.querySelector(".en-input").value.trim();
-    if (es || en) rows.push({ es: es, en: en });
-  });
-  return rows;
+function updateDefaultPreview(word) {
+  const key = word.toLowerCase().trim().split(/[\s/]/)[0];
+  const tip = DEFAULT_TIPS[key];
+  const preview = document.getElementById("defaultTipPreview");
+  if (tip) {
+    preview.innerHTML = `<b>Built-in tip:</b> ${tip}`;
+  } else if (word) {
+    preview.innerHTML = `<span style="color:#ccc">No built-in tip for "${word}" — write a custom tip below, or leave blank.</span>`;
+  } else {
+    preview.innerHTML = `Enter an English word above to see the built-in tip, or write your own custom tip below.`;
+  }
 }
 
 async function savePage() {
-  var content      = collectRows();
-  var teacher_note = getNoteValue();
-  var msg          = document.getElementById("saveMsg");
-  msg.textContent  = "Saving...";
-  msg.style.color  = "#888";
-
+  const msg = document.getElementById("saveMsg");
+  msg.textContent = "Saving…";
+  msg.className = "save-msg";
+  const body = {
+    page_idx: currentPage,
+    english: document.getElementById("enWord").value.trim(),
+    spanish: document.getElementById("esWord").value.trim(),
+    custom_tip: document.getElementById("customTip").value.trim(),
+    teacher_note: document.getElementById("teacherNote").checked
+  };
+  if (PAGES[currentPage] === undefined) PAGES[currentPage] = {};
+  PAGES[currentPage].english = body.english;
+  PAGES[currentPage].spanish = body.spanish;
+  PAGES[currentPage].custom_tip = body.custom_tip;
+  PAGES[currentPage].teacher_note = body.teacher_note;
+  // update dot
+  const dot = document.querySelector(`#pgbtn_${currentPage} .dot`);
+  if (dot) { dot.className = "dot " + (body.english ? "dot-filled" : "dot-empty"); }
   try {
-    var res  = await fetch("/admin/book/" + BOOK_ID + "/save-page", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ page_num: currentPage, content: content, type: currentType, teacher_note: teacher_note })
-    });
-    var data = await res.json();
-
-    if (data.success) {
-      pageCache[currentPage] = { content: content, type: currentType, teacher_note: teacher_note };
-      msg.textContent = "Saved!";
-      msg.style.color = "#2a7f8f";
-
-      var tc = document.getElementById("thumb-count-" + currentPage);
-      if (tc) tc.textContent = content.length + (content.length === 1 ? " item" : " items");
-
-      var thumb = document.getElementById("thumb-" + currentPage);
-      if (thumb) {
-        if (content.length && !thumb.querySelector(".thumb-check")) {
-          var chk = document.createElement("span");
-          chk.className = "thumb-check"; chk.textContent = "\u2713";
-          thumb.appendChild(chk);
-        }
-        var existingNote = thumb.querySelector(".thumb-note");
-        if (teacher_note && !existingNote) {
-          var n = document.createElement("span");
-          n.className = "thumb-note"; n.title = "Has teacher note"; n.textContent = "\u2605";
-          thumb.appendChild(n);
-        } else if (!teacher_note && existingNote) {
-          existingNote.remove();
-        }
-      }
-      setTimeout(function() { msg.textContent = ""; }, 2500);
-    } else {
-      msg.textContent = "Error saving. Try again.";
-      msg.style.color = "#e74c3c";
-    }
+    const res = await fetch(`/admin/book/${BOOK_ID}/save-page`, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const data = await res.json();
+    msg.textContent = data.success ? "✅ Saved!" : "❌ Error: " + data.error;
+    msg.className = "save-msg " + (data.success ? "ok" : "err");
   } catch(e) {
-    msg.textContent = "Network error. Try again.";
-    msg.style.color = "#e74c3c";
+    msg.textContent = "❌ Connection error";
+    msg.className = "save-msg err";
   }
 }
 
 async function uploadPDF(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var status = document.getElementById("pdfStatus");
-  status.style.color = "#2a7f8f";
-  status.textContent = "Uploading and processing... please wait.";
+  const msg = document.getElementById("pdfMsg");
+  msg.textContent = "Uploading PDF… this may take a minute ⏳";
+  msg.className = "upload-msg";
+  const fd = new FormData();
+  fd.append("pdf", input.files[0]);
   try {
-    var fd = new FormData();
-    fd.append("pdf", file);
-    var res  = await fetch("/admin/book/" + BOOK_ID + "/upload-pdf", { method: "POST", body: fd });
-    var data = await res.json();
+    const res = await fetch(`/admin/book/${BOOK_ID}/upload-pdf`, {method:"POST",body:fd});
+    const data = await res.json();
     if (data.success) {
-      status.textContent = "Done! " + data.num_pages + " pages loaded. Refreshing...";
-      setTimeout(function() { location.reload(); }, 1500);
+      msg.textContent = `✅ PDF uploaded! ${data.num_pages} pages ready.`;
+      msg.className = "upload-msg ok";
+      setTimeout(() => location.reload(), 1500);
     } else {
-      status.style.color = "#e74c3c";
-      status.textContent = "Error: " + (data.error || "Upload failed.");
+      msg.textContent = "❌ " + (data.error || "Upload failed");
+      msg.className = "upload-msg err";
     }
   } catch(e) {
-    status.style.color = "#e74c3c";
-    status.textContent = "Network error. Try again.";
+    msg.textContent = "❌ Upload failed — try again";
+    msg.className = "upload-msg err";
   }
 }
 
 async function uploadCSV(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var status = document.getElementById("csvStatus");
-
-  if (NUM_PAGES === 0) {
-    status.style.color = "#e74c3c";
-    status.textContent = "Please upload your PDF first, then upload the CSV.";
-    input.value = "";
+  const msg = document.getElementById("csvMsg");
+  if (!{{ book.num_pages }}) {
+    msg.textContent = "⚠️ Upload the PDF first, then the CSV.";
+    msg.className = "upload-msg err";
     return;
   }
-
-  status.style.color = "#2a7f8f";
-  status.textContent = "Uploading words... please wait.";
-
+  msg.textContent = "Uploading words…";
+  msg.className = "upload-msg";
+  const fd = new FormData();
+  fd.append("csv", input.files[0]);
   try {
-    var fd = new FormData();
-    fd.append("csv", file);
-    var res = await fetch("/admin/book/" + BOOK_ID + "/upload-csv", { method: "POST", body: fd });
-
-    if (!res.ok) {
-      status.style.color = "#e74c3c";
-      status.textContent = "Server error (" + res.status + "). Try again.";
-      return;
-    }
-
-    var data = await res.json();
-
+    const res = await fetch(`/admin/book/${BOOK_ID}/upload-csv`, {method:"POST",body:fd});
+    const data = await res.json();
     if (data.success) {
-      if (data.pages_filled === 0) {
-        status.style.color = "#e74c3c";
-        status.textContent = "No words imported. Make sure your CSV columns are named exactly: page, spanish, english";
-      } else {
-        status.style.color = "#2a7f8f";
-        status.textContent = "Done! Words loaded for " + data.pages_filled + " page(s). Refreshing...";
-        setTimeout(function() { location.reload(); }, 1800);
-      }
+      msg.textContent = `✅ Words loaded for ${data.pages_filled} pages! Refreshing…`;
+      msg.className = "upload-msg ok";
+      setTimeout(() => location.reload(), 1800);
     } else {
-      status.style.color = "#e74c3c";
-      status.textContent = "Error: " + (data.error || "Upload failed.");
+      msg.textContent = "❌ " + (data.error || "CSV upload failed");
+      msg.className = "upload-msg err";
     }
   } catch(e) {
-    status.style.color = "#e74c3c";
-    status.textContent = "Network error. Check your connection and try again.";
+    msg.textContent = "❌ Upload failed";
+    msg.className = "upload-msg err";
+  }
+}
+
+async function regenCode() {
+  const res = await fetch(`/admin/book/${BOOK_ID}/generate-code`, {method:"POST"});
+  const data = await res.json();
+  if (data.code) {
+    document.getElementById("codeDisplay").textContent = data.code;
+    document.querySelector(".code-pill") && (document.querySelector(".code-pill").textContent = data.code);
   }
 }
 
 function downloadTemplate() {
-  var num = NUM_PAGES || 5;
-  var csv = "page,spanish,english\n";
-  for (var i = 1; i <= num; i++) {
-    csv += i + ",,\n";
-  }
-  var blob = new Blob([csv], { type: "text/csv" });
-  var a    = document.createElement("a");
-  a.href   = URL.createObjectURL(blob);
-  a.download = "words-template.csv";
+  const rows = ["page,english,spanish"];
+  for (let i = 1; i <= {{ book.num_pages }}; i++) rows.push(`${i},,`);
+  const blob = new Blob([rows.join("\n")], {type:"text/csv"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "book_words_template.csv";
   a.click();
 }
 
-if (NUM_PAGES > 0) selectPage(0);
+loadPage(0);
 </script>
 </body>
 </html>
