@@ -231,7 +231,7 @@ def upload_pdf(book_id):
         img.save(img_dir / f"page_{i}.jpg", quality=85)
     # Extend pages array if needed
     while len(books[book_id]["pages"]) < num_pages:
-        books[book_id]["pages"].append({"english": "", "spanish": "", "teacher_note": False})
+        books[book_id]["pages"].append({"english": "", "spanish": "", "teacher_note": False, "custom_tip": ""})
     books[book_id]["num_pages"] = num_pages
     save_books(books)
     return jsonify(success=True, num_pages=num_pages)
@@ -246,10 +246,11 @@ def save_page(book_id):
     page_idx = data.get("page_idx")
     pages = books[book_id]["pages"]
     while len(pages) <= page_idx:
-        pages.append({"english": "", "spanish": "", "teacher_note": False})
+        pages.append({"english": "", "spanish": "", "teacher_note": False, "custom_tip": ""})
     pages[page_idx]["english"] = data.get("english", "")
     pages[page_idx]["spanish"] = data.get("spanish", "")
     pages[page_idx]["teacher_note"] = data.get("teacher_note", False)
+    pages[page_idx]["custom_tip"] = data.get("custom_tip", "")
     save_books(books)
     return jsonify(success=True)
 
