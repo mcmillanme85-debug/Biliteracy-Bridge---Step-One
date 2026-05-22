@@ -1,58 +1,45 @@
-import os, json, uuid, re, csv, io, secrets, string
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, send_file, make_response
+import json, os, random, io, base64, csv
 from pathlib import Path
-from io import BytesIO
-from functools import wraps
-from flask import (Flask, request, jsonify, send_file,
-                   render_template, session, redirect, url_for, abort)
-import fitz
+import fitz  # PyMuPDF
 from PIL import Image
 from elevenlabs.client import ElevenLabs
 from elevenlabs import VoiceSettings
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "biliteracy-bridge-secret-2025")
+app.secret_key = os.environ.get('SECRET_KEY', 'biliteracy-dev-key-2025')
 
-DATA_DIR  = Path("/var/data")
-PDFS_DIR  = DATA_DIR / "pdfs"
-PAGES_DIR = DATA_DIR / "pages"
-for d in [DATA_DIR, PDFS_DIR, PAGES_DIR]:
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
+ELEVENLABS_API_KEY = os.environ.get('ELEVENLABS_API_KEY', '')
+VOICE_ES = "2Lb1en5ujrODDIqmp7F3"   # Jhenny (Spanish)
+VOICE_EN = "2EUn20N7uqcXUxqGrJEF"   # Britney (English)
+
+DATA_DIR = Path("data")
+UPLOADS_DIR = Path("uploads")
+IMAGES_DIR = Path("page_images")
+for d in [DATA_DIR, UPLOADS_DIR, IMAGES_DIR]:
     d.mkdir(exist_ok=True)
 
-BOOKS_FILE     = DATA_DIR / "books.json"
-CODES_FILE     = DATA_DIR / "codes.json"
-ELEVENLABS_KEY = os.environ.get("ELEVENLABS_API_KEY", "")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
+BOOKS_FILE = DATA_DIR / "books.json"
 
-SPANISH_VOICE_ID = os.environ.get("SPANISH_VOICE_ID", "2Lb1en5ujrODDIqmp7F3")
-ENGLISH_VOICE_ID = os.environ.get("ENGLISH_VOICE_ID", "2EUn20N7uqcXUxqGrJEF")
-TTS_MODEL        = "eleven_multilingual_v2"
-TTS_STABILITY    = 0.80
-TTS_SIMILARITY   = 0.85
-TTS_SPEED        = 0.75
-
-# ── Data helpers ──────────────────────────────────────────────────
+# ── helpers ──────────────────────────────────────────────────────────────────
 
 def load_books():
     if BOOKS_FILE.exists():
-        with open(BOOKS_FILE, encoding="utf-8") as f:
+        with open(BOOKS_FILE) as f:
             return json.load(f)
     return {}
 
 def save_books(books):
-    with open(BOOKS_FILE, "w", encoding="utf-8") as f:
-        json.dump(books, f, indent=2, ensure_ascii=False)
+    with open(BOOKS_FILE, "w") as f:
+        json.dump(books, f, indent=2)
 
-def load_codes():
-    if CODES_FILE.exists():
-        with open(CODES_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+def generate_code():
+    """Return a memorable 4-digit numeric code (1000–9999)."""
+    return str(random.randint(1000, 9999))
 
-def save_codes(codes):
-    with open(CODES_FILE, "w", encoding="utf-8") as f:
-        json.dump(codes, f, indent=2, ensure_ascii=False)
-
-def admin_required(f):
+def requires_admin(f):
+    from functools import wraps
     @wraps(f)
     def decorated(*args, **kwargs):
         if not session.get("admin"):
@@ -60,120 +47,92 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-def has_book_access(book_id, book):
-    """Book 1 (marked free) is always accessible. Others need a code in session."""
-    if book.get("free", False):
+def book_accessible(book_id, book):
+    """True if the user can view this book (no code, or code entered)."""
+    if not book.get("access_code"):          # no code set = always open
         return True
-    unlocked = session.get("unlocked_books", [])
-    return book_id in unlocked
+    if book.get("free", False):              # flagged free
+        return True
+    entered = session.get(f"access_{book_id}")
+    return entered == book.get("access_code")
 
-def generate_code(length=8):
-    chars = string.ascii_uppercase + string.digits
-    return "".join(secrets.choice(chars) for _ in range(length))
-
-# ── Public routes ─────────────────────────────────────────────────
+# ── public routes ─────────────────────────────────────────────────────────────
 
 @app.route("/")
-def index():
+def home():
     books = load_books()
-    unlocked = session.get("unlocked_books", [])
-    return render_template("home.html", books=books, unlocked=unlocked)
+    return render_template("home.html", books=books)
 
 @app.route("/book/<book_id>")
-def book_page(book_id):
+def book(book_id):
     books = load_books()
-    book  = books.get(book_id)
-    if not book:
-        abort(404)
-    if not has_book_access(book_id, book):
-        return redirect(url_for("access_page", book_id=book_id))
-    return render_template("book.html", book=book, book_id=book_id)
+    b = books.get(book_id)
+    if not b:
+        return "Book not found", 404
+    if not book_accessible(book_id, b):
+        return redirect(url_for("access", book_id=book_id))
+    return render_template("book.html", book=b, book_id=book_id)
 
 @app.route("/access/<book_id>", methods=["GET", "POST"])
-def access_page(book_id):
+def access(book_id):
     books = load_books()
-    book  = books.get(book_id)
-    if not book:
-        abort(404)
-    if has_book_access(book_id, book):
-        return redirect(url_for("book_page", book_id=book_id))
-
+    b = books.get(book_id)
+    if not b:
+        return "Book not found", 404
     error = None
     if request.method == "POST":
-        entered = request.form.get("code", "").strip().upper().replace("-", "").replace(" ", "")
-        codes   = load_codes()
-        valid_codes = [c.upper().replace("-","").replace(" ","") for c in codes.get(book_id, [])]
-        if entered in valid_codes:
-            unlocked = session.get("unlocked_books", [])
-            if book_id not in unlocked:
-                unlocked.append(book_id)
-            session["unlocked_books"] = unlocked
-            session.modified = True
-            return redirect(url_for("book_page", book_id=book_id))
+        entered = "".join([
+            request.form.get("d1", ""),
+            request.form.get("d2", ""),
+            request.form.get("d3", ""),
+            request.form.get("d4", ""),
+        ]).strip()
+        if entered == b.get("access_code", ""):
+            session[f"access_{book_id}"] = entered
+            return redirect(url_for("book", book_id=book_id))
         else:
-            error = "That code doesn't match — double-check the inside cover of your book!"
+            error = "That code didn't match. Please try again."
+    return render_template("access.html", book=b, book_id=book_id, error=error)
 
-    return render_template("access.html", book=book, book_id=book_id, error=error)
-
-@app.route("/api/book/<book_id>/page/<int:page_num>/image")
-def page_image(book_id, page_num):
-    books = load_books()
-    book  = books.get(book_id)
-    if not book or not has_book_access(book_id, book):
-        abort(403)
-    img_path = PAGES_DIR / book_id / f"page_{page_num}.jpg"
+@app.route("/page-image/<book_id>/<int:page_idx>")
+def page_image(book_id, page_idx):
+    img_path = IMAGES_DIR / book_id / f"page_{page_idx}.jpg"
     if not img_path.exists():
-        abort(404)
+        return "Image not found", 404
     return send_file(img_path, mimetype="image/jpeg")
 
-@app.route("/api/book/<book_id>/page/<int:page_num>/content")
-def page_content(book_id, page_num):
+@app.route("/speak/<book_id>/<int:page_idx>/<lang>")
+def speak(book_id, page_idx, lang):
     books = load_books()
-    book  = books.get(book_id)
-    if not book or not has_book_access(book_id, book):
-        return jsonify({"error": "Access denied"}), 403
-    pages = book.get("pages", [])
-    if page_num >= len(pages):
-        return jsonify({"content": [], "type": "words", "teacher_note": ""})
-    pg = pages[page_num]
-    return jsonify({
-        "content":      pg.get("content", []),
-        "type":         pg.get("type", "words"),
-        "teacher_note": pg.get("teacher_note", "")
-    })
-
-@app.route("/api/speak", methods=["POST"])
-def speak():
-    data    = request.get_json()
-    spanish = data.get("spanish", "").strip()
-    english = data.get("english", "").strip()
-    lang    = data.get("lang", "both")
-
-    if not ELEVENLABS_KEY:
-        return jsonify({"error": "Audio service not configured"}), 400
-
+    b = books.get(book_id)
+    if not b:
+        return jsonify(error="Book not found"), 404
+    if not book_accessible(book_id, b):
+        return jsonify(error="Access required"), 403
+    pages = b.get("pages", [])
+    if page_idx >= len(pages):
+        return jsonify(error="Page not found"), 404
+    page = pages[page_idx]
+    word = page.get("spanish" if lang == "es" else "english", "")
+    if not word:
+        return jsonify(error="No word on this page"), 400
+    if not ELEVENLABS_API_KEY:
+        return jsonify(error="ElevenLabs key not configured"), 500
     try:
-        client = ElevenLabs(api_key=ELEVENLABS_KEY)
-        vs     = VoiceSettings(stability=TTS_STABILITY,
-                               similarity_boost=TTS_SIMILARITY,
-                               speed=TTS_SPEED)
-
-        def synth(text, voice_id):
-            return b"".join(client.text_to_speech.convert(
-                voice_id=voice_id, text=text,
-                model_id=TTS_MODEL, voice_settings=vs))
-
-        chunks = []
-        if lang in ("es", "both") and spanish:
-            chunks.append(synth(spanish, SPANISH_VOICE_ID))
-        if lang in ("en", "both") and english:
-            chunks.append(synth(english, ENGLISH_VOICE_ID))
-
-        return send_file(BytesIO(b"".join(chunks)), mimetype="audio/mpeg")
+        client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
+        voice_id = VOICE_ES if lang == "es" else VOICE_EN
+        audio = client.text_to_speech.convert(
+            text=word,
+            voice_id=voice_id,
+            model_id="eleven_multilingual_v2",
+            voice_settings=VoiceSettings(stability=0.80, similarity_boost=0.75, style=0.3)
+        )
+        audio_bytes = b"".join(audio)
+        return send_file(io.BytesIO(audio_bytes), mimetype="audio/mpeg")
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify(error=str(e)), 500
 
-# ── Admin ─────────────────────────────────────────────────────────
+# ── admin routes ──────────────────────────────────────────────────────────────
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
@@ -182,209 +141,142 @@ def admin_login():
         if request.form.get("password") == ADMIN_PASSWORD:
             session["admin"] = True
             return redirect(url_for("admin_dashboard"))
-        error = "Incorrect password. Please try again."
+        error = "Incorrect password."
     return render_template("admin_login.html", error=error)
 
 @app.route("/admin/logout")
 def admin_logout():
     session.pop("admin", None)
-    return redirect(url_for("admin_login"))
+    return redirect(url_for("home"))
 
 @app.route("/admin")
-@admin_required
+@requires_admin
 def admin_dashboard():
     books = load_books()
-    codes = load_codes()
-    return render_template("admin_dashboard.html", books=books, codes=codes)
+    return render_template("admin_dashboard.html", books=books)
 
-@app.route("/admin/book/new", methods=["GET", "POST"])
-@admin_required
+@app.route("/admin/new-book", methods=["GET", "POST"])
+@requires_admin
 def admin_new_book():
-    error = None
     if request.method == "POST":
-        title   = request.form.get("title", "").strip()
-        book_id = request.form.get("book_id", "").strip().lower()
-        is_free = request.form.get("is_free") == "on"
-        book_id = re.sub(r"[^a-z0-9\-]", "-", book_id).strip("-")
-        if not title or not book_id:
-            error = "Both fields are required."
-        else:
-            books = load_books()
-            if book_id in books:
-                error = "That URL ID is already in use. Choose another."
-            else:
-                books[book_id] = {
-                    "title": title,
-                    "num_pages": 0,
-                    "pages": [],
-                    "free": is_free
-                }
-                save_books(books)
-                return redirect(url_for("admin_book", book_id=book_id))
-    return render_template("admin_new_book.html", error=error)
+        title = request.form.get("title", "").strip()
+        book_id = request.form.get("book_id", "").strip().lower().replace(" ", "-")
+        free = request.form.get("free") == "on"
+        books = load_books()
+        if book_id in books:
+            return render_template("admin_new_book.html", error="That ID already exists.")
+        books[book_id] = {
+            "title": title,
+            "num_pages": 0,
+            "pages": [],
+            "free": free,
+            "access_code": "" if free else generate_code()
+        }
+        save_books(books)
+        (IMAGES_DIR / book_id).mkdir(exist_ok=True)
+        return redirect(url_for("admin_book", book_id=book_id))
+    return render_template("admin_new_book.html")
 
 @app.route("/admin/book/<book_id>")
-@admin_required
+@requires_admin
 def admin_book(book_id):
     books = load_books()
-    book  = books.get(book_id)
-    if not book:
-        abort(404)
-    return render_template("admin_book.html", book=book, book_id=book_id)
+    b = books.get(book_id)
+    if not b:
+        return "Book not found", 404
+    return render_template("admin_book.html", book=b, book_id=book_id)
 
-@app.route("/admin/book/<book_id>/set-free", methods=["POST"])
-@admin_required
-def admin_set_free(book_id):
+@app.route("/admin/book/<book_id>/generate-code", methods=["POST"])
+@requires_admin
+def admin_generate_code(book_id):
     books = load_books()
     if book_id not in books:
-        abort(404)
-    books[book_id]["free"] = request.form.get("free") == "true"
+        return jsonify(error="Not found"), 404
+    code = generate_code()
+    books[book_id]["access_code"] = code
     save_books(books)
-    return redirect(url_for("admin_dashboard"))
+    return jsonify(code=code)
 
-@app.route("/admin/codes", methods=["GET", "POST"])
-@admin_required
-def admin_codes():
+@app.route("/admin/book/<book_id>/toggle-free", methods=["POST"])
+@requires_admin
+def admin_toggle_free(book_id):
     books = load_books()
-    codes = load_codes()
-    message = None
-    if request.method == "POST":
-        action  = request.form.get("action")
-        book_id = request.form.get("book_id", "").strip()
-        if action == "generate":
-            new_code = generate_code()
-            codes.setdefault(book_id, []).append(new_code)
-            save_codes(codes)
-            message = f"Generated code for {books.get(book_id, {}).get('title', book_id)}: {new_code}"
-        elif action == "set":
-            raw = request.form.get("code", "").strip().upper()
-            if raw:
-                codes.setdefault(book_id, []).append(raw)
-                save_codes(codes)
-                message = f"Code '{raw}' added for {books.get(book_id, {}).get('title', book_id)}"
-        elif action == "delete":
-            code_to_del = request.form.get("code", "").strip()
-            if book_id in codes and code_to_del in codes[book_id]:
-                codes[book_id].remove(code_to_del)
-                save_codes(codes)
-                message = f"Code deleted."
-        elif action == "clear":
-            codes[book_id] = []
-            save_codes(codes)
-            message = "All codes cleared."
-    return render_template("admin_codes.html", books=books, codes=codes, message=message)
+    if book_id not in books:
+        return jsonify(error="Not found"), 404
+    books[book_id]["free"] = not books[book_id].get("free", False)
+    save_books(books)
+    return jsonify(free=books[book_id]["free"])
 
 @app.route("/admin/book/<book_id>/upload-pdf", methods=["POST"])
-@admin_required
-def admin_upload_pdf(book_id):
+@requires_admin
+def upload_pdf(book_id):
     books = load_books()
     if book_id not in books:
-        return jsonify({"error": "Book not found"}), 404
-    if "pdf" not in request.files:
-        return jsonify({"error": "No file provided"}), 400
-    file = request.files["pdf"]
-    if not file.filename.lower().endswith(".pdf"):
-        return jsonify({"error": "PDF files only"}), 400
-
-    pdf_path  = PDFS_DIR / f"{book_id}.pdf"
-    file.save(pdf_path)
-    pages_dir = PAGES_DIR / book_id
-    pages_dir.mkdir(exist_ok=True)
-
-    doc       = fitz.open(str(pdf_path))
+        return jsonify(error="Book not found"), 404
+    f = request.files.get("pdf")
+    if not f:
+        return jsonify(error="No file"), 400
+    pdf_bytes = f.read()
+    img_dir = IMAGES_DIR / book_id
+    img_dir.mkdir(exist_ok=True)
+    # Clear old images
+    for old in img_dir.glob("*.jpg"):
+        old.unlink()
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
     num_pages = len(doc)
     for i, page in enumerate(doc):
-        mat = fitz.Matrix(150 / 72, 150 / 72)
+        mat = fitz.Matrix(1.5, 1.5)
         pix = page.get_pixmap(matrix=mat)
         img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-        img.save(pages_dir / f"page_{i}.jpg", "JPEG", quality=85)
-    doc.close()
-
-    existing  = books[book_id].get("pages", [])
-    new_pages = []
-    for i in range(num_pages):
-        if i < len(existing):
-            new_pages.append(existing[i])
-        else:
-            new_pages.append({"content": [], "type": "words", "teacher_note": ""})
-
+        img.save(img_dir / f"page_{i}.jpg", quality=85)
+    # Extend pages array if needed
+    while len(books[book_id]["pages"]) < num_pages:
+        books[book_id]["pages"].append({"english": "", "spanish": "", "teacher_note": False})
     books[book_id]["num_pages"] = num_pages
-    books[book_id]["pages"]     = new_pages
     save_books(books)
-    return jsonify({"num_pages": num_pages, "success": True})
-
-@app.route("/admin/book/<book_id>/upload-csv", methods=["POST"])
-@admin_required
-def admin_upload_csv(book_id):
-    books = load_books()
-    if book_id not in books:
-        return jsonify({"error": "Book not found"}), 404
-    if "csv" not in request.files:
-        return jsonify({"error": "No file provided"}), 400
-
-    raw    = request.files["csv"].read().decode("utf-8-sig")
-    reader = csv.DictReader(io.StringIO(raw))
-
-    page_data = {}
-    for row in reader:
-        norm = {k.strip().lower(): v.strip() for k, v in row.items() if k}
-        try:
-            page_idx = int(norm.get("page", 0)) - 1
-        except ValueError:
-            continue
-        es = norm.get("spanish", norm.get("español", norm.get("es", ""))).strip()
-        en = norm.get("english", norm.get("inglés", norm.get("en", ""))).strip()
-        if not es and not en:
-            continue
-        page_data.setdefault(page_idx, []).append({"es": es, "en": en})
-
-    pages     = books[book_id].get("pages", [])
-    num_pages = books[book_id].get("num_pages", 0)
-    while len(pages) < num_pages:
-        pages.append({"content": [], "type": "words", "teacher_note": ""})
-
-    for page_idx, items in page_data.items():
-        if 0 <= page_idx < num_pages:
-            pages[page_idx]["content"] = items
-
-    books[book_id]["pages"] = pages
-    save_books(books)
-    return jsonify({"success": True, "pages_filled": len(page_data)})
+    return jsonify(success=True, num_pages=num_pages)
 
 @app.route("/admin/book/<book_id>/save-page", methods=["POST"])
-@admin_required
-def admin_save_page(book_id):
+@requires_admin
+def save_page(book_id):
     books = load_books()
     if book_id not in books:
-        return jsonify({"error": "Book not found"}), 404
-
-    data         = request.get_json()
-    page_num     = int(data.get("page_num", 0))
-    content      = data.get("content", [])
-    content_type = data.get("type", "words")
-    teacher_note = data.get("teacher_note", "").strip()
-
-    pages = books[book_id].get("pages", [])
-    while len(pages) <= page_num:
-        pages.append({"content": [], "type": "words", "teacher_note": ""})
-
-    pages[page_num] = {
-        "content":      content,
-        "type":         content_type,
-        "teacher_note": teacher_note
-    }
-    books[book_id]["pages"] = pages
+        return jsonify(error="Not found"), 404
+    data = request.get_json()
+    page_idx = data.get("page_idx")
+    pages = books[book_id]["pages"]
+    while len(pages) <= page_idx:
+        pages.append({"english": "", "spanish": "", "teacher_note": False})
+    pages[page_idx]["english"] = data.get("english", "")
+    pages[page_idx]["spanish"] = data.get("spanish", "")
+    pages[page_idx]["teacher_note"] = data.get("teacher_note", False)
     save_books(books)
-    return jsonify({"success": True})
+    return jsonify(success=True)
 
-@app.route("/admin/book/<book_id>/delete", methods=["POST"])
-@admin_required
-def admin_delete_book(book_id):
+@app.route("/admin/book/<book_id>/upload-csv", methods=["POST"])
+@requires_admin
+def upload_csv(book_id):
     books = load_books()
-    books.pop(book_id, None)
+    if book_id not in books:
+        return jsonify(error="Not found"), 404
+    f = request.files.get("csv")
+    if not f:
+        return jsonify(error="No file"), 400
+    content = f.read().decode("utf-8").splitlines()
+    reader = csv.DictReader(content)
+    pages = books[book_id]["pages"]
+    filled = 0
+    for row in reader:
+        try:
+            idx = int(row.get("page", row.get("Page", ""))) - 1
+            if 0 <= idx < len(pages):
+                pages[idx]["english"] = row.get("english", row.get("English", "")).strip()
+                pages[idx]["spanish"] = row.get("spanish", row.get("Spanish", "")).strip()
+                filled += 1
+        except (ValueError, TypeError):
+            continue
     save_books(books)
-    return redirect(url_for("admin_dashboard"))
+    return jsonify(success=True, pages_filled=filled)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(debug=True)
