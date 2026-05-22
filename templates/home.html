@@ -6,48 +6,51 @@
 <title>Biliteracy Bridge · Pronunciation Guide</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FFF8F2;color:#1a1a1a;min-height:100vh}
-header{background:#fff;border-bottom:2px solid #FF7043;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{font-size:28px}
-.brand-text h1{font-size:20px;font-weight:700;color:#E65100}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FFF8F0;color:#1a1a1a;min-height:100vh}
+header{background:#fff;border-bottom:3px solid #F9C12E;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{height:52px;width:auto}
+.brand-text h1{font-size:19px;font-weight:800;color:#1a1a1a;letter-spacing:-.3px}
 .brand-text p{font-size:13px;color:#888;margin-top:2px}
-.admin-link{font-size:12px;color:#bbb;text-decoration:none;padding:6px 12px;border:1px solid #eee;border-radius:20px}
-.admin-link:hover{color:#FF7043;border-color:#FF7043}
-main{max-width:900px;margin:0 auto;padding:32px 20px}
+.admin-link{font-size:12px;color:#bbb;text-decoration:none;padding:6px 14px;border:1px solid #eee;border-radius:20px}
+.admin-link:hover{color:#F9C12E;border-color:#F9C12E}
+main{max-width:920px;margin:0 auto;padding:32px 20px}
 .hero{text-align:center;margin-bottom:36px}
-.hero h2{font-size:26px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
-.hero p{font-size:15px;color:#666;max-width:500px;margin:0 auto}
+.hero-logo{display:flex;justify-content:center;margin-bottom:16px}
+.hero-logo img{height:100px;width:auto}
+.hero h2{font-size:26px;font-weight:800;color:#1a1a1a;margin-bottom:8px}
+.hero p{font-size:15px;color:#666;max-width:480px;margin:0 auto}
 .content-grid{display:grid;grid-template-columns:1fr 240px;gap:28px;align-items:start}
 @media(max-width:680px){.content-grid{grid-template-columns:1fr}}
-.books-section h3{font-size:16px;font-weight:600;color:#555;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.book-card{background:#fff;border:1.5px solid #f0e0d8;border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:box-shadow .15s,border-color .15s}
-.book-card:hover{box-shadow:0 4px 20px rgba(255,112,67,.12);border-color:#ffb89a}
+.books-section h3{font-size:14px;font-weight:700;color:#888;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
+.book-card{background:#fff;border:2px solid #F0E8D8;border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:box-shadow .15s,border-color .15s}
+.book-card:hover{box-shadow:0 4px 20px rgba(249,193,46,.2);border-color:#F9C12E}
 .book-icon{font-size:36px;flex-shrink:0}
 .book-info{flex:1}
-.book-title{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:4px}
-.book-meta{font-size:13px;color:#888}
+.book-title{font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.book-meta{font-size:13px;color:#999}
 .book-action{flex-shrink:0}
-.btn-open{display:inline-block;background:#FF7043;color:#fff;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;transition:background .15s}
-.btn-open:hover{background:#E64A19}
-.btn-locked{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#FF7043;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;border:2px solid #FF7043;transition:all .15s}
-.btn-locked:hover{background:#FF7043;color:#fff}
-.free-badge{display:inline-block;background:#E8F5E9;color:#2E7D32;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px}
-.locked-badge{display:inline-block;background:#FFF3E0;color:#E65100;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px}
-.qr-card{background:#fff;border:1.5px solid #f0e0d8;border-radius:16px;padding:20px;text-align:center;position:sticky;top:20px}
-.qr-card h3{font-size:14px;font-weight:600;color:#555;margin-bottom:4px}
+.btn-open{display:inline-block;background:#F9C12E;color:#1a1a1a;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:800;transition:background .15s;border:none;cursor:pointer}
+.btn-open:hover{background:#e6b020}
+.btn-locked{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1a1a1a;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700;border:2px solid #F9C12E;transition:all .15s}
+.btn-locked:hover{background:#F9C12E}
+.free-badge{display:inline-block;background:#E8F5E9;color:#2E7D32;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+.locked-badge{display:inline-block;background:#FFF8E1;color:#F57F17;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+.qr-card{background:#fff;border:2px solid #F0E8D8;border-radius:16px;padding:20px;text-align:center;position:sticky;top:20px}
+.qr-card h3{font-size:14px;font-weight:700;color:#555;margin-bottom:4px}
 .qr-card p{font-size:12px;color:#aaa;margin-bottom:14px;line-height:1.4}
 .qr-img{width:180px;height:180px;border-radius:10px;border:1px solid #f0e0d8}
-.qr-url{font-size:11px;color:#bbb;margin-top:10px;word-break:break-all}
-.how-it-works{background:#FFF3E0;border-radius:14px;padding:16px 20px;margin-top:14px;font-size:13px;color:#5D4037;line-height:1.6}
-.how-it-works strong{color:#E65100}
-footer{text-align:center;padding:28px;color:#bbb;font-size:12px;border-top:1px solid #f0ede8;margin-top:40px}
+.qr-url{font-size:11px;color:#ccc;margin-top:10px;word-break:break-all}
+.how-box{background:#FFF8E1;border-radius:14px;padding:16px 20px;margin-top:14px;font-size:13px;color:#5D4037;line-height:1.6;border-left:4px solid #F9C12E}
+.how-box strong{color:#E65100}
+footer{text-align:center;padding:28px;color:#ccc;font-size:12px;border-top:1px solid #f0ede8;margin-top:40px}
+footer img{height:28px;vertical-align:middle;margin-right:8px;opacity:.6}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
-    <div class="logo">🦜</div>
+    <img src="/static/logo.png" alt="Biliteracy Bridge Logo">
     <div class="brand-text">
       <h1>Biliteracy Bridge</h1>
       <p>Pronunciation Guide · Guía de Pronunciación</p>
@@ -58,6 +61,7 @@ footer{text-align:center;padding:28px;color:#bbb;font-size:12px;border-top:1px s
 
 <main>
   <div class="hero">
+    <div class="hero-logo"><img src="/static/logo.png" alt="Biliteracy Bridge"></div>
     <h2>Hear Every Word in Both Languages</h2>
     <p>Interactive pronunciation guides for parents and teachers supporting bilingual readers ages 2–6.</p>
   </div>
@@ -78,7 +82,7 @@ footer{text-align:center;padding:28px;color:#bbb;font-size:12px;border-top:1px s
                 <span class="locked-badge">🔒 Code Required</span>
               {% endif %}
             </div>
-            <div class="book-meta">{{ book.num_pages }} pages</div>
+            <div class="book-meta">{{ book.num_pages }} pages · Biliteracy Bridge Step {{ loop.index }}</div>
           </div>
           <div class="book-action">
             {% if book.get('free') or not book.get('access_code') %}
@@ -93,27 +97,25 @@ footer{text-align:center;padding:28px;color:#bbb;font-size:12px;border-top:1px s
         {% endfor %}
       </div>
 
-      <div class="how-it-works">
+      <div class="how-box">
         <strong>🔑 How access codes work</strong><br>
-        Book 1 is always free! For Books 2 and onwards, find your unique <strong>4-digit code</strong> printed inside the front cover of your book. Enter it once and the app remembers your access.
+        Book 1 is always free! For Books 2 onwards, find your unique <strong>4-digit code</strong> printed inside the front cover of your book. Enter it once and the app remembers your device.
       </div>
     </div>
 
     <div class="qr-card">
       <h3>Scan to Open</h3>
-      <p>Share this QR code with parents & teachers</p>
-      <img
-        class="qr-img"
-        src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=E65100&bgcolor=FFFFFF&data={{ request.host_url | urlencode }}"
-        alt="QR code for Biliteracy Bridge app"
-      >
+      <p>Share with parents &amp; teachers</p>
+      <img class="qr-img"
+        src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=1a1a1a&bgcolor=FFFFFF&data={{ request.host_url | urlencode }}"
+        alt="QR code">
       <div class="qr-url">{{ request.host_url }}</div>
     </div>
   </div>
 </main>
 
 <footer>
-  © Biliteracy Bridge · biliteracybridge.com · Built for bilingual families everywhere
+  <img src="/static/logo.png" alt=""> © Biliteracy Bridge · biliteracybridge.com · Bridging Languages, Empowering Futures
 </footer>
 </body>
 </html>
