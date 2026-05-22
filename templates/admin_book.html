@@ -3,368 +3,388 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edit · {{ book.title }}</title>
+<title>Admin · {{ book.title }}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f7f7f7;color:#1a1a1a}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f4f4;color:#1a1a1a}
 header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
 .brand{display:flex;align-items:center;gap:10px}
-.brand img{height:38px;width:auto}
+.brand img{height:36px;width:auto}
 .brand-text{font-size:14px;font-weight:700;color:#F9C12E}
-.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.code-pill{background:#F9C12E;color:#1a1a1a;font-size:14px;font-weight:800;padding:5px 14px;border-radius:20px;letter-spacing:3px}
-.btn-hdr{font-size:12px;padding:6px 12px;border-radius:8px;border:1px solid #444;background:transparent;cursor:pointer;color:#ccc}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.code-pill{background:#F9C12E;color:#1a1a1a;font-size:15px;font-weight:900;padding:5px 16px;border-radius:20px;letter-spacing:4px}
+.btn-hdr{font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid #555;background:transparent;cursor:pointer;color:#ccc;text-decoration:none;display:inline-block}
 .btn-hdr:hover{border-color:#F9C12E;color:#F9C12E}
-.layout{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 58px)}
-@media(max-width:680px){.layout{grid-template-columns:1fr}}
-.sidebar{background:#fff;border-right:1px solid #eee;padding:14px 10px;overflow-y:auto;max-height:calc(100vh - 58px);position:sticky;top:58px}
+.layout{display:grid;grid-template-columns:180px 1fr;min-height:calc(100vh - 58px)}
+@media(max-width:600px){.layout{grid-template-columns:1fr}}
+.sidebar{background:#fff;border-right:1px solid #e8e8e8;padding:12px 8px;overflow-y:auto;max-height:calc(100vh - 58px);position:sticky;top:58px}
 .sidebar-title{font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.6px;padding:0 8px;margin-bottom:10px}
 .pg-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:7px 10px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:13px;color:#555;text-align:left;transition:all .12s}
-.pg-btn:hover{background:#FFF8E1;color:#1a1a1a}
+.pg-btn:hover{background:#FFF8E1}
 .pg-btn.active{background:#F9C12E;color:#1a1a1a;font-weight:700}
-.pg-btn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.dot-filled{background:#4CAF50}
-.dot-empty{background:#e0e0e0}
-.pg-btn.active .dot-filled,.pg-btn.active .dot-empty{background:#1a1a1a;opacity:.4}
-.main{padding:22px;max-width:760px}
-.card{background:#fff;border-radius:14px;border:1px solid #eee;padding:20px;margin-bottom:16px}
-.card h2{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-on{background:#4CAF50}.dot-off{background:#ddd}
+.pg-btn.active .dot-on,.pg-btn.active .dot-off{background:rgba(0,0,0,.3)}
+.main{padding:20px;max-width:720px}
+.card{background:#fff;border-radius:14px;border:1px solid #e8e8e8;padding:22px;margin-bottom:16px}
+.card h2{font-size:15px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:7px;color:#1a1a1a}
+/* Code section */
+.code-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.code-big{font-size:36px;font-weight:900;letter-spacing:6px;color:#1a1a1a;background:#FFF8E1;padding:10px 22px;border-radius:12px;border:2px solid #F9C12E}
+.btn-regen{background:#fff;border:2px solid #F9C12E;color:#1a1a1a;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-regen:hover{background:#F9C12E}
+.info-box{background:#E8F4FD;border-radius:8px;padding:11px 14px;font-size:13px;color:#1565C0;line-height:1.5}
+/* Upload areas */
+.upload-label{display:block;border:2.5px dashed #d0d0d0;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa}
+.upload-label:hover{border-color:#F9C12E;background:#FFFDF5}
+.upload-label input[type=file]{display:none}
+.upload-icon{font-size:32px;margin-bottom:8px}
+.upload-label strong{font-size:15px;font-weight:700;display:block;margin-bottom:4px;color:#1a1a1a}
+.upload-label span{font-size:13px;color:#aaa}
+.upload-msg{margin-top:10px;font-size:13px;min-height:20px;font-weight:500}
+.msg-ok{color:#2E7D32}.msg-err{color:#C62828}.msg-loading{color:#1565C0}
+.progress-bar{width:100%;height:6px;background:#e8e8e8;border-radius:3px;margin-top:8px;overflow:hidden;display:none}
+.progress-fill{height:100%;background:#F9C12E;border-radius:3px;animation:prog 2s ease-in-out infinite}
+@keyframes prog{0%{width:10%}50%{width:80%}100%{width:95%}}
+/* Page editor */
 .field{margin-bottom:14px}
 .field label{display:block;font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.field input[type=text],.field textarea{width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:8px;font-size:14px;color:#1a1a1a;outline:none;transition:border-color .15s;font-family:inherit}
-.field input[type=text]:focus,.field textarea:focus{border-color:#F9C12E;box-shadow:0 0 0 3px rgba(249,193,46,.1)}
-.field textarea{resize:vertical;min-height:80px;line-height:1.55}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.tip-box{background:#FFFDF5;border:1.5px solid #FFE082;border-radius:10px;padding:14px}
-.tip-box .default-preview{font-size:12px;color:#aaa;margin-bottom:10px;font-style:italic;line-height:1.5;padding:8px 10px;background:#f9f9f9;border-radius:6px;border-left:3px solid #FFE082}
-.tip-box .default-preview b{color:#E65100;font-style:normal}
-.check-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#555;padding:4px 0}
+.field input,.field textarea{width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:8px;font-size:15px;color:#1a1a1a;outline:none;transition:border-color .15s;font-family:inherit}
+.field input:focus,.field textarea:focus{border-color:#F9C12E;box-shadow:0 0 0 3px rgba(249,193,46,.12)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.55;font-size:13px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tip-wrap{background:#FFFDF5;border:1.5px solid #FFE082;border-radius:10px;padding:14px}
+.default-tip-preview{font-size:12px;color:#aaa;font-style:italic;line-height:1.5;padding:8px 10px;background:#f5f5f5;border-radius:6px;border-left:3px solid #F9C12E;margin-bottom:10px}
+.default-tip-preview b{color:#E65100;font-style:normal}
+.check-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#555;padding:6px 0}
 .check-row input{width:16px;height:16px;accent-color:#F9C12E;cursor:pointer}
-.btn-save{background:#F9C12E;color:#1a1a1a;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;transition:background .15s}
+.page-preview{max-width:260px;border-radius:10px;border:1px solid #eee;margin-bottom:14px;display:block}
+.save-row{display:flex;align-items:center;gap:12px;margin-top:8px}
+.btn-save{background:#F9C12E;color:#1a1a1a;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;transition:background .15s}
 .btn-save:hover{background:#e6b020}
-.save-msg{font-size:13px;color:#aaa;margin-left:10px}
-.save-msg.ok{color:#2E7D32}
-.save-msg.err{color:#c62828}
-.page-img{max-width:280px;width:100%;border-radius:10px;border:1px solid #eee;display:block;margin-bottom:14px}
-.upload-zone{border:2px dashed #e0e0e0;border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:border-color .15s;background:#fafafa}
-.upload-zone:hover{border-color:#F9C12E;background:#FFFDF5}
-.upload-zone input{display:none}
-.upload-zone p{font-size:13px;color:#bbb;margin-top:6px}
-.upload-zone .icon{font-size:28px}
-.upload-msg{font-size:13px;margin-top:8px}
-.upload-msg.ok{color:#2E7D32}
-.upload-msg.err{color:#c62828}
-.code-display{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.code-big{font-size:32px;font-weight:900;letter-spacing:6px;color:#1a1a1a;background:#FFF8E1;padding:10px 20px;border-radius:10px;border:2px solid #F9C12E}
-.btn-regen{background:#fff;color:#1a1a1a;border:2px solid #F9C12E;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
-.btn-regen:hover{background:#F9C12E}
-.info{background:#E3F2FD;border-radius:8px;padding:11px 14px;font-size:13px;color:#1565C0;line-height:1.5;margin-top:10px}
-.csv-template{font-size:12px;color:#aaa;margin-top:6px}
-.csv-template a{color:#F9C12E;text-decoration:none}
+.save-status{font-size:13px;color:#aaa}
+.save-status.ok{color:#2E7D32}.save-status.err{color:#C62828}
+.no-pages{text-align:center;padding:30px;color:#bbb;font-size:14px}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
-    <img src="/static/logo.png" alt="Biliteracy Bridge">
+    <img src="/static/logo.png" alt="BB" onerror="this.style.display='none'">
     <div class="brand-text">Admin · Book Editor</div>
   </div>
-  <div class="header-right">
+  <div class="hdr-right">
     {% if book.access_code %}<div class="code-pill">{{ book.access_code }}</div>{% endif %}
-    <a href="/book/{{ book_id }}" target="_blank"><button class="btn-hdr">👁 Preview</button></a>
-    <a href="/admin"><button class="btn-hdr">← Dashboard</button></a>
+    <a href="/book/{{ book_id }}" target="_blank" class="btn-hdr">👁 Preview</a>
+    <a href="/admin" class="btn-hdr">← Dashboard</a>
   </div>
 </header>
 
 <div class="layout">
-  <!-- Sidebar page list -->
+  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-title">Pages ({{ book.num_pages }})</div>
+    {% if book.num_pages == 0 %}
+      <div style="padding:12px 8px;font-size:12px;color:#ccc">Upload PDF first to see pages</div>
+    {% endif %}
     {% for i in range(book.num_pages) %}
     {% set p = book.pages[i] if i < book.pages|length else {} %}
-    <button class="pg-btn{% if i == 0 %} active{% endif %}" id="pgbtn_{{ i }}" onclick="loadPage({{ i }})">
-      <span>{{ i + 1 }}</span>
-      <span class="dot {% if p.get('english') %}dot-filled{% else %}dot-empty{% endif %}"></span>
+    <button class="pg-btn {% if i==0 %}active{% endif %}" id="pgbtn_{{i}}" onclick="loadPage({{i}})">
+      <span>{{ i+1 }}</span>
+      <span class="dot {% if p.get('english') %}dot-on{% else %}dot-off{% endif %}"></span>
     </button>
     {% endfor %}
   </div>
 
-  <!-- Main editor -->
+  <!-- Main -->
   <div class="main">
 
-    <!-- Book setup card -->
+    <!-- Book setup -->
     <div class="card">
-      <h2>⚙️ Book Setup</h2>
+      <h2>⚙️ Book Setup — {{ book.title }}</h2>
 
       <!-- Access code -->
       <div class="field">
         <label>Parent Access Code</label>
-        <div class="code-display">
+        <div class="code-row">
           <div class="code-big" id="codeDisplay">{{ book.access_code or '—' }}</div>
-          <button class="btn-regen" onclick="regenCode()">🔄 New Code</button>
+          <button class="btn-regen" onclick="regenCode()">🔄 Generate New Code</button>
         </div>
-        <div class="info">
-          📋 Print this code inside the front cover of your book. Parents enter it in the app to unlock pronunciation.
-        </div>
+        <div class="info-box">📋 Print this 4-digit code inside the front cover of your book. Parents type it into the app to unlock pronunciation.</div>
       </div>
 
       <!-- PDF upload -->
-      <div class="field" style="margin-top:16px">
-        <label>Upload PDF (Book Pages)</label>
-        <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
-          <div class="icon">📄</div>
-          <strong>Click to upload your PDF</strong>
-          <p>{{ book.num_pages }} pages loaded · Upload again to replace</p>
-          <input type="file" id="pdfInput" accept=".pdf" onchange="uploadPDF(this)">
-        </div>
+      <div class="field" style="margin-top:18px">
+        <label>📄 Upload Book PDF</label>
+        <label class="upload-label" id="pdfLabel">
+          <input type="file" id="pdfFile" accept=".pdf" onchange="uploadPDF(this)">
+          <div class="upload-icon">📄</div>
+          <strong id="pdfLabelText">Click here to choose your PDF</strong>
+          <span>{{ book.num_pages }} pages loaded · Click to replace</span>
+        </label>
         <div class="upload-msg" id="pdfMsg"></div>
+        <div class="progress-bar" id="pdfProgress"><div class="progress-fill"></div></div>
       </div>
 
       <!-- CSV upload -->
       <div class="field">
-        <label>Bulk Upload Words via CSV</label>
-        <div class="upload-zone" onclick="document.getElementById('csvInput').click()">
-          <div class="icon">📊</div>
-          <strong>Click to upload CSV</strong>
-          <p>Columns: page, english, spanish</p>
-          <input type="file" id="csvInput" accept=".csv" onchange="uploadCSV(this)">
-        </div>
+        <label>📊 Bulk Upload Words (CSV)</label>
+        <label class="upload-label" id="csvLabel">
+          <input type="file" id="csvFile" accept=".csv,.txt" onchange="uploadCSV(this)">
+          <div class="upload-icon">📊</div>
+          <strong>Click here to choose your CSV file</strong>
+          <span>Columns: page, english, spanish &nbsp;·&nbsp; <span style="color:#F9C12E;cursor:pointer" onclick="event.preventDefault();downloadTemplate()">Download template ↓</span></span>
+        </label>
         <div class="upload-msg" id="csvMsg"></div>
-        <div class="csv-template">Format: page number (1-based), English word, Spanish word. <a href="#" onclick="downloadTemplate()">Download template ↓</a></div>
       </div>
     </div>
 
-    <!-- Page word editor -->
-    <div class="card">
+    <!-- Page editor -->
+    <div class="card" id="pageEditorCard">
+      {% if book.num_pages == 0 %}
+      <div class="no-pages">⬆️ Upload your PDF above to start editing pages</div>
+      {% else %}
       <h2>✏️ Page <span id="pageNum">1</span> of {{ book.num_pages }}</h2>
-
-      <img class="page-img" id="pageImg" src="/page-image/{{ book_id }}/0" alt="Page preview" onerror="this.style.display='none'">
-
-      <div class="field-row">
+      <img class="page-preview" id="pageImg" src="/page-image/{{ book_id }}/0" alt="Page" onerror="this.style.display='none'">
+      <div class="two-col">
         <div class="field">
           <label>🇺🇸 English Word</label>
-          <input type="text" id="enWord" placeholder="e.g. Elephant">
+          <input type="text" id="enWord" placeholder="e.g. Elephant" oninput="updateTipPreview()">
         </div>
         <div class="field">
           <label>🇲🇽 Spanish Word</label>
           <input type="text" id="esWord" placeholder="e.g. Elefante">
         </div>
       </div>
-
-      <div class="field" style="margin-top:4px">
-        <label>💡 Custom Teaching Tip <span style="font-weight:400;color:#bbb">(optional — overrides the default)</span></label>
-        <div class="tip-box">
-          <div class="default-preview" id="defaultTipPreview">Enter an English word above to see the built-in tip, or write your own below.</div>
-          <textarea id="customTip" placeholder="Leave blank to use the built-in tip automatically. Or write a custom tip here that will show instead — great for personalising the experience for your audience!"></textarea>
+      <div class="field">
+        <label>💡 Custom Teaching Tip <span style="font-weight:400;color:#bbb">(optional — leave blank to use built-in)</span></label>
+        <div class="tip-wrap">
+          <div class="default-tip-preview" id="tipPreview">Enter an English word above to see the built-in tip for that word.</div>
+          <textarea id="customTip" placeholder="Write a custom tip here to override the built-in one. Great for adding your own voice!"></textarea>
         </div>
       </div>
-
       <div class="field">
         <div class="check-row">
-          <input type="checkbox" id="teacherNote">
-          <label for="teacherNote">Mark this page as having a special teacher note ⭐</label>
+          <input type="checkbox" id="teacherNote" onchange="savePage()">
+          <label for="teacherNote">⭐ Mark this page as having a special teacher note</label>
         </div>
       </div>
-
-      <div style="display:flex;align-items:center">
+      <div class="save-row">
         <button class="btn-save" onclick="savePage()">💾 Save Page</button>
-        <span class="save-msg" id="saveMsg"></span>
+        <span class="save-status" id="saveStatus"></span>
       </div>
+      {% endif %}
     </div>
+
   </div>
 </div>
 
 <script>
 const BOOK_ID = "{{ book_id }}";
+const NUM_PAGES = {{ book.num_pages }};
 const PAGES = {{ book.pages | tojson }};
 let currentPage = 0;
 
 const DEFAULT_TIPS = {
-"armadillo":"The double L in Spanish makes a 'y' sound: ar-ma-DEE-yo. Tell your child 'armadillo' means 'little armored one' in Spanish — tap fingers along your arm like armor plates!",
-"buffalo":"Nearly identical! Count syllables together: Buf-fa-lo (3) / Bú-fa-lo (3). The accent mark over ú tells you exactly where to stress — your built-in pronunciation guide.",
-"baboon":"Listen for the shared 'ba' at the start! English ends with 'boon,' Spanish adds 'wee-no': ba-bwee-NO. Can your child hear the 'ba' hiding in both words?",
-"crocodile":"Point out the shared letters C-R-O-C / C-O-C-O — they got rearranged! Clap syllables: Croc-o-dile / Co-co-dri-lo. Both have 4 syllables.",
-"camel":"Spot the double L in 'camello' — it sounds like 'y': ka-MEY-yo! How many humps on a camel? 1 or 2? Count the Ls in camello: 2!",
-"dinosaur":"Spanish adds 'io' at the end! Cover the 'io' in dinosaurio with your finger — the English word is hiding inside.",
-"dolphin":"The accent mark over í tells you to say 'FEEN' — long, clear vowel! English: DOL-fin; Spanish: del-FEEN.",
-"elephant":"Both start with 'ele' — point that out! The 'ph' in English makes an 'f' sound, and Spanish spells it with a plain F.",
-"flamingo":"In Spanish 'flamenco' means BOTH the bird AND the famous dance! The dance was named after the bird's graceful elegance.",
-"giraffe":"IMPORTANT RULE: Spanish J sounds like English H! So 'Jirafa' = hee-RAH-fah. Once your child knows J=H, they unlock dozens of Spanish words.",
-"gorilla":"English has double L; Spanish has single L — but they sound almost the same! Great for showing spelling differences don't always change pronunciation.",
-"hippopotamus":"Both are 5 syllables — count on fingers! Hip-po-pot-a-mus / Hi-po-pó-ta-mo. Same rhythm, same number of beats.",
-"iguana":"PERFECT COGNATE! Barely any difference. English: ih-GWAH-na; Spanish: ee-GWAH-nah. This word needs zero translation!",
-"insect":"Spanish adds 'o': in-sect + o = insecto! Many English words ending in a consonant become Spanish words ending in '-o.'",
-"jaguar":"PERFECT COGNATE — same spelling! English J sounds hard; Spanish J = H, so: hah-GWAR. Same word, tiny pronunciation difference.",
-"koala":"PERFECT COGNATE! Absolutely identical in both languages — from the Dharug Aboriginal language of Australia.",
-"lion":"The accent mark (ó) tells you to stress the LAST syllable: le-ON. English stresses the first: LYE-un.",
-"monkey":"DIFFERENT WORDS — an important lesson! 'Mono' is used across most of Latin America; 'Mico' is common in Colombia.",
-"ocelot":"Spanish adds 'e': ocelot → ocelote. Say them back-to-back: O-se-lot / o-se-LO-te. Very common near-cognate pattern.",
-"panther":"English 'th' becomes 't' in Spanish — very common! PAN-ther → pan-TE-ra. Count syllables: English 2, Spanish 3.",
-"penguin":"The ü (diéresis) tells you to pronounce the U: pin-GWEE-no. Without those dots, 'gu' before 'i' would be silent!",
-"rhinoceros":"English uses 'rh' at the start; Spanish uses plain 'r' — Spanish never uses 'rh.' Both come from the same Greek word about horns.",
-"salamander":"Almost perfect! English ends in '-er'; Spanish ends in '-ra': sala-MAN-der / sala-MAN-dra. Just the last two letters swapped!",
-"tiger":"Consonants T-G-R stay in both words. In Spanish every letter is pronounced — that final 'e' in tigre is always spoken.",
-"tortoise":"Not strong cognates — different paths from Latin. But 'Tortuga' is the famous pirate island name! Great cultural conversation.",
-"uakari":"PERFECT COGNATE from a Brazilian indigenous language! Both pronounced nearly identically. Celebrates indigenous heritage.",
-"viper":"Both trace to Latin 'vipera.' Spanish 'v' is very soft — almost like a 'b': VEE-bo-rah.",
-"yak":"PERFECT COGNATE! Identical in both languages, borrowed from Tibetan unchanged.",
-"cactus":"PERFECT COGNATE! Same spelling, nearly same pronunciation. English: KAK-tus; Spanish: KAHK-toos.",
-"canyon":"English borrowed 'canyon' FROM Spanish 'cañón'! The ñ makes the 'ny' sound. Spanish explorers named canyons across the American West.",
-"island":"Both come from Latin 'insula.' English 'island' has a SILENT S — added in the 1500s to look Latin! Spanish 'isla' is more phonetic.",
-"desert":"English: DEZ-ert (2 syllables); Spanish: de-SYEHR-to (4 syllables). The 'ie' in Spanish is a diphthong — two vowels gliding together.",
-"meteor":"Spanish adds 'o': meteor + o = meteoro! The -or → -oro pattern is very common in science words.",
-"palm":"English 'palm' often has a silent L. Spanish 'palma' always pronounces it. Spanish adds 'a' making it feminine (la palma).",
-"ocean":"English smooshes 'ocean' into 2 syllables (OH-shun). Spanish opens it to 4 clear syllables: o-SEH-ah-no.",
-"planet":"Spanish adds 'a': planet + a = planeta! Both from Greek 'planetes' (wanderer).",
-"safari":"PERFECT COGNATE from Arabic 'safar' (journey)! Both languages borrowed it identically.",
-"tornado":"PERFECT COGNATE! English borrowed 'tornado' FROM Spanish! English: tor-NEI-do; Spanish: tor-NAH-do.",
-"volcano":"Unusual: English ADDS 'o'; Spanish is SHORTER! vol-KAY-no vs vol-KAHN. Both from the Roman god Vulcanus.",
-"banana":"PERFECT COGNATE! Identical in both languages, from West African languages through Portuguese.",
-"broccoli":"Both borrowed from Italian 'broccoli'! Nearly identical — great example of English and Spanish agreeing on Italian food words.",
-"cacao":"PERFECT COGNATE from Nahuatl (Aztec)! This word has barely changed in hundreds of years. Chocolate comes from cacao!",
-"cereal":"PERFECT COGNATE from the Roman goddess Ceres. Same spelling, different rhythm — accent mark on á shows where to stress.",
-"chocolate":"PERFECT COGNATE from Nahuatl! English: 3 syllables. Spanish: 4 syllables. Spanish speaks every syllable!",
-"coconut":"Spanish uses just 'coco'! 'Coconut' in English = 'coco' in Spanish. Sometimes one language is more concise.",
-"fruit":"Both from Latin 'fructus.' Spanish adds 'a' — making it feminine (la fruta). Point to all the fruits on the page!",
-"hamburger":"Both named after Hamburg, Germany! Find 'hambur' in both — that's the shared root. Same city, same food.",
+"armadillo":"The double L in Spanish makes a 'y' sound: ar-ma-DEE-yo. Tell your child 'armadillo' means 'little armored one' in Spanish!",
+"buffalo":"Nearly identical! Count syllables: Buf-fa-lo (3) / Bú-fa-lo (3). The accent mark tells you exactly where to stress.",
+"baboon":"Listen for the shared 'ba' at the start! English ends with 'boon,' Spanish adds 'wee-no': ba-bwee-NO.",
+"crocodile":"Point out the shared letters C-R-O-C — they got rearranged in Spanish to Co-co-dri-lo!",
+"camel":"Spot the double L in 'camello' — it sounds like 'y': ka-MEY-yo! Same animal, slightly different sound.",
+"dinosaur":"Spanish adds 'io' at the end! Cover the 'io' in dinosaurio — the English word is hiding inside.",
+"dolphin":"The accent on í means FEEN — stretch that vowel! English: DOL-fin; Spanish: del-FEEN.",
+"elephant":"Both start with 'ele'! The 'ph' in English makes an 'f' sound, just like the F in elefante.",
+"flamingo":"In Spanish 'flamenco' means BOTH the bird AND the famous dance — named after the bird's grace!",
+"giraffe":"KEY RULE: Spanish J sounds like English H! So Jirafa = hee-RAH-fah. J=H unlocks dozens of words!",
+"gorilla":"English has double L; Spanish has single L — nearly the same sound! Clearly the same animal.",
+"hippopotamus":"Both are 5 syllables — count on fingers! Hip-po-pot-a-mus / Hi-po-pó-ta-mo. Same rhythm!",
+"iguana":"PERFECT COGNATE! Barely any difference — English: ih-GWAH-na; Spanish: ee-GWAH-nah.",
+"insect":"Spanish adds 'o': insect + o = insecto! Many English -ect words become -ecto in Spanish.",
+"jaguar":"PERFECT COGNATE — same spelling! J = H in Spanish so: hah-GWAR. From South American indigenous language.",
+"koala":"PERFECT COGNATE! Identical in both — from Australia's Dharug Aboriginal language.",
+"lion":"The accent ó tells you to stress the LAST syllable: le-ON. English stresses first: LYE-un.",
+"monkey":"DIFFERENT WORD — important lesson! 'Mono' is used in most of Latin America; 'Mico' in Colombia.",
+"ocelot":"Spanish adds 'e': ocelot → ocelote. Say them: O-se-lot / o-se-LO-te. Very common pattern!",
+"panther":"English 'th' becomes plain 't' in Spanish — PAN-ther → pan-TE-ra. Very common pattern!",
+"penguin":"The ü (two dots) means pronounce the U: pin-GWEE-no. Without dots, 'gu' before 'i' is silent!",
+"rhinoceros":"English uses 'rh'; Spanish never does — just plain 'r'. Both from the same Greek word about horns.",
+"salamander":"Almost perfect! Just the last two letters swapped: sala-MAN-der / sala-MAN-dra.",
+"tiger":"Consonants T-G-R stay in both! Spanish always pronounces the final 'e' — no silent letters.",
+"tortoise":"Not cognates — different Latin paths. But 'Tortuga' is the famous pirate island name!",
+"uakari":"PERFECT COGNATE from a Brazilian indigenous language! Say it: wah-KAH-ree / wah-kah-REE.",
+"viper":"Both from Latin 'vipera.' Spanish 'v' sounds like 'b': VEE-bo-rah.",
+"yak":"PERFECT COGNATE! Identical in both languages, from Tibetan. One word, two languages!",
+"cactus":"PERFECT COGNATE! English: KAK-tus; Spanish: KAHK-toos. A confidence builder!",
+"canyon":"English borrowed 'canyon' FROM Spanish 'cañón'! The ñ makes the 'ny' sound.",
+"island":"Both from Latin 'insula.' English 'island' has a SILENT S — added to look Latin!",
+"desert":"English: 2 syllables; Spanish: de-SYEHR-to (4 syllables). The 'ie' is two vowels gliding together.",
+"meteor":"Spanish adds 'o': meteor + o = meteoro! Science words often follow this -or → -oro pattern.",
+"palm":"English 'palm' has a silent L sometimes. Spanish 'palma' always pronounces it. La palma is feminine!",
+"ocean":"English: OH-shun (2 syllables). Spanish: o-SEH-ah-no (4!). Spanish speaks every letter.",
+"planet":"Spanish adds 'a': planet + a = planeta! Both from Greek 'planetes' meaning wanderer.",
+"safari":"PERFECT COGNATE from Arabic 'safar' (journey)! Both borrowed it identically.",
+"tornado":"PERFECT COGNATE! English borrowed 'tornado' FROM Spanish! Listen for 'nay' vs 'nah'.",
+"volcano":"English adds 'o'; Spanish is shorter: vol-KAHN. Both from the Roman god Vulcanus.",
+"banana":"PERFECT COGNATE! Identical in both — from West African languages via Portuguese.",
+"broccoli":"Both from Italian! Nearly identical — great example of English and Spanish agreeing on food words.",
+"cacao":"PERFECT COGNATE from Nahuatl (Aztec)! ka-KAH-oh. Chocolate comes from this amazing plant!",
+"cereal":"PERFECT COGNATE from the goddess Ceres! Same spelling, accent mark shows where to stress.",
+"chocolate":"PERFECT COGNATE from Nahuatl! English: 3 syllables. Spanish: 4. Spanish speaks every syllable!",
+"coconut":"Spanish uses just 'coco'! The 'nut' part is implied. Sometimes Spanish is more concise.",
+"fruit":"Both from Latin 'fructus.' Spanish adds 'a' — la fruta is feminine. Point to all the fruits!",
+"hamburger":"Both named after Hamburg, Germany! Find 'hambur' in both — same city, same delicious food.",
 "kiwi":"PERFECT COGNATE from Māori (New Zealand)! KEE-wee in both languages.",
-"lemon":"The accent mark shows last-syllable stress: lee-MOHN. Both from Arabic 'laymun' via the spice trade.",
-"mango":"PERFECT COGNATE from Tamil/Sanskrit! Identical in both languages, via Portuguese trade routes.",
-"melon":"Accent on last syllable in Spanish: me-LOHN. English: MEL-on. Same letters, different stress — accent mark is your guide!",
-"papaya":"PERFECT COGNATE from Taíno (Caribbean indigenous language)! Honoring Caribbean indigenous heritage.",
-"pasta":"PERFECT COGNATE from Italian! Food words from Italy almost always become perfect cognates.",
-"salmon":"The L is completely SILENT in English — SAM-un! Spanish pronounces every letter: sal-MOHN.",
-"soup":"Both share S-P at their core! SouP / SoPa. Both from Latin 'suppa.' Finding the shared core is a great metalinguistic skill.",
-"tomato":"From Nahuatl 'tomatl'! This is the word that inspired 'You say to-MAY-to, I say to-MAH-to!'",
-"vanilla":"Two rules at once: Spanish 'v' sounds like 'b' AND double-ll sounds like 'y.' So: bai-NEE-ya. From Nahuatl!",
-"yogurt":"Spanish drops the final 't': yogurt → yogur! Both from Turkish. Spanish is actually closer to the original Turkish."
+"lemon":"Accent shows last-syllable stress: lee-MOHN. Both from Arabic 'laymun' via the spice trade.",
+"mango":"PERFECT COGNATE from Tamil/Sanskrit! Identical — via Portuguese trade routes from India.",
+"melon":"Accent on last syllable in Spanish: me-LOHN. Same letters, the mark changes everything!",
+"papaya":"PERFECT COGNATE from Taíno (Caribbean indigenous)! pa-PYE-ah / pa-PAH-yah.",
+"pasta":"PERFECT COGNATE from Italian! Both borrowed it identically. Food words from Italy always match.",
+"salmon":"The L is SILENT in English — SAM-un! Spanish says every letter clearly: sal-MOHN.",
+"soup":"Both share S-P at their core! SouP / SoPa — from Latin 'suppa.' Finding shared letters is key!",
+"tomato":"From Nahuatl 'tomatl'! This is literally the word behind 'you say to-MAY-to, I say to-MAH-to!'",
+"vanilla":"Two rules at once: Spanish 'v' sounds like 'b' AND double-ll sounds like 'y': bai-NEE-ya!",
+"yogurt":"Spanish drops the final 't': yogurt → yogur! From Turkish — Spanish is closer to the original."
 };
 
-function loadPage(idx) {
-  currentPage = idx;
-  document.querySelectorAll(".pg-btn").forEach((b,i) => b.classList.toggle("active", i === idx));
-  document.getElementById("pageNum").textContent = idx + 1;
-  document.getElementById("pageImg").src = `/page-image/${BOOK_ID}/${idx}`;
-  document.getElementById("pageImg").style.display = "block";
-  const p = PAGES[idx] || {};
-  document.getElementById("enWord").value = p.english || "";
-  document.getElementById("esWord").value = p.spanish || "";
-  document.getElementById("customTip").value = p.custom_tip || "";
-  document.getElementById("teacherNote").checked = p.teacher_note || false;
-  updateDefaultPreview(p.english || "");
-  document.getElementById("saveMsg").textContent = "";
-}
-
-document.getElementById("enWord").addEventListener("input", function() {
-  updateDefaultPreview(this.value);
-});
-
-function updateDefaultPreview(word) {
-  const key = word.toLowerCase().trim().split(/[\s/]/)[0];
-  const tip = DEFAULT_TIPS[key];
-  const preview = document.getElementById("defaultTipPreview");
+function updateTipPreview() {
+  const word = document.getElementById("enWord").value.toLowerCase().trim().split(/[\s\/]/)[0];
+  const preview = document.getElementById("tipPreview");
+  if (!preview) return;
+  const tip = DEFAULT_TIPS[word];
   if (tip) {
     preview.innerHTML = `<b>Built-in tip:</b> ${tip}`;
   } else if (word) {
-    preview.innerHTML = `<span style="color:#ccc">No built-in tip for "${word}" — write a custom tip below, or leave blank.</span>`;
+    preview.innerHTML = `No built-in tip for "${word}" — write a custom tip below.`;
   } else {
-    preview.innerHTML = `Enter an English word above to see the built-in tip, or write your own custom tip below.`;
+    preview.innerHTML = `Enter an English word above to see the built-in tip for that word.`;
   }
 }
 
+function loadPage(idx) {
+  if (idx < 0 || idx >= NUM_PAGES) return;
+  currentPage = idx;
+  document.querySelectorAll(".pg-btn").forEach((b,i) => b.classList.toggle("active", i === idx));
+  const pNum = document.getElementById("pageNum");
+  if (pNum) pNum.textContent = idx + 1;
+  const img = document.getElementById("pageImg");
+  if (img) { img.src = `/page-image/${BOOK_ID}/${idx}`; img.style.display = "block"; }
+  const p = PAGES[idx] || {};
+  const enEl = document.getElementById("enWord");
+  const esEl = document.getElementById("esWord");
+  const tipEl = document.getElementById("customTip");
+  const noteEl = document.getElementById("teacherNote");
+  if (enEl) enEl.value = p.english || "";
+  if (esEl) esEl.value = p.spanish || "";
+  if (tipEl) tipEl.value = p.custom_tip || "";
+  if (noteEl) noteEl.checked = p.teacher_note || false;
+  updateTipPreview();
+  const st = document.getElementById("saveStatus");
+  if (st) st.textContent = "";
+}
+
 async function savePage() {
-  const msg = document.getElementById("saveMsg");
-  msg.textContent = "Saving…";
-  msg.className = "save-msg";
+  const st = document.getElementById("saveStatus");
+  if (!st) return;
+  st.textContent = "Saving…"; st.className = "save-status";
   const body = {
     page_idx: currentPage,
-    english: document.getElementById("enWord").value.trim(),
-    spanish: document.getElementById("esWord").value.trim(),
-    custom_tip: document.getElementById("customTip").value.trim(),
+    english: (document.getElementById("enWord").value||"").trim(),
+    spanish: (document.getElementById("esWord").value||"").trim(),
+    custom_tip: (document.getElementById("customTip").value||"").trim(),
     teacher_note: document.getElementById("teacherNote").checked
   };
-  if (PAGES[currentPage] === undefined) PAGES[currentPage] = {};
-  PAGES[currentPage].english = body.english;
-  PAGES[currentPage].spanish = body.spanish;
-  PAGES[currentPage].custom_tip = body.custom_tip;
-  PAGES[currentPage].teacher_note = body.teacher_note;
-  // update dot
+  if (!PAGES[currentPage]) PAGES[currentPage] = {};
+  Object.assign(PAGES[currentPage], body);
   const dot = document.querySelector(`#pgbtn_${currentPage} .dot`);
-  if (dot) { dot.className = "dot " + (body.english ? "dot-filled" : "dot-empty"); }
+  if (dot) dot.className = "dot " + (body.english ? "dot-on" : "dot-off");
   try {
-    const res = await fetch(`/admin/book/${BOOK_ID}/save-page`, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    const data = await res.json();
-    msg.textContent = data.success ? "✅ Saved!" : "❌ Error: " + data.error;
-    msg.className = "save-msg " + (data.success ? "ok" : "err");
+    const r = await fetch(`/admin/book/${BOOK_ID}/save-page`, {
+      method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+    });
+    const d = await r.json();
+    st.textContent = d.success ? "✅ Saved!" : "❌ " + (d.error||"Error");
+    st.className = "save-status " + (d.success ? "ok" : "err");
   } catch(e) {
-    msg.textContent = "❌ Connection error";
-    msg.className = "save-msg err";
+    st.textContent = "❌ Connection error — try again";
+    st.className = "save-status err";
   }
 }
 
 async function uploadPDF(input) {
   const msg = document.getElementById("pdfMsg");
-  msg.textContent = "Uploading PDF… this may take a minute ⏳";
-  msg.className = "upload-msg";
+  const bar = document.getElementById("pdfProgress");
+  const lbl = document.getElementById("pdfLabelText");
+  if (!input.files[0]) return;
+  const fileName = input.files[0].name;
+  msg.textContent = `⏳ Uploading ${fileName}… please wait, this takes 30–60 seconds for a large PDF`;
+  msg.className = "upload-msg msg-loading";
+  bar.style.display = "block";
+  lbl.textContent = "Uploading…";
   const fd = new FormData();
   fd.append("pdf", input.files[0]);
   try {
-    const res = await fetch(`/admin/book/${BOOK_ID}/upload-pdf`, {method:"POST",body:fd});
-    const data = await res.json();
-    if (data.success) {
-      msg.textContent = `✅ PDF uploaded! ${data.num_pages} pages ready.`;
-      msg.className = "upload-msg ok";
+    const r = await fetch(`/admin/book/${BOOK_ID}/upload-pdf`, {method:"POST", body:fd});
+    const d = await r.json();
+    bar.style.display = "none";
+    if (d.success) {
+      msg.textContent = `✅ Success! ${d.num_pages} pages loaded. Refreshing…`;
+      msg.className = "upload-msg msg-ok";
       setTimeout(() => location.reload(), 1500);
     } else {
-      msg.textContent = "❌ " + (data.error || "Upload failed");
-      msg.className = "upload-msg err";
+      msg.textContent = "❌ Upload failed: " + (d.error || "Unknown error. Check Render logs.");
+      msg.className = "upload-msg msg-err";
+      lbl.textContent = "Click here to try again";
     }
   } catch(e) {
-    msg.textContent = "❌ Upload failed — try again";
-    msg.className = "upload-msg err";
+    bar.style.display = "none";
+    msg.textContent = "❌ Upload failed — " + e.message + ". Try again.";
+    msg.className = "upload-msg msg-err";
+    lbl.textContent = "Click here to try again";
   }
 }
 
 async function uploadCSV(input) {
   const msg = document.getElementById("csvMsg");
-  if (!{{ book.num_pages }}) {
-    msg.textContent = "⚠️ Upload the PDF first, then the CSV.";
-    msg.className = "upload-msg err";
+  if (!input.files[0]) return;
+  if (NUM_PAGES === 0) {
+    msg.textContent = "⚠️ Please upload the PDF first, then the CSV.";
+    msg.className = "upload-msg msg-err";
     return;
   }
-  msg.textContent = "Uploading words…";
-  msg.className = "upload-msg";
+  msg.textContent = "⏳ Loading words from CSV…";
+  msg.className = "upload-msg msg-loading";
   const fd = new FormData();
   fd.append("csv", input.files[0]);
   try {
-    const res = await fetch(`/admin/book/${BOOK_ID}/upload-csv`, {method:"POST",body:fd});
-    const data = await res.json();
-    if (data.success) {
-      msg.textContent = `✅ Words loaded for ${data.pages_filled} pages! Refreshing…`;
-      msg.className = "upload-msg ok";
+    const r = await fetch(`/admin/book/${BOOK_ID}/upload-csv`, {method:"POST", body:fd});
+    const d = await r.json();
+    if (d.success) {
+      msg.textContent = `✅ Words loaded for ${d.pages_filled} pages! Refreshing…`;
+      msg.className = "upload-msg msg-ok";
       setTimeout(() => location.reload(), 1800);
     } else {
-      msg.textContent = "❌ " + (data.error || "CSV upload failed");
-      msg.className = "upload-msg err";
+      msg.textContent = "❌ " + (d.error || "CSV upload failed. Check your column names: page, english, spanish");
+      msg.className = "upload-msg msg-err";
     }
   } catch(e) {
-    msg.textContent = "❌ Upload failed";
-    msg.className = "upload-msg err";
+    msg.textContent = "❌ Upload failed — " + e.message;
+    msg.className = "upload-msg msg-err";
   }
 }
 
 async function regenCode() {
-  const res = await fetch(`/admin/book/${BOOK_ID}/generate-code`, {method:"POST"});
-  const data = await res.json();
-  if (data.code) {
-    document.getElementById("codeDisplay").textContent = data.code;
-    document.querySelector(".code-pill") && (document.querySelector(".code-pill").textContent = data.code);
+  const r = await fetch(`/admin/book/${BOOK_ID}/generate-code`, {method:"POST"});
+  const d = await r.json();
+  if (d.code) {
+    document.getElementById("codeDisplay").textContent = d.code;
+    const pill = document.querySelector(".code-pill");
+    if (pill) pill.textContent = d.code;
   }
 }
 
 function downloadTemplate() {
   const rows = ["page,english,spanish"];
-  for (let i = 1; i <= {{ book.num_pages }}; i++) rows.push(`${i},,`);
+  for (let i = 1; i <= Math.max(NUM_PAGES, 67); i++) rows.push(`${i},,`);
   const blob = new Blob([rows.join("\n")], {type:"text/csv"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -372,7 +392,8 @@ function downloadTemplate() {
   a.click();
 }
 
-loadPage(0);
+// Init
+if (NUM_PAGES > 0) loadPage(0);
 </script>
 </body>
 </html>
