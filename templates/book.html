@@ -81,7 +81,7 @@ header{background:#fff;border-bottom:2px solid #FF7043;padding:14px 20px;display
 
 <header>
   <div class="brand">
-    <div class="brand-logo">🦜</div>
+    <img src="/static/logo.png" alt="Biliteracy Bridge" style="height:40px;width:auto">
     <div class="brand-name">Biliteracy Bridge</div>
   </div>
   <div class="header-right">
@@ -319,7 +319,7 @@ function updateWords() {
   document.getElementById("playEs").disabled = !esW;
   document.getElementById("playBoth").disabled = !hasWords;
 
-  updateTips(key, enW, esW);
+  updateTips(key, enW, esW, page.custom_tip || "");
 }
 
 // ── Tips ─────────────────────────────────────────────────────────────────────
@@ -332,35 +332,29 @@ function toggleTips() {
   document.getElementById("tipsToggle").classList.toggle("open", tipsOpen);
 }
 
-function updateTips(key, enW, esW) {
-  const tip = TIPS[key];
-  const content = document.getElementById("tipsContent");
-  if (!tip || !enW) {
-    content.innerHTML = `<p class="no-tip">No teaching tip for this page. Tips are available for all cognate pages.</p>`;
-    return;
-  }
-  const simClass = tip.sim >= 95 ? "sim-high" : tip.sim >= 80 ? "sim-med" : "sim-low";
-  content.innerHTML = `
+function updateTips(key, enW, esW, customTip) {
+  const baseTip = TIPS[key];
+  const el = document.getElementById("tipsContent");
+  if (!enW) { el.innerHTML = `<p class="no-tip">No teaching tip for this page.</p>`; return; }
+  const t = baseTip ? {...baseTip} : {sim:80, badge:"Custom tip", badgeClass:"badge-near", act:"", fact:""};
+  if (customTip) t.tip = customTip;
+  if (!t.tip) { el.innerHTML = `<p class="no-tip">No teaching tip for this page. Tips are available for all cognate pages.</p>`; return; }
+  const simClass = t.sim >= 95 ? "sim-high" : t.sim >= 80 ? "sim-med" : "sim-low";
+  el.innerHTML = `
     <div class="sim-row">
       <span class="sim-label">Similarity</span>
-      <div class="sim-track"><div class="${simClass} sim-fill" style="width:${tip.sim}%"></div></div>
-      <span class="sim-pct">${tip.sim}%</span>
+      <div class="sim-track"><div class="${simClass} sim-fill" style="width:${t.sim}%"></div></div>
+      <span class="sim-pct">${t.sim}%</span>
     </div>
     <div style="padding:10px 16px 0">
-      <span class="cognate-badge ${tip.badgeClass}">${tip.badge}</span>
+      <span class="cognate-badge ${t.badgeClass}">${customTip ? "✏️ Custom tip" : t.badge}</span>
     </div>
     <div class="tip-section">
       <div class="tip-head tip-head-tip">💡 Parent & teacher tip</div>
-      <div class="tip-text">${tip.tip}</div>
+      <div class="tip-text">${t.tip}</div>
     </div>
-    <div class="tip-section">
-      <div class="tip-head tip-head-act">🎯 Activity</div>
-      <div class="act-box">${tip.act}</div>
-    </div>
-    <div class="tip-section">
-      <div class="tip-head tip-head-fact">🌍 Linguistic fun fact</div>
-      <div class="fact-box">${tip.fact}</div>
-    </div>`;
+    ${t.act ? `<div class="tip-section"><div class="tip-head tip-head-act">🎯 Activity</div><div class="act-box">${t.act}</div></div>` : ""}
+    ${t.fact ? `<div class="tip-section"><div class="tip-head tip-head-fact">🌍 Linguistic fun fact</div><div class="fact-box">${t.fact}</div></div>` : ""}`;
 }
 
 // ── Audio ─────────────────────────────────────────────────────────────────────
