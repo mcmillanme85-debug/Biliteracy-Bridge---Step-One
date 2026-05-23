@@ -53,22 +53,40 @@ print(f"📁 BOOKS_FILE = {BOOKS_FILE}")
 # ── helpers ──────────────────────────────────────────────────────────────────
 
 def load_books():
-    # Try persistent disk first
+    # Load the repo seed (always present, has book IDs and fixed codes)
+    repo_seed = {}
+    repo_file = Path("data") / "books.json"
+    if repo_file.exists():
+        try:
+            with open(repo_file) as f:
+                repo_seed = json.load(f)
+        except Exception:
+            pass
+
+    # Try to load live data from persistent disk
+    live_data = {}
     if BOOKS_FILE.exists():
         try:
             with open(BOOKS_FILE) as f:
-                return json.load(f)
+                live_data = json.load(f)
         except Exception:
             pass
-    # Fall back to local copy
-    local = Path("data") / "books.json"
-    if local.exists():
-        try:
-            with open(local) as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return {}
+
+    if not live_data and BOOKS_FILE != repo_file:
+        # No disk data yet — start from seed
+        live_data = repo_seed.copy()
+    elif live_data:
+        # Merge: ensure all seed book IDs exist in live data
+        for book_id, seed_book in repo_seed.items():
+            if book_id not in live_data:
+                live_data[book_id] = seed_book
+            else:
+                # Keep disk data but restore fixed code if missing/empty
+                if not live_data[book_id].get("access_code"):
+                    live_data[book_id]["access_code"] = seed_book.get("access_code", "")
+                    live_data[book_id]["code_locked"] = True
+
+    return live_data
 
 def save_books(books):
     try:
@@ -224,14 +242,8 @@ def admin_book(book_id):
     b = books.get(book_id)
     if not b:
         return "Book not found", 404
-    # Generate code once only — only if truly missing (not just empty string)
-    if b.get("access_code") is None or "access_code" not in b:
-        b["access_code"] = make_code()
-        b["code_locked"] = True
-        books[book_id] = b
-        save_books(books)
-    # If access_code is empty string, set a real code now and lock it
-    elif b.get("access_code") == "":
+    # Code is set in the seed file — only generate if completely missing
+    if not b.get("access_code"):
         b["access_code"] = make_code()
         b["code_locked"] = True
         books[book_id] = b
