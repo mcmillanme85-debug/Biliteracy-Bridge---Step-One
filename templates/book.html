@@ -81,7 +81,12 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 
 <header>
   <div class="brand">
-    <img src="/static/logo.png" alt="Biliteracy Bridge" style="height:40px;width:auto">
+    <img src="/logo.png" alt="Biliteracy Bridge"
+         style="height:44px;width:auto"
+         onerror="this.style.display='none';document.getElementById('brand-text').style.display='flex'">
+    <div id="brand-text" style="display:none;align-items:center;gap:8px">
+      <span style="font-size:18px;font-weight:800;color:#F9C12E">Biliteracy Bridge</span>
+    </div>
     <div class="brand-name">Biliteracy Bridge</div>
   </div>
   <div class="header-right">
@@ -149,10 +154,30 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 </div>
 
 <script>
-// ── Page data from Flask ─────────────────────────────────────────────────────
+// ── Page data — loaded via API to avoid template encoding issues ──────────────
 const BOOK_ID = "{{ book_id }}";
-const PAGES   = {{ book.pages | tojson }};
 const NUM_PAGES = {{ book.num_pages }};
+let PAGES = [];
+let DATA_LOADED = false;
+
+async function loadPageData() {
+  try {
+    const r = await fetch(`/api/book/${BOOK_ID}/pages`);
+    const d = await r.json();
+    PAGES = d.pages || [];
+    DATA_LOADED = true;
+    // Re-render current page now that data is loaded
+    updateWords();
+    updateTips(
+      (PAGES[currentPage]?.english || "").toLowerCase().split(/[\s\/]/)[0],
+      PAGES[currentPage]?.english || "",
+      PAGES[currentPage]?.spanish || "",
+      PAGES[currentPage]?.custom_tip || ""
+    );
+  } catch(e) {
+    console.error("Failed to load page data:", e);
+  }
+}
 
 let currentPage = 0;
 let playing = false;
@@ -446,7 +471,7 @@ function playLang(lang, wordIdx=0) {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 buildDots();
-updateWords();
+loadPageData();  // fetch word data from API
 
 // Keyboard navigation
 document.addEventListener("keydown", e => {
