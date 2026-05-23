@@ -384,10 +384,14 @@ def voices_list():
     if not ELEVENLABS_KEY:
         return jsonify(error="No ElevenLabs API key configured in environment variables.")
     try:
-        import requests as req
-        r = req.get("https://api.elevenlabs.io/v1/voices",
-                    headers={"xi-api-key": ELEVENLABS_KEY}, timeout=10)
-        data = r.json()
+        import urllib.request, ssl
+        req = urllib.request.Request(
+            "https://api.elevenlabs.io/v1/voices",
+            headers={"xi-api-key": ELEVENLABS_KEY}
+        )
+        ctx = ssl.create_default_context()
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as resp:
+            data = json.loads(resp.read().decode())
         voices = sorted(data.get("voices",[]), key=lambda v: v.get("name",""))
         return jsonify(voices=voices)
     except Exception as e:
