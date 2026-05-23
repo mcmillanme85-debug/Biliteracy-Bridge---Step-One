@@ -118,25 +118,8 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
         Spanish shown with English phonetic conventions
       </div>
 
-      <!-- English -->
-      <div class="word-card">
-        <div class="word-label">🇺🇸 English <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for Spanish speakers)</span></div>
-        <div class="word-text" id="enWord">—</div>
-        <div class="word-pron" id="enPron"></div>
-        <div class="play-row">
-          <button class="play-btn play-btn-en" id="playEn" onclick="playWord('en')" disabled>▶ English</button>
-          <button class="play-btn play-btn-both" id="playBoth" onclick="playBoth()" disabled>▶ Both</button>
-        </div>
-      </div>
-
-      <!-- Spanish -->
-      <div class="word-card">
-        <div class="word-label">🇲🇽 Español <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for English speakers)</span></div>
-        <div class="word-text" id="esWord">—</div>
-        <div class="word-pron" id="esPron"></div>
-        <div class="play-row">
-          <button class="play-btn play-btn-es" id="playEs" onclick="playWord('es')" disabled>▶ Español</button>
-        </div>
+      <div id="wordsContainer">
+        <p style="color:#8BA3C0;font-size:13px;padding:8px 0">⏳ Loading...</p>
       </div>
     </div>
 
@@ -161,12 +144,29 @@ let PAGES = [];
 let DATA_LOADED = false;
 
 async function loadPageData() {
+  const container = document.getElementById("wordsContainer");
+  if (container) container.innerHTML = '<p style="color:#8BA3C0;font-size:13px">⏳ Loading word data...</p>';
   try {
-    const r = await fetch(`/api/book/${BOOK_ID}/pages`);
-    const d = await r.json();
+    const url = `/api/book/${BOOK_ID}/pages`;
+    const r = await fetch(url);
+    const text = await r.text();
+    let d;
+    try { d = JSON.parse(text); } catch(e) {
+      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ API parse error:<br>${text.substring(0,200)}</p>`;
+      return;
+    }
+    if (!r.ok || d.error) {
+      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ API error ${r.status}: ${d.error || text}</p>`;
+      return;
+    }
     PAGES = d.pages || [];
     DATA_LOADED = true;
-    // Re-render current page now that data is loaded
+    // Show diagnostic if pages seem empty
+    const page5 = PAGES[4] || {};
+    const hasWords = page5.english || (page5.words && page5.words[0] && page5.words[0].english);
+    if (!hasWords && PAGES.length > 0) {
+      console.warn("API returned pages but page 5 has no words. Page 5 data:", JSON.stringify(page5).substring(0,300));
+    }
     updateWords();
     updateTips(
       (PAGES[currentPage]?.english || "").toLowerCase().split(/[\s\/]/)[0],
@@ -175,7 +175,8 @@ async function loadPageData() {
       PAGES[currentPage]?.custom_tip || ""
     );
   } catch(e) {
-    console.error("Failed to load page data:", e);
+    if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ Fetch failed: ${e.message}</p>`;
+    console.error("loadPageData error:", e);
   }
 }
 
