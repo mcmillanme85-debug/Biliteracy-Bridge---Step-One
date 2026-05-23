@@ -314,21 +314,30 @@ function goPage(idx) {
 
 function updateWords() {
   const page = PAGES[currentPage] || {};
-  const words = page.words || [];
-  // If words array exists but is empty or has no real content, fall back to legacy fields
-  const firstWord = words[0] || {};
-  const wordsHaveContent = words.length && (firstWord.english || firstWord.spanish);
-  const wordList = wordsHaveContent ? words : [{
-    english:     page.english      || "",
-    spanish:     page.spanish      || "",
-    en_sentence: firstWord.en_sentence || "",
-    es_sentence: firstWord.es_sentence || ""
-  }];
+
+  // Build word list — try every possible data location
+  let wordList = [];
+
+  // Option 1: words array with real content
+  if (page.words && page.words.length) {
+    const real = page.words.filter(w => w.english || w.spanish);
+    if (real.length) wordList = real;
+  }
+
+  // Option 2: legacy top-level english/spanish fields
+  if (!wordList.length && (page.english || page.spanish)) {
+    wordList = [{
+      english:     page.english || "",
+      spanish:     page.spanish || "",
+      en_sentence: page.en_sentence || "",
+      es_sentence: page.es_sentence || ""
+    }];
+  }
 
   const container = document.getElementById("wordsContainer");
   if (!container) return;
 
-  if (!wordList[0].english && !wordList[0].spanish) {
+  if (!wordList.length) {
     container.innerHTML = '<p class="no-word">No words on this page</p>';
     updateTips("", "", "", "");
     return;
