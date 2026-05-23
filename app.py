@@ -280,11 +280,16 @@ def upload_pdf(book_id):
             old.unlink()
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
         num_pages = len(doc)
+        del pdf_bytes  # free RAM immediately
         for i, page in enumerate(doc):
-            mat = fitz.Matrix(1.5, 1.5)
-            pix = page.get_pixmap(matrix=mat)
-            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-            img.save(img_dir / f"page_{i}.jpg", quality=85)
+            # Use 1.0x scale + grayscale — much less memory, perfect for coloring books
+            mat = fitz.Matrix(1.0, 1.0)
+            pix = page.get_pixmap(matrix=mat, colorspace=fitz.csGRAY)
+            img = Image.frombytes("L", [pix.width, pix.height], pix.samples)
+            img.save(img_dir / f"page_{i}.jpg", quality=75, optimize=True)
+            del pix, img  # free RAM after each page
+        doc.close()
+        del doc
         # Extend pages list
         pages = books[book_id].get("pages", [])
         while len(pages) < num_pages:
