@@ -119,6 +119,29 @@ pb{padding-bottom:80px;display:block}
     </div>
   </div>
 
+  <!-- Manual voice ID entry -->
+  <div style="background:#222;border-radius:14px;padding:20px;margin-bottom:24px;border:1px solid #333">
+    <h3 style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">
+      📋 Manual Entry — paste a voice ID directly
+    </h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div>
+        <label style="display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Voice Name</label>
+        <input type="text" id="manualName" placeholder="e.g. Kate" value="Kate" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:14px;outline:none" onfocus="this.style.borderColor='#F9C12E'" onblur="this.style.borderColor='#333'">
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Voice ID</label>
+        <input type="text" id="manualId" placeholder="e.g. qWWAqFomnJ99VwQLREfT" value="qWWAqFomnJ99VwQLREfT" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:14px;outline:none;font-family:monospace" onfocus="this.style.borderColor='#F9C12E'" onblur="this.style.borderColor='#333'">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="manualAssign('en')" style="background:rgba(66,165,245,.15);color:#90CAF9;border:1px solid #42A5F5;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🇺🇸 Set as English Voice</button>
+      <button onclick="manualAssign('es')" style="background:rgba(249,193,46,.15);color:#F9C12E;border:1px solid #F9C12E;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🇲🇽 Set as Spanish Voice</button>
+      <button onclick="manualPreview()" style="background:transparent;color:#aaa;border:1px solid #444;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer" id="manualPreviewBtn">▶ Preview</button>
+    </div>
+    <div id="manualMsg" style="margin-top:10px;font-size:13px;min-height:18px;color:#aaa"></div>
+  </div>
+
   <!-- Search + filter -->
   <div class="search-bar">
     <input type="text" id="searchInput" placeholder="Search voices by name…" oninput="filterVoices()">
@@ -300,6 +323,47 @@ async function saveVoices() {
     btn.textContent = '❌ Failed — try again';
     btn.disabled = false;
     setTimeout(() => { btn.textContent = '💾 Save Voice Selection'; }, 2000);
+  }
+}
+
+
+function manualAssign(lang) {
+  const name = document.getElementById("manualName").value.trim();
+  const id   = document.getElementById("manualId").value.trim();
+  const msg  = document.getElementById("manualMsg");
+  if (!name || !id) {
+    msg.textContent = "⚠️ Please enter both a name and a voice ID.";
+    msg.style.color = "#EF9A9A";
+    return;
+  }
+  selectVoice(lang, id, name);
+  msg.textContent = `✅ "${name}" set as ${lang === 'en' ? '🇺🇸 English' : '🇲🇽 Spanish'} voice. Don't forget to click Save!`;
+  msg.style.color = "#81C784";
+}
+
+async function manualPreview() {
+  const id   = document.getElementById("manualId").value.trim();
+  const btn  = document.getElementById("manualPreviewBtn");
+  const msg  = document.getElementById("manualMsg");
+  if (!id) { msg.textContent = "⚠️ Enter a voice ID first."; msg.style.color = "#EF9A9A"; return; }
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  btn.textContent = "⏳ Loading…";
+  try {
+    const r = await fetch("/admin/voices/preview", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ voice_id: id, text: "Hello! My name is Kate. El elefante tiene una trompa larga." })
+    });
+    if (!r.ok) throw new Error("Preview failed");
+    const blob = await r.blob();
+    currentAudio = new Audio(URL.createObjectURL(blob));
+    btn.textContent = "🔊 Playing…";
+    currentAudio.play();
+    currentAudio.onended = () => { btn.textContent = "▶ Preview"; };
+    currentAudio.onerror = () => { btn.textContent = "▶ Preview"; msg.textContent = "❌ Could not preview — check the voice ID."; msg.style.color = "#EF9A9A"; };
+  } catch(e) {
+    btn.textContent = "▶ Preview";
+    msg.textContent = "❌ Preview failed: " + e.message;
+    msg.style.color = "#EF9A9A";
   }
 }
 
