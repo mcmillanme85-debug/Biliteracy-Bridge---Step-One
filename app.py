@@ -99,16 +99,38 @@ def speak(book_id, idx, lang):
     pages = b.get("pages", [])
     if idx >= len(pages):
         return jsonify(error="No page"), 404
-    word = pages[idx].get("spanish" if lang == "es" else "english", "")
-    if not word:
-        return jsonify(error="No word"), 400
+    speak_type = request.args.get("type", "word")  # word | sentence | both
+    word_idx   = int(request.args.get("word_idx", 0))
+    page_data  = pages[idx]
+    words_list = page_data.get("words", [])
+    if words_list and word_idx < len(words_list):
+        word_data = words_list[word_idx]
+    else:
+        word_data = {"english": page_data.get("english",""), "spanish": page_data.get("spanish",""), "en_sentence":"", "es_sentence":""}
+    if lang == "es":
+        word      = word_data.get("spanish","")
+        sentence  = word_data.get("es_sentence","")
+    else:
+        word      = word_data.get("english","")
+        sentence  = word_data.get("en_sentence","")
+    if speak_type == "sentence":
+        text = sentence or word
+    elif speak_type == "both":
+        text = f"{word}. {sentence}" if sentence else word
+    else:
+        text = word
+    if not text:
+        return jsonify(error="No text"), 400
+    word = text  # reuse variable for the API call below
     if not ELEVENLABS_KEY:
         return jsonify(error="No API key"), 500
     try:
+        cfg = load_config()
+        voice_id = cfg.get("voice_es_id", VOICE_ES) if lang == "es" else cfg.get("voice_en_id", VOICE_EN)
         client = ElevenLabs(api_key=ELEVENLABS_KEY)
         audio_iter = client.text_to_speech.convert(
             text=word,
-            voice_id=VOICE_ES if lang == "es" else VOICE_EN,
+            voice_id=voice_id,
             model_id="eleven_multilingual_v2",
             voice_settings=VoiceSettings(stability=0.80, similarity_boost=0.75, style=0.3)
         )
@@ -211,7 +233,7 @@ def upload_pdf(book_id):
         # Extend pages list
         pages = books[book_id].get("pages", [])
         while len(pages) < num_pages:
-            pages.append({"english":"","spanish":"","teacher_note":False,"custom_tip":""})
+            pages.append({"words":[{"english":"","spanish":"","en_sentence":"","es_sentence":""}],"teacher_note":False,"custom_tip":""})
         books[book_id]["pages"]     = pages
         books[book_id]["num_pages"] = num_pages
         save_books(books)
@@ -240,6 +262,9 @@ def upload_csv(book_id):
         reader  = csv.DictReader(content)
         pages   = books[book_id].get("pages", [])
         filled  = 0
+        # Group rows by page, then word_num
+        from collections import defaultdict
+        page_words = defaultdict(dict)
         for row in reader:
             raw_pg = row.get("page") or row.get("Page") or ""
             try:
@@ -247,11 +272,24 @@ def upload_csv(book_id):
             except ValueError:
                 continue
             if 0 <= idx < len(pages):
-                en = (row.get("english") or row.get("English") or "").strip()
-                es = (row.get("spanish") or row.get("Spanish") or "").strip()
-                pages[idx]["english"] = en
-                pages[idx]["spanish"] = es
-                filled += 1
+                word_num = int((row.get("word_num") or "1").strip() or "1") - 1
+                word = {
+                    "english":     (row.get("english")     or "").strip(),
+                    "spanish":     (row.get("spanish")     or "").strip(),
+                    "en_sentence": (row.get("en_sentence") or "").strip(),
+                    "es_sentence": (row.get("es_sentence") or "").strip(),
+                }
+                if idx not in page_words:
+                    page_words[idx] = {}
+                page_words[idx][word_num] = word
+        for idx, words_dict in page_words.items():
+            ordered = [words_dict[k] for k in sorted(words_dict.keys())]
+            pages[idx]["words"] = ordered
+            # Keep legacy fields for backward compat
+            if ordered:
+                pages[idx]["english"] = ordered[0]["english"]
+                pages[idx]["spanish"] = ordered[0]["spanish"]
+            filled += 1
         books[book_id]["pages"] = pages
         save_books(books)
         return redirect(url_for("admin_book", book_id=book_id,
@@ -273,9 +311,27 @@ def save_page(book_id):
     idx   = data.get("page_idx", 0)
     pages = books[book_id].get("pages", [])
     while len(pages) <= idx:
-        pages.append({"english":"","spanish":"","teacher_note":False,"custom_tip":""})
-    pages[idx]["english"]      = data.get("english","")
-    pages[idx]["spanish"]      = data.get("spanish","")
+        pages.append({"words":[{"english":"","spanish":"","en_sentence":"","es_sentence":""}],"teacher_note":False,"custom_tip":""})
+    # Support both legacy single-word and new multi-word structure
+    words = data.get("words", None)
+    if words is not None:
+        pages[idx]["words"] = words
+        if words:
+            pages[idx]["english"] = words[0].get("english","")
+            pages[idx]["spanish"] = words[0].get("spanish","")
+    else:
+        # Legacy save
+        pages[idx]["english"] = data.get("english","")
+        pages[idx]["spanish"] = data.get("spanish","")
+        en_sentence = data.get("en_sentence","")
+        es_sentence = data.get("es_sentence","")
+        if "words" not in pages[idx] or not pages[idx]["words"]:
+            pages[idx]["words"] = [{"english":pages[idx]["english"],"spanish":pages[idx]["spanish"],"en_sentence":en_sentence,"es_sentence":es_sentence}]
+        else:
+            pages[idx]["words"][0]["english"]     = pages[idx]["english"]
+            pages[idx]["words"][0]["spanish"]      = pages[idx]["spanish"]
+            pages[idx]["words"][0]["en_sentence"]  = en_sentence
+            pages[idx]["words"][0]["es_sentence"]  = es_sentence
     pages[idx]["custom_tip"]   = data.get("custom_tip","")
     pages[idx]["teacher_note"] = data.get("teacher_note", False)
     books[book_id]["pages"] = pages
@@ -284,3 +340,75 @@ def save_page(book_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+# ── Voice config ──────────────────────────────────────────────────────────────
+
+CONFIG_FILE = DATA_DIR / "config.json"
+
+def load_config():
+    if CONFIG_FILE.exists():
+        with open(CONFIG_FILE) as f:
+            return json.load(f)
+    return {
+        "voice_en_id":   "2EUn20N7uqcXUxqGrJEF",
+        "voice_en_name": "Britney",
+        "voice_es_id":   "2Lb1en5ujrODDIqmp7F3",
+        "voice_es_name": "Jhenny"
+    }
+
+def save_config(cfg):
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(cfg, f, indent=2)
+
+@app.route("/admin/voices")
+@requires_admin
+def admin_voices():
+    cfg = load_config()
+    msg = request.args.get("msg","")
+    return render_template("admin_voices.html", config=cfg, msg=msg)
+
+@app.route("/admin/voices/list")
+@requires_admin
+def voices_list():
+    if not ELEVENLABS_KEY:
+        return jsonify(error="No ElevenLabs API key configured in environment variables.")
+    try:
+        import requests as req
+        r = req.get("https://api.elevenlabs.io/v1/voices",
+                    headers={"xi-api-key": ELEVENLABS_KEY}, timeout=10)
+        data = r.json()
+        voices = sorted(data.get("voices",[]), key=lambda v: v.get("name",""))
+        return jsonify(voices=voices)
+    except Exception as e:
+        return jsonify(error=str(e))
+
+@app.route("/admin/voices/preview", methods=["POST"])
+@requires_admin
+def voice_preview():
+    if not ELEVENLABS_KEY:
+        return jsonify(error="No API key"), 500
+    data     = request.get_json()
+    voice_id = data.get("voice_id","")
+    text     = data.get("text","Hello, elephant! Hola, elefante!")[:200]
+    try:
+        client = ElevenLabs(api_key=ELEVENLABS_KEY)
+        audio_iter = client.text_to_speech.convert(
+            text=text, voice_id=voice_id,
+            model_id="eleven_multilingual_v2",
+            voice_settings=VoiceSettings(stability=0.75, similarity_boost=0.75)
+        )
+        return send_file(io.BytesIO(b"".join(audio_iter)), mimetype="audio/mpeg")
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+@app.route("/admin/voices/save", methods=["POST"])
+@requires_admin
+def voices_save():
+    data = request.get_json()
+    cfg  = load_config()
+    cfg["voice_en_id"]   = data.get("voice_en_id",   cfg.get("voice_en_id",""))
+    cfg["voice_en_name"] = data.get("voice_en_name", cfg.get("voice_en_name",""))
+    cfg["voice_es_id"]   = data.get("voice_es_id",   cfg.get("voice_es_id",""))
+    cfg["voice_es_name"] = data.get("voice_es_name", cfg.get("voice_es_name",""))
+    save_config(cfg)
+    return jsonify(success=True)
