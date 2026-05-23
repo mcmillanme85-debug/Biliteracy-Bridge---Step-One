@@ -17,8 +17,12 @@ ELEVENLABS_KEY  = os.environ.get('ELEVENLABS_API_KEY', '')
 VOICE_ES = "2Lb1en5ujrODDIqmp7F3"   # Jhenny
 VOICE_EN = "2EUn20N7uqcXUxqGrJEF"   # Britney
 
-DATA_DIR   = Path("data");        DATA_DIR.mkdir(exist_ok=True)
-IMAGES_DIR = Path("page_images"); IMAGES_DIR.mkdir(exist_ok=True)
+# Use /data (Render Persistent Disk) if available, otherwise local fallback
+_DISK = Path("/data")
+DATA_DIR   = (_DISK / "biliteracy_data")   if _DISK.exists() else Path("data")
+IMAGES_DIR = (_DISK / "page_images")       if _DISK.exists() else Path("page_images")
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 BOOKS_FILE = DATA_DIR / "books.json"
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -343,18 +347,25 @@ if __name__ == "__main__":
 
 # ── Voice config ──────────────────────────────────────────────────────────────
 
-CONFIG_FILE = DATA_DIR / "config.json"
+CONFIG_FILE = DATA_DIR / "config.json"  # lives on persistent disk
 
 def load_config():
-    if CONFIG_FILE.exists():
-        with open(CONFIG_FILE) as f:
-            return json.load(f)
-    return {
-        "voice_en_id":   "2EUn20N7uqcXUxqGrJEF",
-        "voice_en_name": "Britney",
-        "voice_es_id":   "2Lb1en5ujrODDIqmp7F3",
-        "voice_es_name": "Jhenny"
+    # Env vars take priority (set in Render dashboard for extra safety)
+    cfg = {
+        "voice_en_id":   os.environ.get("ENGLISH_VOICE_ID", os.environ.get("VOICE_EN_ID", "2EUn20N7uqcXUxqGrJEF")),
+        "voice_en_name": os.environ.get("VOICE_EN_NAME", "English Voice"),
+        "voice_es_id":   os.environ.get("SPANISH_VOICE_ID", os.environ.get("VOICE_ES_ID", "2Lb1en5ujrODDIqmp7F3")),
+        "voice_es_name": os.environ.get("VOICE_ES_NAME", "Kate"),
     }
+    # Override with saved config if it exists
+    if CONFIG_FILE.exists():
+        try:
+            with open(CONFIG_FILE) as f:
+                saved = json.load(f)
+                cfg.update(saved)
+        except Exception:
+            pass
+    return cfg
 
 def save_config(cfg):
     with open(CONFIG_FILE, "w") as f:
