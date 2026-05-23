@@ -17,13 +17,29 @@ ELEVENLABS_KEY  = os.environ.get('ELEVENLABS_API_KEY', '')
 VOICE_ES = "2Lb1en5ujrODDIqmp7F3"   # Jhenny
 VOICE_EN = "2EUn20N7uqcXUxqGrJEF"   # Britney
 
-# Use /data (Render Persistent Disk) if available, otherwise local fallback
-_DISK = Path("/data")
-DATA_DIR   = (_DISK / "biliteracy_data")   if _DISK.exists() else Path("data")
-IMAGES_DIR = (_DISK / "page_images")       if _DISK.exists() else Path("page_images")
+# Find writable persistent disk — try all common Render mount paths
+def _find_disk():
+    import os as _os
+    for candidate in ["/data", "/var/data", "/mnt/data", "/opt/data"]:
+        p = Path(candidate)
+        if p.exists() and _os.access(candidate, _os.W_OK):
+            return p
+    return None
+
+_DISK = _find_disk()
+if _DISK:
+    DATA_DIR   = _DISK / "biliteracy_data"
+    IMAGES_DIR = _DISK / "page_images"
+    print(f"✅ Using persistent disk: {_DISK}")
+else:
+    DATA_DIR   = Path("data")
+    IMAGES_DIR = Path("page_images")
+    print("⚠️  No persistent disk found — using local storage (data lost on restart)")
+
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 BOOKS_FILE = DATA_DIR / "books.json"
+print(f"📁 BOOKS_FILE = {BOOKS_FILE}")
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -379,6 +395,41 @@ def save_page(book_id):
     save_books(books)
     return jsonify(success=True)
 
+
+
+@app.route("/admin/storage-check")
+@requires_admin
+def storage_check():
+    import os
+    books = load_books()
+    book_ids = list(books.keys())
+    pages_sample = []
+    if book_ids:
+        first_book = books[book_ids[0]]
+        pages = first_book.get("pages", [])
+        for i, p in enumerate(pages[4:8]):  # pages 5-8
+            pages_sample.append({
+                "page": i+5,
+                "english": p.get("english",""),
+                "spanish": p.get("spanish",""),
+                "has_words": bool(p.get("words") and p["words"][0].get("english"))
+            })
+
+    return jsonify({
+        "disk_path": str(_DISK) if _DISK else "None (no persistent disk found)",
+        "data_dir": str(DATA_DIR),
+        "books_file": str(BOOKS_FILE),
+        "books_file_exists": BOOKS_FILE.exists(),
+        "books_file_size": BOOKS_FILE.stat().st_size if BOOKS_FILE.exists() else 0,
+        "local_books_exists": (Path("data") / "books.json").exists(),
+        "local_books_size": (Path("data") / "books.json").stat().st_size if (Path("data") / "books.json").exists() else 0,
+        "books_in_memory": book_ids,
+        "first_book_pages": first_book.get("num_pages", 0) if book_ids else 0,
+        "first_book_code": first_book.get("access_code","") if book_ids else "",
+        "sample_pages_5_to_8": pages_sample,
+        "disk_writable": bool(_DISK and os.access(str(_DISK), os.W_OK)),
+        "data_dir_contents": [str(f) for f in DATA_DIR.iterdir()] if DATA_DIR.exists() else []
+    })
 
 @app.route("/admin/debug/<book_id>")
 @requires_admin
