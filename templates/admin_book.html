@@ -28,28 +28,49 @@ header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;just
 .main{padding:20px;max-width:720px}
 .card{background:#fff;border-radius:14px;border:1px solid #e8e8e8;padding:22px;margin-bottom:16px}
 .card-title{font-size:15px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:7px}
-/* Alert banners */
 .alert{padding:12px 16px;border-radius:10px;font-size:14px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .alert-ok{background:#E8F5E9;color:#2E7D32;border:1.5px solid #A5D6A7}
 .alert-err{background:#FFEBEE;color:#C62828;border:1.5px solid #EF9A9A}
-/* Code section */
 .code-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
 .code-big{font-size:40px;font-weight:900;letter-spacing:8px;color:#1a1a1a;background:#FFF8E1;padding:12px 24px;border-radius:12px;border:2px solid #F9C12E}
-.code-locked-badge{display:flex;align-items:center;gap:6px;font-size:13px;color:#555;background:#f5f5f5;padding:8px 14px;border-radius:8px;border:1px solid #e0e0e0}
-.info-box{background:#E8F4FD;border-radius:8px;padding:11px 14px;font-size:13px;color:#1565C0;line-height:1.5}
-/* Upload forms */
-.upload-form-wrap{margin-bottom:16px}
-.upload-form-wrap label{display:block;font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.upload-btn{display:flex;align-items:center;gap:10px;padding:16px 20px;border-radius:12px;border:2.5px dashed #d0d0d0;background:#fafafa;cursor:pointer;transition:all .2s;text-decoration:none;width:100%}
-.upload-btn:hover{border-color:#F9C12E;background:#FFFDF5}
-.upload-btn input[type=file]{display:none}
-.upload-icon{font-size:28px;flex-shrink:0}
-.upload-text strong{display:block;font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:2px}
-.upload-text span{font-size:12px;color:#aaa}
-.upload-submit{margin-top:10px;background:#1a1a1a;color:#fff;border:none;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:none;transition:background .15s}
-.upload-submit:hover{background:#333}
-.upload-submit.visible{display:block}
-/* Page editor */
+.locked-badge{font-size:13px;color:#555;background:#f5f5f5;padding:8px 14px;border-radius:8px;border:1px solid #e0e0e0}
+.info-box{background:#E8F4FD;border-radius:8px;padding:11px 14px;font-size:13px;color:#1565C0;line-height:1.5;margin-bottom:16px}
+
+/* ── UPLOAD SECTION — plain and simple ── */
+.upload-section{background:#FFFDF5;border:2px solid #F9C12E;border-radius:12px;padding:20px;margin-bottom:16px}
+.upload-section h3{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.upload-section p{font-size:13px;color:#888;margin-bottom:10px;line-height:1.5}
+/* Make the file input BIG and visible */
+input[type=file]{
+  display:block;
+  width:100%;
+  padding:12px;
+  font-size:14px;
+  border:2px solid #ddd;
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  margin-bottom:10px;
+  color:#1a1a1a;
+}
+input[type=file]:hover{border-color:#F9C12E}
+.btn-upload{
+  display:block;
+  width:100%;
+  background:#1a1a1a;
+  color:#fff;
+  border:none;
+  padding:14px;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .15s;
+  text-align:center;
+}
+.btn-upload:hover{background:#333}
+
+/* ── Page editor ── */
 .field{margin-bottom:14px}
 .field label{display:block;font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 .field input,.field textarea{width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:8px;font-size:15px;color:#1a1a1a;outline:none;transition:border-color .15s;font-family:inherit}
@@ -60,10 +81,10 @@ header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;just
 .built-in-preview{font-size:12px;color:#999;font-style:italic;line-height:1.5;padding:8px 10px;background:#f9f9f9;border-radius:6px;border-left:3px solid #F9C12E;margin-bottom:10px}
 .built-in-preview b{color:#E65100;font-style:normal}
 .check-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#555;padding:6px 0}
-.check-row input{width:16px;height:16px;accent-color:#F9C12E;cursor:pointer}
+.check-row input[type=checkbox]{width:16px;height:16px;accent-color:#F9C12E;cursor:pointer}
 .page-img{max-width:260px;width:100%;border-radius:10px;border:1px solid #eee;margin-bottom:14px;display:block}
 .save-row{display:flex;align-items:center;gap:12px;margin-top:8px}
-.btn-save{background:#F9C12E;color:#1a1a1a;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;transition:background .15s}
+.btn-save{background:#F9C12E;color:#1a1a1a;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer}
 .btn-save:hover{background:#e6b020}
 .save-status{font-size:13px;color:#aaa}
 .save-status.ok{color:#2E7D32}.save-status.err{color:#C62828}
@@ -86,11 +107,11 @@ header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;just
 </header>
 
 <div class="layout">
-  <!-- Sidebar page list -->
+  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-title">Pages ({{ book.num_pages }})</div>
     {% if book.num_pages == 0 %}
-      <div style="padding:10px 8px;font-size:12px;color:#ccc;line-height:1.5">Upload your PDF first to see pages here</div>
+      <div style="padding:10px 8px;font-size:12px;color:#ccc;line-height:1.5">Upload PDF first</div>
     {% endif %}
     {% for i in range(book.num_pages) %}
     {% set p = book.pages[i] if i < book.pages|length else {} %}
@@ -101,95 +122,61 @@ header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;just
     {% endfor %}
   </div>
 
-  <!-- Main content -->
+  <!-- Main -->
   <div class="main">
 
-    <!-- Flash messages from redirects -->
     {% if msg == 'pdf_ok' %}
-    <div class="alert alert-ok">✅ PDF uploaded! {{ msg_val }} pages loaded. Now upload your CSV to add all the words.</div>
+    <div class="alert alert-ok">✅ PDF uploaded! {{ msg_val }} pages loaded. Now upload your CSV.</div>
     {% elif msg == 'pdf_err' %}
-    <div class="alert alert-err">❌ PDF upload failed: {{ msg_val }}</div>
+    <div class="alert alert-err">❌ PDF failed: {{ msg_val }}</div>
     {% elif msg == 'csv_ok' %}
-    <div class="alert alert-ok">✅ Words loaded for {{ msg_val }} pages! Click any page in the sidebar to check them.</div>
+    <div class="alert alert-ok">✅ Words loaded for {{ msg_val }} pages!</div>
     {% elif msg == 'csv_err' %}
-    <div class="alert alert-err">❌ CSV upload failed: {{ msg_val }}</div>
+    <div class="alert alert-err">❌ CSV failed: {{ msg_val }}</div>
     {% endif %}
 
-    <!-- Book setup card -->
     <div class="card">
-      <div class="card-title">⚙️ Book Setup — {{ book.title }}</div>
+      <div class="card-title">⚙️ Book Setup</div>
 
-      <!-- Access code (locked once set) -->
+      <!-- Code -->
       <div class="field">
-        <label>Parent Access Code</label>
+        <label>Parent Access Code — permanently locked</label>
         <div class="code-row">
           <div class="code-big">{{ book.access_code or '—' }}</div>
-          {% if book.get('code_locked') %}
-          <div class="code-locked-badge">🔒 Locked — cannot be changed</div>
-          {% endif %}
+          <div class="locked-badge">🔒 Permanent</div>
         </div>
-        <div class="info-box">
-          📋 Print this 4-digit code inside the front cover of your physical book. Parents type it into the app to unlock the pronunciation guide. <strong>This code is permanent.</strong>
-        </div>
+        <div class="info-box">📋 Print this 4-digit code inside the front cover of your book. Parents type it into the app to unlock the pronunciation guide.</div>
       </div>
 
-      <!-- PDF upload — standard HTML form, most reliable -->
-      <div class="upload-form-wrap" style="margin-top:18px">
-        <label>📄 Upload Book PDF</label>
-        <form method="POST" action="/admin/book/{{ book_id }}/upload-pdf"
-              enctype="multipart/form-data" id="pdfForm">
-          <label class="upload-btn" for="pdfFile">
-            <div class="upload-icon">📄</div>
-            <div class="upload-text">
-              <strong id="pdfLabel">Click to choose your PDF file</strong>
-              <span>{{ book.num_pages }} pages currently loaded · Select to replace</span>
-            </div>
-            <input type="file" name="pdf" id="pdfFile" accept=".pdf"
-                   onchange="document.getElementById('pdfLabel').textContent=this.files[0].name;
-                             document.getElementById('pdfSubmit').classList.add('visible')">
-          </label>
-          <button type="submit" id="pdfSubmit" class="upload-submit"
-                  onclick="this.textContent='⏳ Uploading… please wait (up to 60 sec)';this.disabled=true;">
-            ⬆️ Upload PDF Now
-          </button>
+      <!-- PDF upload — dead simple form -->
+      <div class="upload-section">
+        <h3>📄 Step 1 — Upload Book PDF</h3>
+        <p>Select your PDF file, then click the Upload button. The page will refresh when done (may take up to 60 seconds).</p>
+        <form method="POST" action="/admin/book/{{ book_id }}/upload-pdf" enctype="multipart/form-data">
+          <input type="file" name="pdf" accept=".pdf" required>
+          <button type="submit" class="btn-upload">⬆️ Upload PDF</button>
         </form>
       </div>
 
-      <!-- CSV upload — standard HTML form -->
-      <div class="upload-form-wrap">
-        <label>📊 Bulk Upload Words via CSV</label>
-        <form method="POST" action="/admin/book/{{ book_id }}/upload-csv"
-              enctype="multipart/form-data" id="csvForm">
-          <label class="upload-btn" for="csvFile">
-            <div class="upload-icon">📊</div>
-            <div class="upload-text">
-              <strong id="csvLabel">Click to choose your CSV file</strong>
-              <span>Columns: page, english, spanish</span>
-            </div>
-            <input type="file" name="csv" id="csvFile" accept=".csv,.txt"
-                   onchange="document.getElementById('csvLabel').textContent=this.files[0].name;
-                             document.getElementById('csvSubmit').classList.add('visible')">
-          </label>
-          <button type="submit" id="csvSubmit" class="upload-submit"
-                  onclick="this.textContent='⏳ Loading words…';this.disabled=true;">
-            ⬆️ Upload CSV Now
-          </button>
+      <!-- CSV upload — dead simple form -->
+      <div class="upload-section">
+        <h3>📊 Step 2 — Upload Words CSV</h3>
+        <p>Upload after the PDF. Columns must be: <strong>page, english, spanish</strong></p>
+        <form method="POST" action="/admin/book/{{ book_id }}/upload-csv" enctype="multipart/form-data">
+          <input type="file" name="csv" accept=".csv,.txt" required>
+          <button type="submit" class="btn-upload">⬆️ Upload CSV</button>
         </form>
-        <div class="csv-hint">
-          Format: page number (1-based), English word, Spanish word ·
-          <a onclick="downloadTemplate()">Download blank template ↓</a>
-        </div>
+        <div class="csv-hint">Need the template? <a onclick="downloadTemplate()">Download blank CSV ↓</a></div>
       </div>
     </div>
 
-    <!-- Per-page editor -->
+    <!-- Page editor -->
     <div class="card">
       {% if book.num_pages == 0 %}
       <div class="no-pages-msg">⬆️ Upload your PDF above — pages will appear here</div>
       {% else %}
       <div class="card-title">✏️ Page <span id="pageNum">1</span> of {{ book.num_pages }}</div>
-      <img class="page-img" id="pageImg" src="/page-image/{{ book_id }}/0"
-           alt="Page preview" onerror="this.style.display='none'">
+      <img class="page-img" id="pageImg" src="/page-image/{{ book_id }}/0" alt="Page" onerror="this.style.display='none'">
       <div class="two-col">
         <div class="field">
           <label>🇺🇸 English Word</label>
@@ -201,10 +188,10 @@ header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;just
         </div>
       </div>
       <div class="field">
-        <label>💡 Custom Teaching Tip <span style="font-weight:400;color:#ccc">(optional)</span></label>
+        <label>💡 Custom Teaching Tip <span style="font-weight:400;color:#ccc">(optional — leave blank for built-in)</span></label>
         <div class="tip-wrap">
           <div class="built-in-preview" id="builtInPreview">Enter an English word above to preview the built-in teaching tip.</div>
-          <textarea id="customTip" placeholder="Leave blank to use the built-in tip automatically. Write here to override it with your own words."></textarea>
+          <textarea id="customTip" placeholder="Leave blank to use the built-in tip. Write here to override with your own words."></textarea>
         </div>
       </div>
       <div class="field">
@@ -230,10 +217,10 @@ const PAGES     = {{ book.pages | tojson }};
 let currentPage = 0;
 
 const TIPS = {
-"armadillo":"The double L makes a 'y' sound: ar-ma-DEE-yo. 'Armadillo' means 'little armored one' — tap fingers on your arm like armor!",
+"armadillo":"The double L makes a 'y' sound: ar-ma-DEE-yo. 'Armadillo' means 'little armored one' in Spanish — tap fingers on your arm like armor!",
 "buffalo":"Nearly identical! Count syllables: Buf-fa-lo / Bú-fa-lo — both 3. The accent mark shows where to stress.",
 "baboon":"Listen for the shared 'ba' at the start! English: ba-BOON, Spanish: ba-bwee-NO.",
-"crocodile":"The letters C-R-O-C are in both — they just rearranged! Clap syllables: Croc-o-dile / Co-co-dri-lo.",
+"crocodile":"The letters C-R-O-C are in both — just rearranged! Clap syllables: Croc-o-dile / Co-co-dri-lo.",
 "camel":"Double L in 'camello' sounds like 'y': ka-MEY-yo. Count humps on the camel — count the Ls: 2!",
 "dinosaur":"Spanish adds 'io' at the end! Cover the 'io' in dinosaurio — the English word is hiding inside.",
 "dolphin":"Accent on í means FEEN — stretch it! English: DOL-fin; Spanish: del-FEEN.",
@@ -250,53 +237,53 @@ const TIPS = {
 "monkey":"DIFFERENT WORD — important lesson! Mono (most of Latin America) or Mico (Colombia).",
 "ocelot":"Spanish adds 'e': ocelot → ocelote. Say: O-se-lot / o-se-LO-te. Very common pattern.",
 "panther":"English 'th' → Spanish 't': PAN-ther → pan-TE-ra. This pattern works for hundreds of words!",
-"penguin":"The ü (two dots) means pronounce the U: pin-GWEE-no. Without dots, 'gu' before 'i' is silent.",
-"rhinoceros":"English 'rh' → Spanish plain 'r'. Both from the same Greek word meaning 'nose-horn'.",
+"penguin":"The ü (two dots) means pronounce the U: pin-GWEE-no. Without dots 'gu' before 'i' is silent.",
+"rhinoceros":"English 'rh' → Spanish plain 'r'. Both from Greek meaning 'nose-horn'.",
 "salamander":"Just the last 2 letters swapped: sala-MAN-der / sala-MAN-dra. Both have 4 syllables!",
-"tiger":"T-G-R stays in both words! Spanish always pronounces the final 'e' — no silent letters.",
+"tiger":"T-G-R stays in both! Spanish always pronounces the final 'e' — no silent letters.",
 "tortoise":"Different roots, but 'Tortuga' is the famous pirate island! Great history conversation.",
-"uakari":"PERFECT COGNATE from a Brazilian indigenous language! wah-KAH-ree / wah-kah-REE.",
+"uakari":"PERFECT COGNATE from Brazilian indigenous language! wah-KAH-ree / wah-kah-REE.",
 "viper":"Both from Latin 'vipera.' Spanish 'v' sounds like 'b': VEE-bo-rah.",
-"yak":"PERFECT COGNATE from Tibetan! Identical in both languages — one word, two languages!",
+"yak":"PERFECT COGNATE from Tibetan! Identical in both languages.",
 "cactus":"PERFECT COGNATE! KAK-tus / KAHK-toos. Same spelling, barely different pronunciation.",
 "canyon":"English borrowed 'canyon' FROM Spanish 'cañón'! The ñ makes the 'ny' sound.",
-"island":"Both from Latin 'insula.' English 'island' has a SILENT S added to look more Latin!",
-"desert":"English: 2 syllables; Spanish de-SYEHR-to: 4 syllables. The 'ie' is two vowels gliding together.",
-"meteor":"Spanish adds 'o': meteor → meteoro! Science words often follow this -or → -oro pattern.",
+"island":"Both from Latin 'insula.' English 'island' has a SILENT S added to look Latin!",
+"desert":"English: 2 syllables. Spanish de-SYEHR-to: 4 syllables. The 'ie' is two vowels gliding.",
+"meteor":"Spanish adds 'o': meteor → meteoro! Science words often follow -or → -oro.",
 "palm":"English 'palm' silent L sometimes; Spanish 'palma' always says it. La palma is feminine!",
-"ocean":"English: OH-shun (2 syllables). Spanish o-SEH-ah-no: 4 syllables. Spanish speaks every letter.",
-"planet":"Spanish adds 'a': planet → planeta! Both from Greek 'planetes' meaning 'wanderer.'",
-"safari":"PERFECT COGNATE from Arabic 'safar' (journey) — borrowed identically by both languages.",
-"tornado":"PERFECT COGNATE — English borrowed FROM Spanish! Listen: tor-NEI-do vs tor-NAH-do.",
+"ocean":"English: OH-shun (2 syllables). Spanish o-SEH-ah-no: 4. Spanish speaks every letter.",
+"planet":"Spanish adds 'a': planet → planeta! Both from Greek 'planetes' meaning wanderer.",
+"safari":"PERFECT COGNATE from Arabic 'safar' (journey) — borrowed identically by both.",
+"tornado":"PERFECT COGNATE — English borrowed FROM Spanish! tor-NEI-do vs tor-NAH-do.",
 "volcano":"English adds 'o'; Spanish is shorter: vol-KAHN. Both from the Roman god Vulcanus.",
 "banana":"PERFECT COGNATE! Identical — from West African languages through Portuguese trade.",
 "broccoli":"Both from Italian! Almost identical — English and Spanish agree on Italian food words.",
 "cacao":"PERFECT COGNATE from Nahuatl (Aztec)! ka-KAH-oh. Chocolate comes from this plant!",
 "cereal":"PERFECT COGNATE from goddess Ceres! Same spelling, accent mark shows the stress.",
 "chocolate":"PERFECT COGNATE from Nahuatl! English: 3 syllables. Spanish: 4. Every syllable spoken!",
-"coconut":"Spanish uses just 'coco'! 'Coconut' in English = 'coco' in Spanish. Shorter and sweeter.",
-"fruit":"Both from Latin 'fructus.' Spanish adds 'a' — la fruta is feminine. Name the fruits!",
-"hamburger":"Both named after Hamburg, Germany! 'hambur' appears in both — same city, same food.",
+"coconut":"Spanish uses just 'coco'! The 'nut' part is implied. Sometimes Spanish is more concise.",
+"fruit":"Both from Latin 'fructus.' Spanish adds 'a' — la fruta is feminine. Name all the fruits!",
+"hamburger":"Both named after Hamburg, Germany! 'hambur' is in both — same city, same food.",
 "kiwi":"PERFECT COGNATE from Māori (New Zealand)! KEE-wee in both languages.",
-"lemon":"Accent = last syllable stress: lee-MOHN. Both from Arabic 'laymun' via trade routes.",
+"lemon":"Accent = last-syllable stress: lee-MOHN. Both from Arabic 'laymun' via trade routes.",
 "mango":"PERFECT COGNATE from Tamil/Sanskrit! Identical — via Portuguese from India.",
 "melon":"Spanish: me-LOHN (last syllable). English: MEL-on (first). Same word, different music!",
 "papaya":"PERFECT COGNATE from Taíno (Caribbean indigenous)! Honoring Caribbean heritage.",
 "pasta":"PERFECT COGNATE from Italian! Identical — food words from Italy always match.",
-"salmon":"L is SILENT in English — SAM-un! Spanish says every letter: sal-MOHN. No silent letters!",
+"salmon":"L is SILENT in English — SAM-un! Spanish says every letter: sal-MOHN.",
 "soup":"Both share S-P: SouP / SoPa. From Latin 'suppa.' Finding shared letters is a key skill!",
-"tomato":"From Nahuatl 'tomatl'! This is the word behind 'you say to-MAY-to, I say to-MAH-to!'",
+"tomato":"From Nahuatl 'tomatl'! The word behind 'you say to-MAY-to, I say to-MAH-to!'",
 "vanilla":"Spanish 'v' sounds like 'b' AND double-ll sounds like 'y': bai-NEE-ya! From Nahuatl.",
 "yogurt":"Spanish drops the 't': yogurt → yogur! From Turkish — Spanish is closer to the original."
 };
 
 function updatePreview() {
   const word = (document.getElementById("enWord").value||"").toLowerCase().trim().split(/[\s\/]/)[0];
-  const el   = document.getElementById("builtInPreview");
+  const el = document.getElementById("builtInPreview");
   if (!el) return;
   const tip = TIPS[word];
   if (tip)       el.innerHTML = `<b>Built-in tip:</b> ${tip}`;
-  else if (word) el.innerHTML = `No built-in tip for "${word}" — write a custom one below if you'd like.`;
+  else if (word) el.innerHTML = `No built-in tip for "${word}" — write a custom one below.`;
   else           el.innerHTML = `Enter an English word above to preview the built-in teaching tip.`;
 }
 
@@ -306,12 +293,12 @@ function loadPage(idx) {
   const pg = document.getElementById("pageNum");
   if (pg) pg.textContent = idx + 1;
   const img = document.getElementById("pageImg");
-  if (img) { img.src = `/page-image/${BOOK_ID}/${idx}`; img.style.display = "block"; }
+  if (img) { img.src = `/page-image/${BOOK_ID}/${idx}`; img.style.display="block"; }
   const p = PAGES[idx] || {};
-  const set = (id, val) => { const el = document.getElementById(id); if(el) el.value = val||""; };
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||""; };
   set("enWord", p.english); set("esWord", p.spanish); set("customTip", p.custom_tip);
   const note = document.getElementById("teacherNote");
-  if (note) note.checked = p.teacher_note || false;
+  if (note) note.checked = p.teacher_note||false;
   updatePreview();
   const st = document.getElementById("saveStatus");
   if (st) st.textContent = "";
@@ -322,34 +309,34 @@ async function savePage() {
   if (!st) return;
   st.textContent = "Saving…"; st.className = "save-status";
   const body = {
-    page_idx:     currentPage,
-    english:      (document.getElementById("enWord").value||"").trim(),
-    spanish:      (document.getElementById("esWord").value||"").trim(),
-    custom_tip:   (document.getElementById("customTip").value||"").trim(),
+    page_idx: currentPage,
+    english:  (document.getElementById("enWord").value||"").trim(),
+    spanish:  (document.getElementById("esWord").value||"").trim(),
+    custom_tip:(document.getElementById("customTip").value||"").trim(),
     teacher_note: document.getElementById("teacherNote").checked
   };
-  if (!PAGES[currentPage]) PAGES[currentPage] = {};
+  if (!PAGES[currentPage]) PAGES[currentPage]={};
   Object.assign(PAGES[currentPage], body);
   const dot = document.querySelector(`#pgbtn_${currentPage} .dot`);
-  if (dot) dot.className = "dot " + (body.english ? "dot-on" : "dot-off");
+  if (dot) dot.className = "dot "+(body.english?"dot-on":"dot-off");
   try {
-    const r = await fetch(`/admin/book/${BOOK_ID}/save-page`, {
-      method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+    const r = await fetch(`/admin/book/${BOOK_ID}/save-page`,{
+      method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)
     });
     const d = await r.json();
-    st.textContent = d.success ? "✅ Saved!" : "❌ " + (d.error||"Error");
-    st.className   = "save-status " + (d.success ? "ok" : "err");
+    st.textContent = d.success ? "✅ Saved!" : "❌ "+(d.error||"Error");
+    st.className = "save-status "+(d.success?"ok":"err");
   } catch(e) {
-    st.textContent = "❌ Network error — try again"; st.className = "save-status err";
+    st.textContent = "❌ Network error"; st.className = "save-status err";
   }
 }
 
 function downloadTemplate() {
-  const n = Math.max(NUM_PAGES, 67);
+  const n = Math.max(NUM_PAGES,67);
   const rows = ["page,english,spanish"];
-  for (let i = 1; i <= n; i++) rows.push(`${i},,`);
+  for (let i=1;i<=n;i++) rows.push(`${i},,`);
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([rows.join("\n")], {type:"text/csv"}));
+  a.href = URL.createObjectURL(new Blob([rows.join("\n")],{type:"text/csv"}));
   a.download = "book_words_template.csv";
   a.click();
 }
