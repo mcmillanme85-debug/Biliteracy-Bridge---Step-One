@@ -102,6 +102,7 @@ input[type=file]:hover{border-color:#F9C12E}
   <div class="hdr-right">
     {% if book.access_code %}<div class="code-pill">{{ book.access_code }}</div>{% endif %}
     <a href="/book/{{ book_id }}" target="_blank" class="btn-hdr">👁 Preview</a>
+    <a href="/admin/voices" class="btn-hdr">🎙️ Voices</a>
     <a href="/admin" class="btn-hdr">← Dashboard</a>
   </div>
 </header>
@@ -177,16 +178,8 @@ input[type=file]:hover{border-color:#F9C12E}
       {% else %}
       <div class="card-title">✏️ Page <span id="pageNum">1</span> of {{ book.num_pages }}</div>
       <img class="page-img" id="pageImg" src="/page-image/{{ book_id }}/0" alt="Page" onerror="this.style.display='none'">
-      <div class="two-col">
-        <div class="field">
-          <label>🇺🇸 English Word</label>
-          <input type="text" id="enWord" placeholder="e.g. Elephant" oninput="updatePreview()">
-        </div>
-        <div class="field">
-          <label>🇲🇽 Spanish Word</label>
-          <input type="text" id="esWord" placeholder="e.g. Elefante">
-        </div>
-      </div>
+      <div id="wordsEditor"></div>
+      <button type="button" onclick="addWord()" style="background:transparent;border:1.5px dashed #F9C12E;color:#F9C12E;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:14px;width:100%">+ Add another word to this page</button>
       <div class="field">
         <label>💡 Custom Teaching Tip <span style="font-weight:400;color:#ccc">(optional — leave blank for built-in)</span></label>
         <div class="tip-wrap">
@@ -295,8 +288,11 @@ function loadPage(idx) {
   const img = document.getElementById("pageImg");
   if (img) { img.src = `/page-image/${BOOK_ID}/${idx}`; img.style.display="block"; }
   const p = PAGES[idx] || {};
+  const words = p.words || [{english:p.english||"",spanish:p.spanish||"",en_sentence:"",es_sentence:""}];
+  wordCount = words.length;
+  renderWordsEditor(words);
   const set = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||""; };
-  set("enWord", p.english); set("esWord", p.spanish); set("customTip", p.custom_tip);
+  set("customTip", p.custom_tip);
   const note = document.getElementById("teacherNote");
   if (note) note.checked = p.teacher_note||false;
   updatePreview();
@@ -304,21 +300,95 @@ function loadPage(idx) {
   if (st) st.textContent = "";
 }
 
+let wordCount = 1;
+
+function getWordTemplate(idx, data={}) {
+  return `
+    <div class="word-block" id="wordBlock_${idx}" style="background:#2a2a2a;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #3a3a3a">
+      ${idx > 0 ? `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;font-weight:700;color:#F9C12E">Word ${idx+1}</span><button onclick="removeWord(${idx})" style="background:transparent;border:none;color:#666;cursor:pointer;font-size:12px">✕ Remove</button></div>` : '<div style="font-size:12px;font-weight:700;color:#F9C12E;margin-bottom:10px">Word ${idx+1}</div>'}
+      <div class="two-col">
+        <div class="field">
+          <label>🇺🇸 English Word</label>
+          <input type="text" id="enWord_${idx}" placeholder="e.g. Elephant" value="${data.english||''}" oninput="if(${idx}===0)updatePreview()">
+        </div>
+        <div class="field">
+          <label>🇲🇽 Spanish Word</label>
+          <input type="text" id="esWord_${idx}" placeholder="e.g. el Elefante" value="${data.spanish||''}">
+        </div>
+      </div>
+      <div class="field">
+        <label>🇺🇸 English Sentence</label>
+        <input type="text" id="enSentence_${idx}" placeholder="e.g. The elephant has a long trunk." value="${data.en_sentence||''}">
+      </div>
+      <div class="field">
+        <label>🇲🇽 Spanish Sentence</label>
+        <input type="text" id="esSentence_${idx}" placeholder="e.g. El elefante tiene una trompa larga." value="${data.es_sentence||''}">
+      </div>
+    </div>`;
+}
+
+function renderWordsEditor(words) {
+  wordCount = Math.max(words.length, 1);
+  const el = document.getElementById("wordsEditor");
+  if (!el) return;
+  el.innerHTML = words.map((w, i) => getWordTemplate(i, w)).join("");
+}
+
+function addWord() {
+  const el = document.getElementById("wordsEditor");
+  if (!el) return;
+  const div = document.createElement("div");
+  div.innerHTML = getWordTemplate(wordCount, {});
+  el.appendChild(div.firstElementChild);
+  wordCount++;
+}
+
+function removeWord(idx) {
+  const block = document.getElementById(`wordBlock_${idx}`);
+  if (block) block.remove();
+}
+
+function collectWords() {
+  const words = [];
+  for (let i = 0; i < wordCount + 5; i++) {
+    const enEl = document.getElementById(`enWord_${i}`);
+    if (!enEl) continue;
+    words.push({
+      english:     (document.getElementById(`enWord_${i}`)?.value||"").trim(),
+      spanish:     (document.getElementById(`esWord_${i}`)?.value||"").trim(),
+      en_sentence: (document.getElementById(`enSentence_${i}`)?.value||"").trim(),
+      es_sentence: (document.getElementById(`esSentence_${i}`)?.value||"").trim(),
+    });
+  }
+  return words.filter(w => w.english || w.spanish);
+}
+
+function updatePreview() {
+  const word = (document.getElementById("enWord_0")?.value||"").toLowerCase().trim().split(/[\s\/]/)[0];
+  const el = document.getElementById("builtInPreview");
+  if (!el) return;
+  const tip = TIPS[word];
+  if (tip)       el.innerHTML = `<b>Built-in tip:</b> ${tip}`;
+  else if (word) el.innerHTML = `No built-in tip for "${word}" — write a custom one below.`;
+  else           el.innerHTML = `Enter an English word above to preview the built-in teaching tip.`;
+}
+
 async function savePage() {
   const st = document.getElementById("saveStatus");
   if (!st) return;
   st.textContent = "Saving…"; st.className = "save-status";
+  const words = collectWords();
   const body = {
-    page_idx: currentPage,
-    english:  (document.getElementById("enWord").value||"").trim(),
-    spanish:  (document.getElementById("esWord").value||"").trim(),
-    custom_tip:(document.getElementById("customTip").value||"").trim(),
+    page_idx:     currentPage,
+    words:        words,
+    custom_tip:   (document.getElementById("customTip").value||"").trim(),
     teacher_note: document.getElementById("teacherNote").checked
   };
   if (!PAGES[currentPage]) PAGES[currentPage]={};
-  Object.assign(PAGES[currentPage], body);
+  PAGES[currentPage].words = words;
+  if (words.length) { PAGES[currentPage].english = words[0].english; PAGES[currentPage].spanish = words[0].spanish; }
   const dot = document.querySelector(`#pgbtn_${currentPage} .dot`);
-  if (dot) dot.className = "dot "+(body.english?"dot-on":"dot-off");
+  if (dot) dot.className = "dot "+(words.length && words[0].english ? "dot-on" : "dot-off");
   try {
     const r = await fetch(`/admin/book/${BOOK_ID}/save-page`,{
       method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)
@@ -341,6 +411,7 @@ function downloadTemplate() {
   a.click();
 }
 
+wordCount = 1;
 if (NUM_PAGES > 0) loadPage(0);
 </script>
 </body>

@@ -3,136 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard — Biliteracy Bridge</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Admin Dashboard · Biliteracy Bridge</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Source Sans 3', sans-serif; background: #f7f4ee; color: #2d2d2d; }
-  header {
-    background: #1b3a5c;
-    color: #fff;
-    padding: 18px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 4px solid #c8893a;
-  }
-  header .left .brand { font-size: 0.7rem; letter-spacing: .12em; text-transform: uppercase; color: #c8893a; }
-  header h1 { font-family: 'Playfair Display', serif; font-size: 1.3rem; }
-  .logout { color: #aac4d8; font-size: 0.85rem; text-decoration: none; }
-  .logout:hover { color: #fff; }
-  .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
-  .section-header h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #1b3a5c; }
-  .add-btn {
-    background: #c8893a;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: opacity .2s;
-  }
-  .add-btn:hover { opacity: .85; }
-  .book-grid { display: grid; gap: 16px; }
-  .book-row {
-    background: #fff;
-    border: 1px solid #ddd8ce;
-    border-radius: 12px;
-    padding: 22px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0,0,0,.05);
-  }
-  .book-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #1b3a5c; margin-bottom: 4px; }
-  .book-meta { font-size: 0.83rem; color: #6b6b6b; }
-  .book-actions { display: flex; gap: 10px; flex-shrink: 0; }
-  .btn-edit {
-    background: #1b3a5c;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 8px;
-    padding: 8px 18px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-  .btn-view {
-    background: #2a7f8f;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 8px;
-    padding: 8px 18px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-  .empty { text-align: center; padding: 60px 20px; color: #999; }
-  .empty p { font-size: 1rem; margin-bottom: 20px; }
-  .tip {
-    background: #e8f4f8;
-    border-left: 4px solid #2a7f8f;
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-top: 32px;
-    font-size: 0.9rem;
-    color: #1b3a5c;
-  }
-  .tip strong { display: block; margin-bottom: 4px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#fff;min-height:100vh}
+header{background:#1a1a1a;border-bottom:3px solid #F9C12E;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{height:36px;width:auto}
+.brand-text{font-size:15px;font-weight:700;color:#F9C12E}
+.hdr-right{display:flex;gap:8px;flex-wrap:wrap}
+.btn-hdr{font-size:12px;padding:7px 14px;border-radius:8px;border:1px solid #444;background:transparent;cursor:pointer;color:#aaa;text-decoration:none;display:inline-block;transition:all .15s}
+.btn-hdr:hover{border-color:#F9C12E;color:#F9C12E}
+.btn-primary{background:#F9C12E;color:#000;border-color:#F9C12E;font-weight:700}
+.btn-primary:hover{background:#FFD54F;color:#000}
+main{max-width:820px;margin:0 auto;padding:28px 20px}
+h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.subtitle{font-size:14px;color:#888;margin-bottom:28px}
+.book-card{background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:14px;padding:20px 24px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;transition:border-color .15s}
+.book-card:hover{border-color:#F9C12E}
+.book-info h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px}
+.book-info p{font-size:13px;color:#666}
+.book-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.badge-code{background:rgba(249,193,46,.15);color:#F9C12E;border:1px solid rgba(249,193,46,.3);letter-spacing:2px}
+.badge-pages{background:#222;color:#888;border:1px solid #333}
+.badge-free{background:rgba(76,175,80,.15);color:#81C784;border:1px solid rgba(76,175,80,.3)}
+.book-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-edit{background:#F9C12E;color:#000;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:background .15s}
+.btn-edit:hover{background:#FFD54F}
+.btn-preview{background:transparent;color:#aaa;border:1px solid #444;padding:9px 14px;border-radius:8px;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .15s}
+.btn-preview:hover{border-color:#F9C12E;color:#F9C12E}
+.empty{text-align:center;padding:50px 20px;color:#555}
+.empty h3{font-size:18px;margin-bottom:8px;color:#888}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.toolbar h2{margin-bottom:0}
 </style>
 </head>
 <body>
 <header>
-  <div class="left">
-    <div class="brand">Biliteracy Bridge · Admin</div>
-    <h1>Book Dashboard</h1>
+  <div class="brand">
+    <img src="/static/logo.png" alt="BB" onerror="this.style.display='none'">
+    <div class="brand-text">Admin Dashboard</div>
   </div>
-  <a href="/admin/logout" class="logout">Sign out</a>
+  <div class="hdr-right">
+    <a href="/admin/voices" class="btn-hdr">🎙️ Voices</a>
+    <a href="/" class="btn-hdr">👁 View App</a>
+    <a href="/admin/logout" class="btn-hdr">Log Out</a>
+  </div>
 </header>
 
-<div class="container">
-  <div class="section-header">
-    <h2>Your Books</h2>
-    <a href="/admin/book/new" class="add-btn">+ Add New Book</a>
+<main>
+  <div class="toolbar">
+    <div>
+      <h2>📚 Your Books</h2>
+      <div class="subtitle">Manage books, upload PDFs and words, set access codes</div>
+    </div>
+    <a href="/admin/new-book" class="btn-hdr btn-primary">+ New Book</a>
   </div>
 
-  {% if books %}
-  <div class="book-grid">
-    {% for book_id, book in books.items() %}
-    <div class="book-row">
-      <div>
-        <div class="book-title">{{ book.title }}</div>
-        <div class="book-meta">
-          {{ book.num_pages }} page{{ 's' if book.num_pages != 1 else '' }} ·
-          URL: /book/{{ book_id }}
-        </div>
-      </div>
-      <div class="book-actions">
-        <a href="/book/{{ book_id }}" target="_blank" class="btn-view">Preview ↗</a>
-        <a href="/admin/book/{{ book_id }}" class="btn-edit">Edit</a>
+  {% for book_id, book in books.items() %}
+  <div class="book-card">
+    <div class="book-info">
+      <h3>{{ book.title }}</h3>
+      <div class="book-meta">
+        {% if book.access_code %}
+        <span class="badge badge-code">{{ book.access_code }}</span>
+        {% else %}
+        <span class="badge badge-free">FREE ACCESS</span>
+        {% endif %}
+        <span class="badge badge-pages">{{ book.num_pages }} pages</span>
+        {% set filled = book.pages | selectattr('english') | list | length %}
+        <span class="badge badge-pages">{{ filled }} words set</span>
       </div>
     </div>
-    {% endfor %}
+    <div class="book-actions">
+      <a href="/book/{{ book_id }}" target="_blank" class="btn-preview">👁 Preview</a>
+      <a href="/admin/book/{{ book_id }}" class="btn-edit">✏️ Edit Book</a>
+    </div>
   </div>
   {% else %}
   <div class="empty">
-    <p>No books yet. Add your first book to get started.</p>
-    <a href="/admin/book/new" class="add-btn">+ Add New Book</a>
+    <h3>No books yet</h3>
+    <p>Click "+ New Book" to get started</p>
   </div>
-  {% endif %}
-
-  <div class="tip">
-    <strong>How to embed a book on your Hostinger website:</strong>
-    Copy this code and paste it into a Custom HTML block — replace BOOK-ID with the book's URL ID shown above:<br><br>
-    <code style="background:#d4eaf2;padding:6px 10px;border-radius:4px;display:inline-block;margin-top:6px;">
-      &lt;iframe src="https://biliteracy-bridge-step-one.onrender.com/book/BOOK-ID" width="100%" height="750" style="border:none;border-radius:12px;" allow="autoplay"&gt;&lt;/iframe&gt;
-    </code>
-  </div>
-</div>
+  {% endfor %}
+</main>
 </body>
 </html>

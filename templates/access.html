@@ -6,39 +6,35 @@
 <title>Enter Code · {{ book.title }}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FFF8F0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-.card{background:#fff;border-radius:24px;padding:40px 36px;max-width:400px;width:100%;text-align:center;border:2px solid #F0E8D8;box-shadow:0 8px 32px rgba(249,193,46,.12)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.card{background:#0F2847;border-radius:24px;padding:40px 36px;max-width:400px;width:100%;text-align:center;border:1.5px solid #1E3A5F;box-shadow:0 8px 40px rgba(0,0,0,.4)}
 .logo{width:90px;height:auto;margin-bottom:16px}
-h1{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:6px}
-.book-name{font-size:14px;color:#999;margin-bottom:28px;line-height:1.4}
-.digits-label{font-size:12px;font-weight:700;color:#aaa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.6px}
+h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.book-name{font-size:14px;color:#8BA3C0;margin-bottom:28px;line-height:1.4}
+.digits-label{font-size:12px;font-weight:700;color:#8BA3C0;margin-bottom:12px;text-transform:uppercase;letter-spacing:.6px}
 .digits{display:flex;justify-content:center;gap:12px;margin-bottom:24px}
-.digit-box{width:66px;height:74px;border:2.5px solid #e0e0e0;border-radius:14px;font-size:34px;font-weight:800;text-align:center;color:#1a1a1a;background:#FFFDF8;outline:none;transition:border-color .15s,box-shadow .15s;-moz-appearance:textfield}
+.digit-box{width:66px;height:74px;border:2.5px solid #1E3A5F;border-radius:14px;font-size:34px;font-weight:800;text-align:center;color:#F9C12E;background:#0B1F3A;outline:none;transition:border-color .15s,box-shadow .15s;-moz-appearance:textfield}
 .digit-box::-webkit-outer-spin-button,.digit-box::-webkit-inner-spin-button{-webkit-appearance:none}
 .digit-box:focus{border-color:#F9C12E;box-shadow:0 0 0 3px rgba(249,193,46,.2)}
-.digit-box.filled{border-color:#F9C12E;background:#FFFBE8}
-{% if error %}.digit-box{border-color:#E53935;animation:shake .3s ease}{% endif %}
+.digit-box.filled{border-color:#F9C12E}
+{% if error %}.digit-box{border-color:#EF5350;animation:shake .3s ease}{% endif %}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.error-msg{background:#FFEBEE;color:#C62828;font-size:13px;padding:10px 16px;border-radius:10px;margin-bottom:20px}
-.btn-submit{width:100%;background:#F9C12E;color:#1a1a1a;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;transition:background .15s;margin-bottom:16px}
-.btn-submit:hover{background:#e6b020}
-.btn-submit:disabled{background:#e0e0e0;color:#aaa;cursor:not-allowed}
-.hint{font-size:12px;color:#bbb;line-height:1.5;margin-bottom:20px}
-.hint strong{color:#E65100}
-.back{font-size:13px;color:#ccc;text-decoration:none}
+.error-msg{background:rgba(239,83,80,.15);color:#EF9A9A;font-size:13px;padding:10px 16px;border-radius:10px;margin-bottom:20px;border:1px solid rgba(239,83,80,.3)}
+.btn-submit{width:100%;background:#F9C12E;color:#0B1F3A;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;transition:all .15s;margin-bottom:16px}
+.btn-submit:hover{background:#FFD54F;transform:translateY(-1px)}
+.btn-submit:disabled{background:#1E3A5F;color:#4A6A8A;cursor:not-allowed;transform:none}
+.hint{font-size:12px;color:#4A6A8A;line-height:1.5;margin-bottom:20px}
+.hint strong{color:#8BA3C0}
+.back{font-size:13px;color:#4A6A8A;text-decoration:none}
 .back:hover{color:#F9C12E}
 </style>
 </head>
 <body>
 <div class="card">
-  <img class="logo" src="/static/logo.png" alt="Biliteracy Bridge">
+  <img class="logo" src="/static/logo.png" alt="Biliteracy Bridge" onerror="this.style.display='none'">
   <h1>Enter Your Book Code</h1>
-  <div class="book-name">To access <strong>{{ book.title }}</strong></div>
-
-  {% if error %}
-  <div class="error-msg">❌ {{ error }}</div>
-  {% endif %}
-
+  <div class="book-name">To unlock <strong style="color:#fff">{{ book.title }}</strong></div>
+  {% if error %}<div class="error-msg">❌ {{ error }}</div>{% endif %}
   <form method="POST" id="codeForm">
     <div class="digits-label">Your 4-Digit Code</div>
     <div class="digits">
@@ -47,7 +43,7 @@ h1{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:6px}
       <input class="digit-box" type="number" name="d3" id="d3" min="0" max="9" placeholder="·" autocomplete="off" required>
       <input class="digit-box" type="number" name="d4" id="d4" min="0" max="9" placeholder="·" autocomplete="off" required>
     </div>
-    <div class="hint">💡 Find your code printed inside the<br>front cover of <strong>{{ book.title }}</strong></div>
+    <div class="hint">💡 Find your code printed inside the front cover of<br><strong>{{ book.title }}</strong></div>
     <button type="submit" class="btn-submit" id="submitBtn" disabled>🔓 Unlock Pronunciation Guide</button>
   </form>
   <a href="/" class="back">← Back to all books</a>
@@ -55,28 +51,11 @@ h1{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:6px}
 <script>
 const boxes=[d1,d2,d3,d4];
 const btn=document.getElementById("submitBtn");
-function update(){
-  const ok=boxes.every(b=>b.value.length===1);
-  btn.disabled=!ok;
-  boxes.forEach(b=>b.classList.toggle("filled",b.value.length===1));
-}
+function update(){btn.disabled=!boxes.every(b=>b.value.length===1);boxes.forEach(b=>b.classList.toggle("filled",b.value.length===1));}
 boxes.forEach((box,i)=>{
-  box.addEventListener("input",function(){
-    if(this.value.length>1)this.value=this.value.slice(-1);
-    if(this.value.length===1&&i<3)boxes[i+1].focus();
-    update();
-  });
-  box.addEventListener("keydown",function(e){
-    if(e.key==="Backspace"&&!this.value&&i>0){boxes[i-1].focus();boxes[i-1].value="";update();}
-    if(e.key==="ArrowLeft"&&i>0)boxes[i-1].focus();
-    if(e.key==="ArrowRight"&&i<3)boxes[i+1].focus();
-  });
-  box.addEventListener("paste",function(e){
-    e.preventDefault();
-    const t=(e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"");
-    t.split("").slice(0,4).forEach((ch,j)=>{if(boxes[j])boxes[j].value=ch;});
-    boxes[Math.min(t.length,3)].focus();update();
-  });
+  box.addEventListener("input",function(){if(this.value.length>1)this.value=this.value.slice(-1);if(this.value.length===1&&i<3)boxes[i+1].focus();update();});
+  box.addEventListener("keydown",function(e){if(e.key==="Backspace"&&!this.value&&i>0){boxes[i-1].focus();boxes[i-1].value="";update();}});
+  box.addEventListener("paste",function(e){e.preventDefault();const t=(e.clipboardData||window.clipboardData).getData("text").replace(/\D/g,"");t.split("").slice(0,4).forEach((ch,j)=>{if(boxes[j])boxes[j].value=ch;});boxes[Math.min(t.length,3)].focus();update();});
 });
 boxes[0].focus();
 </script>

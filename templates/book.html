@@ -6,48 +6,48 @@
 <title>{{ book.title }} · Biliteracy Bridge</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FFF8F2;color:#1a1a1a;min-height:100vh}
-header{background:#fff;border-bottom:2px solid #FF7043;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;color:#fff;min-height:100vh}
+header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:8px}
 .brand-logo{font-size:22px}
-.brand-name{font-size:16px;font-weight:700;color:#E65100}
+.brand-name{font-size:16px;font-weight:700;color:#F9C12E}
 .header-right{display:flex;align-items:center;gap:10px}
-.page-counter{font-size:13px;color:#888;font-weight:500}
-.back-link{font-size:13px;color:#aaa;text-decoration:none}
-.back-link:hover{color:#FF7043}
+.page-counter{font-size:13px;color:#8BA3C0;font-weight:500}
+.back-link{font-size:13px;color:#4A6A8A;text-decoration:none}
+.back-link:hover{color:#F9C12E}
 .layout{display:grid;grid-template-columns:1fr 340px;gap:0;min-height:calc(100vh - 60px)}
 @media(max-width:780px){.layout{grid-template-columns:1fr}}
 .page-viewer{padding:20px;display:flex;flex-direction:column;align-items:center}
-.page-img-wrap{width:100%;max-width:520px;background:#fff;border-radius:16px;border:1.5px solid #f0e0d8;overflow:hidden;margin-bottom:16px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center}
+.page-img-wrap{width:100%;max-width:520px;background:#0F2847;border-radius:16px;border:1.5px solid #1E3A5F;overflow:hidden;margin-bottom:16px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center}
 .page-img{width:100%;height:100%;object-fit:contain;display:block}
 .page-nav{display:flex;align-items:center;gap:12px;margin-top:4px}
-.nav-btn{background:#fff;border:1.5px solid #ddd;color:#666;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
-.nav-btn:hover:not(:disabled){border-color:#FF7043;color:#FF7043}
+.nav-btn{background:#0F2847;border:1.5px solid #ddd;color:#666;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-btn:hover:not(:disabled){border-color:#F9C12E;color:#F9C12E}
 .nav-btn:disabled{opacity:.35;cursor:not-allowed}
 .page-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:200px}
 .dot{width:7px;height:7px;border-radius:50%;background:#ddd;transition:background .2s}
-.dot.active{background:#FF7043}
-.sidebar{background:#fff;border-left:1.5px solid #f0e0d8;padding:20px;overflow-y:auto;max-height:calc(100vh - 60px);position:sticky;top:60px}
+.dot.active{background:#F9C12E}
+.sidebar{background:#0F2847;border-left:1.5px solid #f0e0d8;padding:20px;overflow-y:auto;max-height:calc(100vh - 60px);position:sticky;top:60px}
 @media(max-width:780px){.sidebar{border-left:none;border-top:1.5px solid #f0e0d8;position:static;max-height:none}}
 .word-section{margin-bottom:20px}
-.word-section h3{font-size:12px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
-.word-card{background:#FFF8F2;border-radius:12px;padding:14px;margin-bottom:10px}
-.word-label{font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.word-text{font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
-.word-pron{font-size:12px;color:#aaa;font-style:italic;margin-bottom:10px}
+.word-section h3{font-size:12px;font-weight:700;color:#4A6A8A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+.word-card{background:#0B1F3A;border-radius:12px;padding:14px;margin-bottom:10px}
+.word-label{font-size:11px;color:#4A6A8A;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.word-text{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px}
+.word-pron{font-size:12px;color:#4A6A8A;font-style:italic;margin-bottom:10px}
 .play-row{display:flex;gap:8px;flex-wrap:wrap}
 .play-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
-.play-btn-en{background:#E3F2FD;color:#1565C0}
+.play-btn-en{background:rgba(30,58,95,.8);color:#90CAF9}
 .play-btn-en:hover{background:#1565C0;color:#fff}
-.play-btn-es{background:#FBE9E7;color:#BF360C}
-.play-btn-es:hover{background:#BF360C;color:#fff}
-.play-btn-both{background:#E8F5E9;color:#2E7D32}
+.play-btn-es{background:rgba(249,193,46,.15);color:#F9C12E}
+.play-btn-es:hover{background:#F9C12E;color:#0B1F3A}
+.play-btn-both{background:rgba(76,175,80,.15);color:#81C784}
 .play-btn-both:hover{background:#2E7D32;color:#fff}
 .play-btn:disabled{opacity:.5;cursor:not-allowed}
 .no-word{font-size:13px;color:#ccc;font-style:italic;padding:8px 0}
 .divider{border:none;border-top:1px solid #f0ede8;margin:16px 0}
 /* Teaching tips */
-.tips-toggle{width:100%;background:#FFF3E0;border:none;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;color:#E65100;transition:background .15s;margin-bottom:2px}
+.tips-toggle{width:100%;background:#0F2847;border:none;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;color:#F9C12E;transition:background .15s;margin-bottom:2px}
 .tips-toggle:hover{background:#FFE0B2}
 .tips-toggle .arrow{transition:transform .25s;font-style:normal;font-size:12px}
 .tips-toggle.open .arrow{transform:rotate(180deg)}
@@ -56,23 +56,23 @@ header{background:#fff;border-bottom:2px solid #FF7043;padding:14px 20px;display
 .tip-section{padding:14px 16px;border-bottom:1px solid #FFF0E0}
 .tip-section:last-child{border-bottom:none}
 .tip-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
-.tip-head-tip{color:#E65100}
+.tip-head-tip{color:#F9C12E}
 .tip-head-act{color:#6A1B9A}
 .tip-head-fact{color:#1565C0}
-.tip-text{font-size:13px;color:#333;line-height:1.55}
-.act-box{background:#FFFDE7;border-left:3px solid #FFC107;padding:8px 10px;border-radius:0 8px 8px 0;font-size:13px;color:#4E342E;line-height:1.5}
-.fact-box{background:#F3E5F5;border-left:3px solid #9C27B0;padding:8px 10px;border-radius:0 8px 8px 0;font-size:12px;color:#4A148C;line-height:1.5}
+.tip-text{font-size:13px;color:#CBD5E0;line-height:1.55}
+.act-box{background:rgba(249,193,46,.08);border-left:3px solid #FFC107;padding:8px 10px;border-radius:0 8px 8px 0;font-size:13px;color:#E0E0E0;line-height:1.5}
+.fact-box{background:rgba(30,58,95,.8);border-left:3px solid #9C27B0;padding:8px 10px;border-radius:0 8px 8px 0;font-size:12px;color:#90CAF9;line-height:1.5}
 .no-tip{font-size:12px;color:#ccc;font-style:italic;padding:14px 16px}
 .sim-row{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#f9f9f9}
-.sim-label{font-size:11px;color:#aaa;min-width:55px}
+.sim-label{font-size:11px;color:#4A6A8A;min-width:55px}
 .sim-track{flex:1;height:4px;background:#eee;border-radius:2px;overflow:hidden}
 .sim-fill{height:100%;border-radius:2px}
-.sim-high{background:#FF7043}
+.sim-high{background:#F9C12E}
 .sim-med{background:#FFA726}
 .sim-low{background:#42A5F5}
-.sim-pct{font-size:11px;color:#aaa;min-width:32px;text-align:right}
+.sim-pct{font-size:11px;color:#4A6A8A;min-width:32px;text-align:right}
 .cognate-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px}
-.badge-perfect{background:#FFF3E0;color:#BF360C}
+.badge-perfect{background:#0F2847;color:#BF360C}
 .badge-near{background:#E8F5E9;color:#1B5E20}
 .badge-related{background:#E3F2FD;color:#0D47A1}
 </style>
@@ -107,10 +107,15 @@ header{background:#fff;border-bottom:2px solid #FF7043;padding:14px 20px;display
   <div class="sidebar">
     <div class="word-section">
       <h3>Words on this page</h3>
+      <div style="font-size:11px;color:#4A6A8A;line-height:1.4;margin-bottom:10px;padding:8px 10px;background:rgba(249,193,46,.08);border-radius:8px;border-left:3px solid #F9C12E">
+        🔤 <strong style="color:#F9C12E">Dual-use phonics:</strong><br>
+        English shown with Spanish phonetic conventions<br>
+        Spanish shown with English phonetic conventions
+      </div>
 
       <!-- English -->
       <div class="word-card">
-        <div class="word-label">🇺🇸 English</div>
+        <div class="word-label">🇺🇸 English <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for Spanish speakers)</span></div>
         <div class="word-text" id="enWord">—</div>
         <div class="word-pron" id="enPron"></div>
         <div class="play-row">
@@ -121,7 +126,7 @@ header{background:#fff;border-bottom:2px solid #FF7043;padding:14px 20px;display
 
       <!-- Spanish -->
       <div class="word-card">
-        <div class="word-label">🇲🇽 Español</div>
+        <div class="word-label">🇲🇽 Español <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for English speakers)</span></div>
         <div class="word-text" id="esWord">—</div>
         <div class="word-pron" id="esPron"></div>
         <div class="play-row">
@@ -214,66 +219,71 @@ const TIPS = {
 "yogurt":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish drops the final 't': yogurt → yogur! yo-GOOR. Both from Turkish. Interestingly, Spanish pronunciation is actually closer to the Turkish original!","act":"Stir an imaginary yogurt cup while saying both. YO-gert stir… yo-GOOR stir! Which feels smoother?","fact":"From Turkish 'yoğurt.' Spanish dropped the final consonant giving 'yogur' — ironically closer to the Turkish original than English 'yogurt' is."}
 };
 
-// pronunciation guide (matched to the word bank in the PDF)
+// Dual-use phonics — English words use Spanish phonetic conventions (for Spanish-speaking parents)
+// Spanish words use English phonetic conventions (for English-speaking parents)
+// Source: Biliteracy Bridge Word Bank & Pronunciation Guide (pages 65-67)
 const PRON = {
-  "armadillo":{"enP":"ar-ma-DIL-oh","esP":"ar-ma-DEE-yo"},
-  "buffalo":{"enP":"BUF-fah-lo","esP":"BOO-fah-lo"},
-  "baboon":{"enP":"ba-BOON","esP":"ba-bwee-NO"},
-  "crocodile":{"enP":"KROC-o-dile","esP":"ko-ko-DRI-lo"},
-  "camel":{"enP":"KAM-ul","esP":"ka-MEY-yo"},
-  "dinosaur":{"enP":"DYE-no-sor","esP":"dee-no-SOW-ree-oh"},
-  "dolphin":{"enP":"DOL-fin","esP":"del-FEEN"},
-  "elephant":{"enP":"EL-eh-fant","esP":"e-le-FAN-te"},
-  "flamingo":{"enP":"fla-MING-oh","esP":"fla-MEN-ko"},
-  "giraffe":{"enP":"ji-RAF","esP":"hee-RAH-fah"},
-  "gorilla":{"enP":"gor-IL-ah","esP":"gor-EE-lah"},
-  "hippopotamus":{"enP":"hip-oh-POT-ah-mus","esP":"ee-po-PO-ta-mo"},
-  "iguana":{"enP":"ih-GWAH-nah","esP":"ee-GWAH-nah"},
-  "insect":{"enP":"IN-sekt","esP":"een-SEK-to"},
-  "jaguar":{"enP":"JAG-war","esP":"hah-GWAR"},
-  "koala":{"enP":"ko-AH-lah","esP":"ko-AH-lah"},
-  "lion":{"enP":"LYE-un","esP":"le-ON"},
-  "monkey":{"enP":"MUN-kee","esP":"MO-no / MEE-ko"},
-  "ocelot":{"enP":"OS-eh-lot","esP":"o-se-LO-te"},
-  "panther":{"enP":"PAN-ther","esP":"pan-TE-rah"},
-  "penguin":{"enP":"PENG-gwin","esP":"pin-GWEE-no"},
-  "rhinoceros":{"enP":"rye-NOS-er-us","esP":"ree-no-se-RON-te"},
-  "salamander":{"enP":"SAL-ah-man-der","esP":"sa-la-MAN-drah"},
-  "tiger":{"enP":"TYE-ger","esP":"TEE-greh"},
-  "tortoise":{"enP":"TOR-tus","esP":"tor-TOO-gah"},
-  "uakari":{"enP":"wah-KAH-ree","esP":"wah-kah-REE"},
-  "viper":{"enP":"VYE-per","esP":"VEE-bo-rah"},
-  "yak":{"enP":"YAK","esP":"YAK"},
-  "cactus":{"enP":"KAK-tus","esP":"KAHK-toos"},
-  "canyon":{"enP":"KAN-yun","esP":"kah-NYOHN"},
-  "island":{"enP":"EYE-land","esP":"EES-lah"},
-  "desert":{"enP":"DEZ-ert","esP":"de-SYEHR-to"},
-  "meteor":{"enP":"MEE-tee-or","esP":"me-te-OH-ro"},
-  "palm":{"enP":"PAHM","esP":"PAL-mah"},
-  "ocean":{"enP":"OH-shun","esP":"oh-SEH-ah-no"},
-  "planet":{"enP":"PLAN-et","esP":"pla-NEH-tah"},
-  "safari":{"enP":"sah-FAH-ree","esP":"sah-FAH-ree"},
-  "tornado":{"enP":"tor-NEI-do","esP":"tor-NAH-do"},
-  "volcano":{"enP":"vol-KAY-no","esP":"vol-KAHN"},
-  "banana":{"enP":"ba-NA-nah","esP":"ba-NA-nah"},
-  "broccoli":{"enP":"BROC-o-lee","esP":"BRO-ko-lee"},
-  "cacao":{"enP":"ka-KOW","esP":"ka-KAH-oh"},
-  "cereal":{"enP":"SEER-ee-ul","esP":"se-re-AHL"},
-  "chocolate":{"enP":"CHOC-o-lit","esP":"cho-ko-LAH-te"},
-  "coconut":{"enP":"KO-ko-nut","esP":"KO-ko"},
-  "fruit":{"enP":"FROOT","esP":"FROO-tah"},
-  "hamburger":{"enP":"HAM-ber-ger","esP":"ahm-boor-GEH-sah"},
-  "kiwi":{"enP":"KEE-wee","esP":"KEE-wee"},
-  "lemon":{"enP":"LEM-un","esP":"lee-MOHN"},
-  "mango":{"enP":"MAN-go","esP":"MAN-go"},
-  "melon":{"enP":"MEL-un","esP":"me-LOHN"},
-  "papaya":{"enP":"pa-PYE-ah","esP":"pa-PAH-yah"},
-  "pasta":{"enP":"PAS-tah","esP":"PAS-tah"},
-  "salmon":{"enP":"SAM-un","esP":"sal-MOHN"},
-  "soup":{"enP":"SOOP","esP":"SO-pah"},
-  "tomato":{"enP":"to-MAY-to","esP":"to-MAH-te"},
-  "vanilla":{"enP":"va-NIL-ah","esP":"bai-NEE-ya"},
-  "yogurt":{"enP":"YO-gert","esP":"yo-GOOR"}
+  // ANIMALS
+  "armadillo": {"enP":"ar-ma-DI-lo",    "esP":"el ar-mah-DEE-yoh"},
+  "buffalo":   {"enP":"BA-fa-lo",        "esP":"el BOO-fah-loh"},
+  "baboon":    {"enP":"ba-BUN",          "esP":"el bah-bwee-NOH"},
+  "crocodile": {"enP":"kro-ko-DAIL",     "esP":"el koh-koh-DREE-loh"},
+  "camel":     {"enP":"KEI-mel",         "esP":"el kah-MEY-yoh"},
+  "dinosaur":  {"enP":"DAI-no-sor",      "esP":"el dee-noh-SOW-ree-oh"},
+  "dolphin":   {"enP":"Dol-FIN",         "esP":"el del-FEEN"},
+  "elephant":  {"enP":"E-le-fant",       "esP":"el e-le-FAN-te"},
+  "flamingo":  {"enP":"FLA-min-go",      "esP":"el flah-MEN-koh"},
+  "giraffe":   {"enP":"yi-RAF",          "esP":"la hee-RAH-fah"},
+  "gorilla":   {"enP":"go-RI-la",        "esP":"el goh-REE-lah"},
+  "hippopotamus":{"enP":"hi-po-PO-ta-mas","esP":"el ee-poh-PO-tah-moh"},
+  "iguana":    {"enP":"i-GUA-na",        "esP":"la ee-GWAH-nah"},
+  "insect":    {"enP":"In-sek-t",        "esP":"el een-SEK-toh"},
+  "jaguar":    {"enP":"TAI-guer",        "esP":"el hah-GWAR"},
+  "koala":     {"enP":"ko-A-la",         "esP":"el koh-AH-lah"},
+  "lion":      {"enP":"LAI-on",          "esP":"el le-ON"},
+  "monkey":    {"enP":"MAN-ki",          "esP":"el MO-noh"},
+  "ocelot":    {"enP":"O-se-lot",        "esP":"el oh-se-LO-te"},
+  "panther":   {"enP":"PAN-der",         "esP":"la pan-TE-rah"},
+  "penguin":   {"enP":"PEN-guin",        "esP":"el pin-GWEE-noh"},
+  "rhinoceros":{"enP":"rai-NO-se-ros",   "esP":"el ree-noh-se-RON-te"},
+  "salamander":{"enP":"sa-la-MAN-der",   "esP":"la sah-lah-MAN-drah"},
+  "tiger":     {"enP":"TAI-guer",        "esP":"el TEE-greh"},
+  "tortoise":  {"enP":"TOR-t-was",       "esP":"la tor-TOO-gah"},
+  "uakari":    {"enP":"wa-KA-ri",        "esP":"el wah-kah-REE"},
+  "viper":     {"enP":"VAI-per",         "esP":"la VEE-boh-rah"},
+  "yak":       {"enP":"yak",             "esP":"el yak"},
+  // NATURE
+  "cactus":    {"enP":"KAK-tas",         "esP":"el KAHK-toos"},
+  "canyon":    {"enP":"Ka-nyon",         "esP":"el kah-NYOHN"},
+  "island":    {"enP":"AI-land",         "esP":"la EES-lah"},
+  "desert":    {"enP":"De-sert",         "esP":"el deh-SYEHR-toh"},
+  "meteor":    {"enP":"Mi-ti-or",        "esP":"el meh-teh-OH-roh"},
+  "palm":      {"enP":"Palm",            "esP":"la PAHL-mah"},
+  "ocean":     {"enP":"O-shen",          "esP":"el oh-SEH-ah-noh"},
+  "planet":    {"enP":"Pla-net",         "esP":"el plah-NEH-tah"},
+  "safari":    {"enP":"sa-FA-ri",        "esP":"el sah-FAH-ree"},
+  "tornado":   {"enP":"tor-NEI-do",      "esP":"el tor-NAH-doh"},
+  "volcano":   {"enP":"Vol-KEI-no",      "esP":"el vol-KAHN"},
+  // FOOD
+  "banana":    {"enP":"ba-NA-na",        "esP":"la bah-NAH-nah"},
+  "broccoli":  {"enP":"bro-ko-li",       "esP":"el BROH-koh-lee"},
+  "cacao":     {"enP":"ka-KEI-o",        "esP":"el kah-KAH-oh"},
+  "cereal":    {"enP":"Si-ri-al",        "esP":"el seh-reh-AHL"},
+  "chocolate": {"enP":"Cho-ko-lit",      "esP":"el choh-koh-LAH-teh"},
+  "coconut":   {"enP":"Ko-ko-nat",       "esP":"el KOH-koh"},
+  "fruit":     {"enP":"Frut",            "esP":"la FROO-tah"},
+  "hamburger": {"enP":"Ham-ber-ger",     "esP":"la ahm-boor-GEH-sah"},
+  "kiwi":      {"enP":"Ki-wi",           "esP":"el KEE-wee"},
+  "lemon":     {"enP":"Le-mon",          "esP":"el lee-MOHN"},
+  "mango":     {"enP":"Man-go",          "esP":"el MAHN-goh"},
+  "melon":     {"enP":"Me-lon",          "esP":"el meh-LOHN"},
+  "papaya":    {"enP":"pa-PEI-a",        "esP":"la pah-PAH-yah"},
+  "pasta":     {"enP":"Pas-ta",          "esP":"la PAHS-tah"},
+  "salmon":    {"enP":"Sal-mon",         "esP":"el sahl-MOHN"},
+  "soup":      {"enP":"Sup",             "esP":"la SOH-pah"},
+  "tomato":    {"enP":"to-MEI-to",       "esP":"el toh-MAH-teh"},
+  "vanilla":   {"enP":"va-NI-la",        "esP":"la bye-NEE-yah"},
+  "yogurt":    {"enP":"Yo-gert",         "esP":"el yoh-GOOR"}
 };
 
 // ── Navigation ───────────────────────────────────────────────────────────────
@@ -304,22 +314,56 @@ function goPage(idx) {
 
 function updateWords() {
   const page = PAGES[currentPage] || {};
-  const enW = (page.english || "").trim();
-  const esW = (page.spanish || "").trim();
-  const key = enW.toLowerCase().split(/[\s/]/)[0];
-  const pron = PRON[key] || {};
+  const words = page.words || [];
+  // Fallback to legacy single-word fields
+  const wordList = words.length ? words : [{
+    english: page.english || "", spanish: page.spanish || "",
+    en_sentence: "", es_sentence: ""
+  }];
 
-  document.getElementById("enWord").textContent = enW || "—";
-  document.getElementById("esWord").textContent = esW || "—";
-  document.getElementById("enPron").textContent = pron.enP || "";
-  document.getElementById("esPron").textContent = pron.esP || "";
+  const container = document.getElementById("wordsContainer");
+  if (!container) return;
 
-  const hasWords = enW && esW;
-  document.getElementById("playEn").disabled = !enW;
-  document.getElementById("playEs").disabled = !esW;
-  document.getElementById("playBoth").disabled = !hasWords;
+  if (!wordList[0].english && !wordList[0].spanish) {
+    container.innerHTML = '<p class="no-word">No words on this page</p>';
+    updateTips("", "", "", "");
+    return;
+  }
 
-  updateTips(key, enW, esW, page.custom_tip || "");
+  container.innerHTML = wordList.map((w, i) => {
+    const key  = (w.english || "").toLowerCase().split(/[\s\/]/)[0];
+    const pron = PRON[key] || {};
+    const multi = wordList.length > 1;
+    return `
+      ${multi ? `<div class="word-num-badge">Word ${i+1}</div>` : ""}
+      <div class="word-card">
+        <div class="word-label">🇺🇸 English <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for Spanish speakers)</span></div>
+        <div class="word-text">${w.english || "—"}</div>
+        ${pron.enP ? `<div class="word-pron">${pron.enP}</div>` : ""}
+        ${w.en_sentence ? `<div class="sentence-text">"${w.en_sentence}"</div>` : ""}
+        <div class="play-row">
+          <button class="play-btn play-btn-en" onclick="playAudio('en','word',${i})" ${w.english?"":"disabled"}>▶ Word</button>
+          ${w.en_sentence ? `<button class="play-btn play-btn-en" style="opacity:.8" onclick="playAudio('en','sentence',${i})" >▶ Sentence</button>` : ""}
+          <button class="play-btn play-btn-both" onclick="playBothWords(${i})" ${(w.english&&w.spanish)?"":"disabled"}>▶ Both</button>
+        </div>
+      </div>
+      <div class="word-card" style="margin-top:10px">
+        <div class="word-label">🇲🇽 Español <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for English speakers)</span></div>
+        <div class="word-text" style="color:#F9C12E">${w.spanish || "—"}</div>
+        ${pron.esP ? `<div class="word-pron">${pron.esP}</div>` : ""}
+        ${w.es_sentence ? `<div class="sentence-text">"${w.es_sentence}"</div>` : ""}
+        <div class="play-row">
+          <button class="play-btn play-btn-es" onclick="playAudio('es','word',${i})" ${w.spanish?"":"disabled"}>▶ Palabra</button>
+          ${w.es_sentence ? `<button class="play-btn play-btn-es" style="opacity:.8" onclick="playAudio('es','sentence',${i})">▶ Oración</button>` : ""}
+        </div>
+      </div>
+      ${multi && i < wordList.length-1 ? '<hr class="word-divider">' : ""}`;
+  }).join("");
+
+  // Tips use first word
+  const first = wordList[0];
+  const key = (first.english || "").toLowerCase().split(/[\s\/]/)[0];
+  updateTips(key, first.english, first.spanish, page.custom_tip || "");
 }
 
 // ── Tips ─────────────────────────────────────────────────────────────────────
@@ -359,36 +403,28 @@ function updateTips(key, enW, esW, customTip) {
 
 // ── Audio ─────────────────────────────────────────────────────────────────────
 
-function playWord(lang) {
+function playAudio(lang, type, wordIdx) {
   if (playing) return;
   playing = true;
-  const btn = lang === "en" ? document.getElementById("playEn") : document.getElementById("playEs");
-  const orig = btn.textContent;
-  btn.textContent = "⏳ Loading…";
-  btn.disabled = true;
-  const audio = new Audio(`/speak/${BOOK_ID}/${currentPage}/${lang}`);
-  audio.onended = () => { playing = false; btn.textContent = orig; btn.disabled = false; };
-  audio.onerror = () => { playing = false; btn.textContent = orig; btn.disabled = false; alert("Audio unavailable. Check ElevenLabs API key."); };
-  audio.play().catch(() => { playing = false; btn.textContent = orig; btn.disabled = false; });
+  const url = `/speak/${BOOK_ID}/${currentPage}/${lang}?type=${type}&word_idx=${wordIdx}`;
+  const audio = new Audio(url);
+  audio.onended = () => { playing = false; };
+  audio.onerror = () => { playing = false; };
+  audio.play().catch(() => { playing = false; });
 }
 
-async function playBoth() {
+async function playBothWords(wordIdx) {
   if (playing) return;
-  const btn = document.getElementById("playBoth");
-  btn.textContent = "⏳ Playing…";
-  btn.disabled = true;
   playing = true;
-  await playLang("en");
-  await new Promise(r => setTimeout(r, 600));
-  await playLang("es");
+  await playLang("en", wordIdx);
+  await new Promise(r => setTimeout(r, 700));
+  await playLang("es", wordIdx);
   playing = false;
-  btn.textContent = "▶ Both";
-  btn.disabled = false;
 }
 
-function playLang(lang) {
+function playLang(lang, wordIdx=0) {
   return new Promise(resolve => {
-    const audio = new Audio(`/speak/${BOOK_ID}/${currentPage}/${lang}`);
+    const audio = new Audio(`/speak/${BOOK_ID}/${currentPage}/${lang}?type=word&word_idx=${wordIdx}`);
     audio.onended = resolve;
     audio.onerror = resolve;
     audio.play().catch(resolve);

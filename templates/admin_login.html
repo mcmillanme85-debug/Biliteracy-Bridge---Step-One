@@ -3,89 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Login — Biliteracy Bridge</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Admin Login · Biliteracy Bridge</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: #1b3a5c;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 48px 40px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.3);
-  }
-  .brand {
-    font-size: 0.7rem;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: #c8893a;
-    margin-bottom: 6px;
-  }
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.7rem;
-    color: #1b3a5c;
-    margin-bottom: 32px;
-  }
-  label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 6px; }
-  input[type="password"] {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 1rem;
-    outline: none;
-    transition: border .2s;
-  }
-  input[type="password"]:focus { border-color: #2a7f8f; }
-  .error {
-    background: #fff0f0;
-    color: #c0392b;
-    border: 1px solid #f5c6c6;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-  }
-  button {
-    width: 100%;
-    margin-top: 20px;
-    background: #1b3a5c;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 14px;
-    font-family: inherit;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .2s;
-  }
-  button:hover { background: #2a7f8f; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:20px;padding:40px 36px;max-width:380px;width:100%;text-align:center}
+.logo{width:80px;height:auto;margin-bottom:16px}
+h1{font-size:20px;font-weight:800;color:#F9C12E;margin-bottom:6px}
+p{font-size:14px;color:#8BA3C0;margin-bottom:28px}
+.field label{display:block;font-size:11px;font-weight:700;color:#8BA3C0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;text-align:left}
+.field input{width:100%;padding:12px 14px;border:1.5px solid #1E3A5F;border-radius:10px;background:#0B1F3A;color:#fff;font-size:15px;outline:none;transition:border-color .15s;margin-bottom:16px}
+.field input:focus{border-color:#F9C12E}
+.btn{width:100%;background:#F9C12E;color:#0B1F3A;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;transition:background .15s}
+.btn:hover{background:#FFD54F}
+.error{background:rgba(239,83,80,.15);color:#EF9A9A;border:1px solid rgba(239,83,80,.3);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px}
+.back{display:block;margin-top:16px;font-size:13px;color:#4A6A8A;text-decoration:none}
+.back:hover{color:#F9C12E}
 </style>
 </head>
 <body>
 <div class="card">
-  <div class="brand">Biliteracy Bridge</div>
+  <img class="logo" src="/static/logo.png" alt="Biliteracy Bridge" onerror="this.style.display='none'">
   <h1>Admin Login</h1>
-  {% if error %}
-  <div class="error">{{ error }}</div>
-  {% endif %}
+  <p>Biliteracy Bridge · Book Manager</p>
+  {% if error %}<div class="error">❌ {{ error }}</div>{% endif %}
   <form method="POST">
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" autofocus placeholder="Enter your admin password">
-    <button type="submit">Sign In →</button>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Enter admin password" autofocus required>
+    </div>
+    <button type="submit" class="btn">🔐 Log In</button>
   </form>
+  <a href="/" class="back">← Back to app</a>
 </div>
 </body>
 </html>

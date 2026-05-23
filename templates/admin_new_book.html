@@ -3,85 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Add New Book — Biliteracy Bridge</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<title>New Book · Biliteracy Bridge</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Source Sans 3', sans-serif; background: #f7f4ee; }
-  header {
-    background: #1b3a5c; color: #fff;
-    padding: 16px 32px; border-bottom: 4px solid #c8893a;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .brand { font-size: 0.7rem; letter-spacing: .12em; text-transform: uppercase; color: #c8893a; }
-  h1 { font-family: 'Playfair Display', serif; font-size: 1.3rem; }
-  .btn-back { color: #aac4d8; text-decoration: none; font-size: 0.85rem; }
-  .btn-back:hover { color: #fff; }
-  .container { max-width: 560px; margin: 48px auto; padding: 0 20px; }
-  .card {
-    background: #fff; border-radius: 14px;
-    border: 1px solid #ddd8ce; padding: 36px;
-    box-shadow: 0 4px 16px rgba(0,0,0,.06);
-  }
-  .card h2 { font-family: 'Playfair Display', serif; color: #1b3a5c; margin-bottom: 24px; font-size: 1.3rem; }
-  .field { margin-bottom: 22px; }
-  label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 6px; }
-  .hint { font-size: 0.78rem; color: #999; margin-top: 4px; }
-  input[type="text"] {
-    width: 100%; padding: 11px 14px;
-    border: 2px solid #ddd8ce; border-radius: 8px;
-    font-family: inherit; font-size: 0.95rem; outline: none;
-    transition: border .2s;
-  }
-  input[type="text"]:focus { border-color: #2a7f8f; }
-  .error {
-    background: #fff0f0; color: #c0392b;
-    border: 1px solid #f5c6c6; border-radius: 8px;
-    padding: 10px 14px; font-size: 0.9rem; margin-bottom: 20px;
-  }
-  .submit-btn {
-    background: #c8893a; color: #fff; border: none; border-radius: 8px;
-    padding: 12px 28px; font-family: inherit; font-size: 1rem;
-    font-weight: 600; cursor: pointer; transition: opacity .2s;
-  }
-  .submit-btn:hover { opacity: .85; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#111;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:20px;padding:36px;max-width:480px;width:100%}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.logo-row img{height:36px}
+.logo-row span{font-size:15px;font-weight:700;color:#F9C12E}
+h1{font-size:20px;font-weight:800;margin-bottom:6px}
+p{font-size:14px;color:#888;margin-bottom:24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input[type=text]{width:100%;padding:11px 14px;border:1.5px solid #333;border-radius:10px;background:#111;color:#fff;font-size:14px;outline:none;transition:border-color .15s}
+.field input[type=text]:focus{border-color:#F9C12E}
+.field .hint{font-size:12px;color:#555;margin-top:4px}
+.check-row{display:flex;align-items:center;gap:8px;font-size:14px;color:#aaa;padding:4px 0}
+.check-row input{width:16px;height:16px;accent-color:#F9C12E;cursor:pointer}
+.error{background:rgba(239,83,80,.15);color:#EF9A9A;border:1px solid rgba(239,83,80,.3);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px}
+.btn-row{display:flex;gap:10px;margin-top:20px}
+.btn-save{background:#F9C12E;color:#000;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;flex:1}
+.btn-save:hover{background:#FFD54F}
+.btn-cancel{background:transparent;color:#aaa;border:1px solid #444;padding:12px 20px;border-radius:10px;font-size:14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn-cancel:hover{border-color:#F9C12E;color:#F9C12E}
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <div class="brand">Biliteracy Bridge · Admin</div>
-    <h1>Add New Book</h1>
+<div class="card">
+  <div class="logo-row">
+    <img src="/static/logo.png" alt="BB" onerror="this.style.display='none'">
+    <span>Biliteracy Bridge · Admin</span>
   </div>
-  <a href="/admin" class="btn-back">← Back to Dashboard</a>
-</header>
+  <h1>Create New Book</h1>
+  <p>Set up a new pronunciation guide. You can upload the PDF and add words after creating it.</p>
 
-<div class="container">
-  <div class="card">
-    <h2>New Book Details</h2>
-    {% if error %}<div class="error">{{ error }}</div>{% endif %}
-    <form method="POST">
-      <div class="field">
-        <label for="title">Book Title (as parents will see it)</label>
-        <input type="text" id="title" name="title" placeholder="e.g. My First Bilingual Cognates - Step One" required>
+  {% if error %}<div class="error">❌ {{ error }}</div>{% endif %}
+
+  <form method="POST">
+    <div class="field">
+      <label>Book Title</label>
+      <input type="text" name="title" placeholder="e.g. My First Bilingual Cognates – Step One" required autofocus>
+    </div>
+    <div class="field">
+      <label>Book ID (URL slug)</label>
+      <input type="text" name="book_id" placeholder="e.g. step-one-cognates" required
+             pattern="[a-z0-9\-]+" title="Lowercase letters, numbers, and hyphens only">
+      <div class="hint">Lowercase letters, numbers and hyphens only. Used in the URL.</div>
+    </div>
+    <div class="field">
+      <div class="check-row">
+        <input type="checkbox" name="free" id="free">
+        <label for="free">Free access (no code required)</label>
       </div>
-      <div class="field">
-        <label for="book_id">URL ID (short, lowercase, no spaces)</label>
-        <input type="text" id="book_id" name="book_id" placeholder="e.g. cognates-step-one" required>
-        <div class="hint">This becomes the link: /book/cognates-step-one — letters, numbers, and hyphens only.</div>
-      </div>
-      <button type="submit" class="submit-btn">Create Book →</button>
-    </form>
-  </div>
+    </div>
+    <div class="btn-row">
+      <a href="/admin" class="btn-cancel">Cancel</a>
+      <button type="submit" class="btn-save">Create Book →</button>
+    </div>
+  </form>
 </div>
-
-<script>
-document.getElementById("title").addEventListener("input", function() {
-  const id = this.value.toLowerCase()
-    .replace(/[^a-z0-9\s\-]/g, "")
-    .trim().replace(/\s+/g, "-");
-  document.getElementById("book_id").value = id;
-});
-</script>
 </body>
 </html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Picker · Biliteracy Bridge</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a1a;color:#fff;min-height:100vh}
+header{background:#111;border-bottom:3px solid #F9C12E;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{height:36px;width:auto}
+.brand-text{font-size:14px;font-weight:700;color:#F9C12E}
+.btn-hdr{font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid #444;background:transparent;cursor:pointer;color:#aaa;text-decoration:none;display:inline-block}
+.btn-hdr:hover{border-color:#F9C12E;color:#F9C12E}
+main{max-width:900px;margin:0 auto;padding:28px 20px}
+.page-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.page-sub{font-size:14px;color:#888;margin-bottom:28px;line-height:1.5}
+.alert{padding:12px 16px;border-radius:10px;font-size:14px;font-weight:600;margin-bottom:20px}
+.alert-ok{background:rgba(76,175,80,.15);color:#81C784;border:1px solid rgba(76,175,80,.3)}
+.alert-err{background:rgba(239,83,80,.15);color:#EF9A9A;border:1px solid rgba(239,83,80,.3)}
+.current-voices{background:#222;border-radius:14px;padding:20px;margin-bottom:28px;border:1px solid #333}
+.current-voices h3{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
+.voice-slots{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:540px){.voice-slots{grid-template-columns:1fr}}
+.voice-slot{background:#2a2a2a;border-radius:10px;padding:14px;border:2px solid #333}
+.voice-slot.has-voice{border-color:#F9C12E}
+.slot-label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.slot-name{font-size:16px;font-weight:700;color:#F9C12E;margin-bottom:4px}
+.slot-id{font-size:11px;color:#555;font-family:monospace}
+.slot-empty{font-size:14px;color:#555;font-style:italic}
+.btn-preview{display:inline-flex;align-items:center;gap:5px;margin-top:8px;background:transparent;border:1px solid #444;color:#aaa;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer}
+.btn-preview:hover{border-color:#F9C12E;color:#F9C12E}
+.search-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:1px solid #333;background:#222;color:#fff;font-size:14px;outline:none}
+.search-bar input:focus{border-color:#F9C12E}
+.search-bar select{padding:10px 14px;border-radius:10px;border:1px solid #333;background:#222;color:#fff;font-size:14px;outline:none;cursor:pointer}
+.search-bar select:focus{border-color:#F9C12E}
+.loading{text-align:center;padding:40px;color:#555;font-size:15px}
+.voices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.voice-card{background:#222;border:1.5px solid #333;border-radius:12px;padding:16px;transition:all .15s;position:relative}
+.voice-card:hover{border-color:#555}
+.voice-card.selected-en{border-color:#42A5F5;background:rgba(66,165,245,.08)}
+.voice-card.selected-es{border-color:#F9C12E;background:rgba(249,193,46,.08)}
+.voice-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.voice-meta{font-size:12px;color:#666;margin-bottom:10px;line-height:1.4}
+.voice-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.tag-gender{background:rgba(156,39,176,.2);color:#CE93D8}
+.tag-age{background:rgba(33,150,243,.2);color:#90CAF9}
+.tag-accent{background:rgba(76,175,80,.2);color:#A5D6A7}
+.voice-actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn-play{display:flex;align-items:center;gap:4px;padding:7px 12px;border-radius:8px;border:1px solid #444;background:transparent;color:#aaa;font-size:12px;cursor:pointer;font-weight:600;transition:all .15s}
+.btn-play:hover{border-color:#fff;color:#fff}
+.btn-play.playing{border-color:#F9C12E;color:#F9C12E;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.btn-select-en{display:flex;align-items:center;gap:4px;padding:7px 12px;border-radius:8px;border:1px solid #42A5F5;background:transparent;color:#42A5F5;font-size:12px;cursor:pointer;font-weight:700;transition:all .15s}
+.btn-select-en:hover,.btn-select-en.active{background:#42A5F5;color:#000}
+.btn-select-es{display:flex;align-items:center;gap:4px;padding:7px 12px;border-radius:8px;border:1px solid #F9C12E;background:transparent;color:#F9C12E;font-size:12px;cursor:pointer;font-weight:700;transition:all .15s}
+.btn-select-es:hover,.btn-select-es.active{background:#F9C12E;color:#000}
+.selected-badge{position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.badge-en{background:#42A5F5;color:#000}
+.badge-es{background:#F9C12E;color:#000}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:2px solid #F9C12E;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;z-index:50}
+.save-bar-info{font-size:13px;color:#888}
+.save-bar-info span{color:#F9C12E;font-weight:700}
+.btn-save{background:#F9C12E;color:#000;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;transition:all .15s}
+.btn-save:hover{background:#FFD54F}
+.btn-save:disabled{background:#333;color:#666;cursor:not-allowed}
+.no-voices{text-align:center;padding:40px;color:#555}
+pb{padding-bottom:80px;display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img src="/static/logo.png" alt="BB" onerror="this.style.display='none'">
+    <div class="brand-text">Admin · Voice Picker</div>
+  </div>
+  <div>
+    <a href="/admin" class="btn-hdr">← Dashboard</a>
+  </div>
+</header>
+
+<main>
+  <div class="page-title">🎙️ Voice Picker</div>
+  <div class="page-sub">Preview and select the ElevenLabs voices for English and Spanish pronunciation. Click ▶ to hear a sample, then assign it to English or Spanish.</div>
+
+  {% if msg == 'saved' %}
+  <div class="alert alert-ok">✅ Voices saved! They are now live in the app.</div>
+  {% elif msg == 'err' %}
+  <div class="alert alert-err">❌ Error saving voices. Please try again.</div>
+  {% endif %}
+
+  <!-- Current selection -->
+  <div class="current-voices">
+    <h3>Currently Selected Voices</h3>
+    <div class="voice-slots">
+      <div class="voice-slot {% if config.voice_en_name %}has-voice{% endif %}">
+        <div class="slot-label">🇺🇸 English Voice</div>
+        {% if config.voice_en_name %}
+          <div class="slot-name">{{ config.voice_en_name }}</div>
+          <div class="slot-id">{{ config.voice_en_id }}</div>
+          <button class="btn-preview" onclick="previewVoice('{{ config.voice_en_id }}', 'Hello! Welcome to Biliteracy Bridge. Today we are learning about elephants and animals.', this)">▶ Preview</button>
+        {% else %}
+          <div class="slot-empty">No voice selected</div>
+        {% endif %}
+      </div>
+      <div class="voice-slot {% if config.voice_es_name %}has-voice{% endif %}">
+        <div class="slot-label">🇲🇽 Spanish Voice</div>
+        {% if config.voice_es_name %}
+          <div class="slot-name">{{ config.voice_es_name }}</div>
+          <div class="slot-id">{{ config.voice_es_id }}</div>
+          <button class="btn-preview" onclick="previewVoice('{{ config.voice_es_id }}', 'Hola! Bienvenidos a Biliteracy Bridge. Hoy aprendemos sobre elefantes y animales.', this)">▶ Preview</button>
+        {% else %}
+          <div class="slot-empty">No voice selected</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Search + filter -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search voices by name…" oninput="filterVoices()">
+    <select id="filterGender" onchange="filterVoices()">
+      <option value="">All genders</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+    <select id="filterAccent" onchange="filterVoices()">
+      <option value="">All accents</option>
+      <option value="american">American</option>
+      <option value="british">British</option>
+      <option value="spanish">Spanish</option>
+      <option value="latin">Latin American</option>
+      <option value="australian">Australian</option>
+    </select>
+  </div>
+
+  <div id="voicesContainer">
+    <div class="loading">⏳ Loading voices from ElevenLabs…</div>
+  </div>
+
+  <pb></pb>
+</main>
+
+<!-- Sticky save bar -->
+<div class="save-bar">
+  <div class="save-bar-info">
+    🇺🇸 English: <span id="enName">{{ config.voice_en_name or 'Not selected' }}</span>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    🇲🇽 Spanish: <span id="esName">{{ config.voice_es_name or 'Not selected' }}</span>
+  </div>
+  <button class="btn-save" id="saveBtn" onclick="saveVoices()">💾 Save Voice Selection</button>
+</div>
+
+<script>
+let allVoices = [];
+let selectedEN = { id: "{{ config.voice_en_id or '' }}", name: "{{ config.voice_en_name or '' }}" };
+let selectedES = { id: "{{ config.voice_es_id or '' }}", name: "{{ config.voice_es_name or '' }}" };
+let currentAudio = null;
+
+// Load voices on page load
+async function loadVoices() {
+  try {
+    const r = await fetch('/admin/voices/list');
+    const d = await r.json();
+    if (d.error) {
+      document.getElementById('voicesContainer').innerHTML =
+        `<div class="no-voices">❌ ${d.error}<br><small>Check your ElevenLabs API key in Render environment variables.</small></div>`;
+      return;
+    }
+    allVoices = d.voices || [];
+    renderVoices(allVoices);
+  } catch(e) {
+    document.getElementById('voicesContainer').innerHTML =
+      `<div class="no-voices">❌ Could not load voices — ${e.message}</div>`;
+  }
+}
+
+function renderVoices(voices) {
+  if (!voices.length) {
+    document.getElementById('voicesContainer').innerHTML =
+      '<div class="no-voices">No voices found matching your search.</div>';
+    return;
+  }
+  document.getElementById('voicesContainer').innerHTML =
+    `<div class="voices-grid">${voices.map(v => voiceCard(v)).join('')}</div>`;
+}
+
+function voiceCard(v) {
+  const isEN = selectedEN.id === v.voice_id;
+  const isES = selectedES.id === v.voice_id;
+  const gender = (v.labels?.gender || '').toLowerCase();
+  const age    = v.labels?.age || '';
+  const accent = v.labels?.accent || v.labels?.language || '';
+  const use    = v.labels?.use_case || '';
+  return `
+<div class="voice-card ${isEN?'selected-en':''} ${isES?'selected-es':''}" id="card_${v.voice_id}">
+  ${isEN ? '<div class="selected-badge badge-en">🇺🇸 EN</div>' : ''}
+  ${isES ? '<div class="selected-badge badge-es">🇲🇽 ES</div>' : ''}
+  <div class="voice-name">${v.name}</div>
+  <div class="voice-meta">${use || 'General'}${accent ? ' · ' + accent : ''}${v.category === 'premade' ? ' · ElevenLabs' : ' · Custom'}</div>
+  <div class="voice-tags">
+    ${gender ? `<span class="tag tag-gender">${gender}</span>` : ''}
+    ${age    ? `<span class="tag tag-age">${age}</span>`    : ''}
+    ${accent ? `<span class="tag tag-accent">${accent}</span>` : ''}
+  </div>
+  <div class="voice-actions">
+    <button class="btn-play" id="play_${v.voice_id}"
+      onclick="previewVoice('${v.voice_id}', 'Hello, elephant! Hola, elefante!', this)">
+      ▶ Preview
+    </button>
+    <button class="btn-select-en ${isEN?'active':''}" onclick="selectVoice('en','${v.voice_id}','${v.name.replace(/'/g,"\\'")}')">
+      🇺🇸 English
+    </button>
+    <button class="btn-select-es ${isES?'active':''}" onclick="selectVoice('es','${v.voice_id}','${v.name.replace(/'/g,"\\'")}')">
+      🇲🇽 Spanish
+    </button>
+  </div>
+</div>`;
+}
+
+function selectVoice(lang, id, name) {
+  if (lang === 'en') {
+    selectedEN = { id, name };
+    document.getElementById('enName').textContent = name;
+  } else {
+    selectedES = { id, name };
+    document.getElementById('esName').textContent = name;
+  }
+  // Re-render to update highlighting
+  filterVoices();
+}
+
+async function previewVoice(voiceId, text, btn) {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  document.querySelectorAll('.btn-play').forEach(b => { b.textContent = '▶ Preview'; b.classList.remove('playing'); });
+  btn.textContent = '⏳ Loading…';
+  btn.classList.add('playing');
+  try {
+    const r = await fetch('/admin/voices/preview', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ voice_id: voiceId, text })
+    });
+    if (!r.ok) throw new Error('Preview failed');
+    const blob = await r.blob();
+    const url  = URL.createObjectURL(blob);
+    currentAudio = new Audio(url);
+    btn.textContent = '🔊 Playing…';
+    currentAudio.play();
+    currentAudio.onended = () => { btn.textContent = '▶ Preview'; btn.classList.remove('playing'); };
+    currentAudio.onerror = () => { btn.textContent = '▶ Preview'; btn.classList.remove('playing'); };
+  } catch(e) {
+    btn.textContent = '▶ Preview';
+    btn.classList.remove('playing');
+    alert('Preview failed: ' + e.message);
+  }
+}
+
+function filterVoices() {
+  const q  = document.getElementById('searchInput').value.toLowerCase();
+  const g  = document.getElementById('filterGender').value.toLowerCase();
+  const ac = document.getElementById('filterAccent').value.toLowerCase();
+  const filtered = allVoices.filter(v => {
+    const name   = v.name.toLowerCase();
+    const gender = (v.labels?.gender || '').toLowerCase();
+    const accent = (v.labels?.accent || v.labels?.language || '').toLowerCase();
+    if (q  && !name.includes(q))    return false;
+    if (g  && !gender.includes(g))  return false;
+    if (ac && !accent.includes(ac)) return false;
+    return true;
+  });
+  renderVoices(filtered);
+}
+
+async function saveVoices() {
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '⏳ Saving…'; btn.disabled = true;
+  try {
+    const r = await fetch('/admin/voices/save', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        voice_en_id:   selectedEN.id,
+        voice_en_name: selectedEN.name,
+        voice_es_id:   selectedES.id,
+        voice_es_name: selectedES.name
+      })
+    });
+    const d = await r.json();
+    if (d.success) {
+      btn.textContent = '✅ Saved!';
+      setTimeout(() => { btn.textContent = '💾 Save Voice Selection'; btn.disabled = false; }, 2000);
+    } else {
+      throw new Error(d.error || 'Save failed');
+    }
+  } catch(e) {
+    btn.textContent = '❌ Failed — try again';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = '💾 Save Voice Selection'; }, 2000);
+  }
+}
+
+loadVoices();
+</script>
+</body>
+</html>
