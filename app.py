@@ -267,33 +267,35 @@ def upload_csv(book_id):
         pages   = books[book_id].get("pages", [])
         filled  = 0
         # Group rows by page, then word_num
-        from collections import defaultdict
-        page_words = defaultdict(dict)
+        page_words = {}
         for row in reader:
             raw_pg = row.get("page") or row.get("Page") or ""
             try:
-                idx = int(raw_pg.strip()) - 1
-            except ValueError:
+                idx = int(str(raw_pg).strip()) - 1
+            except (ValueError, TypeError):
                 continue
             if 0 <= idx < len(pages):
-                word_num = int((row.get("word_num") or "1").strip() or "1") - 1
+                try:
+                    word_num = int(str(row.get("word_num") or "1").strip()) - 1
+                except (ValueError, TypeError):
+                    word_num = 0
                 word = {
-                    "english":     (row.get("english")     or "").strip(),
-                    "spanish":     (row.get("spanish")     or "").strip(),
-                    "en_sentence": (row.get("en_sentence") or "").strip(),
-                    "es_sentence": (row.get("es_sentence") or "").strip(),
+                    "english":     str(row.get("english")     or "").strip(),
+                    "spanish":     str(row.get("spanish")     or "").strip(),
+                    "en_sentence": str(row.get("en_sentence") or "").strip(),
+                    "es_sentence": str(row.get("es_sentence") or "").strip(),
                 }
                 if idx not in page_words:
                     page_words[idx] = {}
                 page_words[idx][word_num] = word
         for idx, words_dict in page_words.items():
             ordered = [words_dict[k] for k in sorted(words_dict.keys())]
-            pages[idx]["words"] = ordered
-            # Keep legacy fields for backward compat
-            if ordered:
-                pages[idx]["english"] = ordered[0]["english"]
-                pages[idx]["spanish"] = ordered[0]["spanish"]
-            filled += 1
+            # Always update both the words array AND legacy fields
+            pages[idx]["words"]   = ordered
+            pages[idx]["english"] = ordered[0]["english"] if ordered else ""
+            pages[idx]["spanish"] = ordered[0]["spanish"] if ordered else ""
+            if ordered and (ordered[0]["english"] or ordered[0]["spanish"]):
+                filled += 1
         books[book_id]["pages"] = pages
         save_books(books)
         return redirect(url_for("admin_book", book_id=book_id,
