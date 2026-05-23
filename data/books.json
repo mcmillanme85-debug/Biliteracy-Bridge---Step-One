@@ -1,8 +1,10 @@
 {
   "my-first-bilingual-cognates": {
-    "title": "My First Bilingual Cognates – Step One – Biliteracy Bridge",
-    "free": true,
+    "title": "My First Bilingual Cognates - Step One - Biliteracy Bridge",
     "num_pages": 0,
-    "pages": []
+    "pages": [],
+    "free": false,
+    "access_code": "7777",
+    "code_locked": true
   }
 }
