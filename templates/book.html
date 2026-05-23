@@ -315,10 +315,14 @@ function goPage(idx) {
 function updateWords() {
   const page = PAGES[currentPage] || {};
   const words = page.words || [];
-  // Fallback to legacy single-word fields
-  const wordList = words.length ? words : [{
-    english: page.english || "", spanish: page.spanish || "",
-    en_sentence: "", es_sentence: ""
+  // If words array exists but is empty or has no real content, fall back to legacy fields
+  const firstWord = words[0] || {};
+  const wordsHaveContent = words.length && (firstWord.english || firstWord.spanish);
+  const wordList = wordsHaveContent ? words : [{
+    english:     page.english      || "",
+    spanish:     page.spanish      || "",
+    en_sentence: firstWord.en_sentence || "",
+    es_sentence: firstWord.es_sentence || ""
   }];
 
   const container = document.getElementById("wordsContainer");
