@@ -402,6 +402,18 @@ def save_page(book_id):
 
 
 
+
+@app.route("/api/book/<book_id>/pages")
+def api_pages(book_id):
+    """Return page data as JSON — used by book reader instead of template embedding."""
+    books = load_books()
+    b = books.get(book_id)
+    if not b:
+        return jsonify(error="Not found"), 404
+    if not can_view(book_id, b):
+        return jsonify(error="Access required"), 403
+    return jsonify(pages=b.get("pages", []), num_pages=b.get("num_pages", 0))
+
 @app.route("/admin/storage-check")
 @requires_admin
 def storage_check():
