@@ -28,14 +28,38 @@ BOOKS_FILE = DATA_DIR / "books.json"
 # ── helpers ──────────────────────────────────────────────────────────────────
 
 def load_books():
+    # Try persistent disk first
     if BOOKS_FILE.exists():
-        with open(BOOKS_FILE) as f:
-            return json.load(f)
+        try:
+            with open(BOOKS_FILE) as f:
+                return json.load(f)
+        except Exception:
+            pass
+    # Fall back to local copy
+    local = Path("data") / "books.json"
+    if local.exists():
+        try:
+            with open(local) as f:
+                return json.load(f)
+        except Exception:
+            pass
     return {}
 
 def save_books(books):
-    with open(BOOKS_FILE, "w") as f:
-        json.dump(books, f, indent=2)
+    try:
+        BOOKS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(BOOKS_FILE, "w") as f:
+            json.dump(books, f, indent=2)
+    except Exception as e:
+        print(f"WARNING: Could not save to {BOOKS_FILE}: {e}")
+    # Always also save to local fallback so data survives disk issues
+    try:
+        local = Path("data")
+        local.mkdir(exist_ok=True)
+        with open(local / "books.json", "w") as f:
+            json.dump(books, f, indent=2)
+    except Exception as e:
+        print(f"WARNING: Could not save local fallback: {e}")
 
 def make_code():
     return str(random.randint(1000, 9999))
@@ -49,7 +73,9 @@ def requires_admin(f):
     return decorated
 
 def can_view(book_id, book):
-    if not book.get("access_code") or book.get("free"):
+    if session.get("admin"):                              # admins always get in
+        return True
+    if not book.get("access_code") or book.get("free"):  # no code = open
         return True
     return session.get(f"access_{book_id}") == book.get("access_code")
 
@@ -173,8 +199,14 @@ def admin_book(book_id):
     b = books.get(book_id)
     if not b:
         return "Book not found", 404
-    # auto-create a locked code if none exists yet
-    if not b.get("access_code"):
+    # Generate code once only — only if truly missing (not just empty string)
+    if b.get("access_code") is None or "access_code" not in b:
+        b["access_code"] = make_code()
+        b["code_locked"] = True
+        books[book_id] = b
+        save_books(books)
+    # If access_code is empty string, set a real code now and lock it
+    elif b.get("access_code") == "":
         b["access_code"] = make_code()
         b["code_locked"] = True
         books[book_id] = b
@@ -198,10 +230,13 @@ def admin_new_book():
             return render_template("admin_new_book.html",
                                    error="That ID already exists.")
         code = "" if free else make_code()
+        # Always generate a code upfront so it never changes later
+        if not code:
+            code = make_code()
         books[book_id] = {
             "title": title, "num_pages": 0, "pages": [],
             "free": free, "access_code": code,
-            "code_locked": bool(code)
+            "code_locked": True
         }
         save_books(books)
         (IMAGES_DIR / book_id).mkdir(exist_ok=True)
@@ -343,6 +378,32 @@ def save_page(book_id):
     books[book_id]["pages"] = pages
     save_books(books)
     return jsonify(success=True)
+
+
+@app.route("/admin/debug/<book_id>")
+@requires_admin
+def debug_book(book_id):
+    books = load_books()
+    b = books.get(book_id, {})
+    pages = b.get("pages", [])
+    # Show first 10 pages with word data
+    sample = []
+    for i, p in enumerate(pages[:15]):
+        sample.append({
+            "page": i+1,
+            "english": p.get("english",""),
+            "spanish": p.get("spanish",""),
+            "words": p.get("words",[]),
+            "has_data": bool(p.get("english") or (p.get("words") and p["words"][0].get("english")))
+        })
+    return jsonify({
+        "title": b.get("title",""),
+        "num_pages": b.get("num_pages",0),
+        "access_code": b.get("access_code",""),
+        "books_file": str(BOOKS_FILE),
+        "books_file_exists": BOOKS_FILE.exists(),
+        "sample_pages": sample
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
