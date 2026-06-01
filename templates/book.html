@@ -9,7 +9,7 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;color:#fff;min-height:100vh}
 header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:8px}
-.brand-logo{font-size:22px}
+.brand img{height:44px;width:auto;background:transparent}
 .brand-name{font-size:16px;font-weight:700;color:#F9C12E}
 .header-right{display:flex;align-items:center;gap:10px}
 .page-counter{font-size:13px;color:#8BA3C0;font-weight:500}
@@ -49,7 +49,6 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 .play-btn:disabled{opacity:.5;cursor:not-allowed}
 .no-word{font-size:13px;color:#ccc;font-style:italic;padding:8px 0}
 .divider{border:none;border-top:1px solid #f0ede8;margin:16px 0}
-/* Teaching tips */
 .tips-toggle{width:100%;background:#0F2847;border:none;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;color:#F9C12E;transition:background .15s;margin-bottom:2px}
 .tips-toggle:hover{background:#FFE0B2}
 .tips-toggle .arrow{transition:transform .25s;font-style:normal;font-size:12px}
@@ -84,12 +83,9 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 
 <header>
   <div class="brand">
-    <img src="/logo.png" alt="Biliteracy Bridge"
-         style="height:44px;width:auto"
-         onerror="this.style.display='none';document.getElementById('brand-text').style.display='flex'">
-    <div id="brand-text" style="display:none;align-items:center;gap:8px">
-      <span style="font-size:18px;font-weight:800;color:#F9C12E">Biliteracy Bridge</span>
-    </div>
+    <img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent"
+         onerror="this.style.display='none';document.getElementById('brand-fallback').style.display='block'">
+    <span id="brand-fallback" style="display:none;font-size:18px;font-weight:800;color:#F9C12E">Biliteracy Bridge</span>
     <div class="brand-name">Biliteracy Bridge</div>
   </div>
   <div class="header-right">
@@ -99,7 +95,6 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 </header>
 
 <div class="layout">
-  <!-- LEFT: page image + navigation -->
   <div class="page-viewer">
     <div class="page-img-wrap">
       <img class="page-img" id="pageImg" src="/page-image/{{ book_id }}/0" alt="Book page">
@@ -111,7 +106,6 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
     </div>
   </div>
 
-  <!-- RIGHT: words + tips sidebar -->
   <div class="sidebar">
     <div class="word-section">
       <h3>Words on this page</h3>
@@ -120,7 +114,6 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
         English shown with Spanish phonetic conventions<br>
         Spanish shown with English phonetic conventions
       </div>
-
       <div id="wordsContainer">
         <p style="color:#8BA3C0;font-size:13px;padding:8px 0">⏳ Loading...</p>
       </div>
@@ -128,7 +121,6 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 
     <hr class="divider">
 
-    <!-- Teaching Tips toggle -->
     <button class="tips-toggle" id="tipsToggle" onclick="toggleTips()">
       <span>💡 Teaching Tips & Activities</span>
       <span class="arrow">▼</span>
@@ -140,182 +132,165 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 </div>
 
 <script>
-// ── Page data — loaded via API to avoid template encoding issues ──────────────
 const BOOK_ID = "{{ book_id }}";
 const NUM_PAGES = {{ book.num_pages }};
 let PAGES = [];
 let DATA_LOADED = false;
 
+// Read startPage from URL query param
+const _urlParams = new URLSearchParams(window.location.search);
+let currentPage = parseInt(_urlParams.get('startPage') || _urlParams.get('page') || '0', 10);
+if (isNaN(currentPage) || currentPage < 0 || currentPage >= NUM_PAGES) currentPage = 0;
+
 async function loadPageData() {
   const container = document.getElementById("wordsContainer");
   if (container) container.innerHTML = '<p style="color:#8BA3C0;font-size:13px">⏳ Loading word data...</p>';
   try {
-    const url = `/api/book/${BOOK_ID}/pages`;
-    const r = await fetch(url);
+    const r = await fetch(`/api/book/${BOOK_ID}/pages`);
     const text = await r.text();
     let d;
     try { d = JSON.parse(text); } catch(e) {
-      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ API parse error:<br>${text.substring(0,200)}</p>`;
+      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ API parse error</p>`;
       return;
     }
     if (!r.ok || d.error) {
-      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ API error ${r.status}: ${d.error || text}</p>`;
+      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ ${d.error || 'Error'}</p>`;
       return;
     }
     PAGES = d.pages || [];
     DATA_LOADED = true;
-    // Show diagnostic if pages seem empty
-    const page5 = PAGES[4] || {};
-    const hasWords = page5.english || (page5.words && page5.words[0] && page5.words[0].english);
-    if (!hasWords && PAGES.length > 0) {
-      console.warn("API returned pages but page 5 has no words. Page 5 data:", JSON.stringify(page5).substring(0,300));
-    }
     updateWords();
-    updateTips(
-      (PAGES[currentPage]?.english || "").toLowerCase().split(/[\s\/]/)[0],
-      PAGES[currentPage]?.english || "",
-      PAGES[currentPage]?.spanish || "",
-      PAGES[currentPage]?.custom_tip || ""
-    );
+    const p = PAGES[currentPage] || {};
+    const key = (p.english || (p.words && p.words[0] && p.words[0].english) || '').toLowerCase().split(/[\s\/]/)[0];
+    updateTips(key, p.english || (p.words && p.words[0] && p.words[0].english) || '', p.spanish || (p.words && p.words[0] && p.words[0].spanish) || '', p.custom_tip || '');
   } catch(e) {
-    if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ Fetch failed: ${e.message}</p>`;
-    console.error("loadPageData error:", e);
+    if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ ${e.message}</p>`;
   }
 }
 
-let currentPage = 0;
 let playing = false;
 
-// ── Teaching tips data ───────────────────────────────────────────────────────
 const TIPS = {
 "armadillo":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"The double L in Spanish makes a 'y' sound: ar-ma-DEE-yo. Tell your child 'armadillo' means 'little armored one' in Spanish — tap fingers along your arm like armor plates!","act":"Tap fingertips across your arm like armadillo scales while saying both words slowly together.","fact":"'Armadillo' is pure Spanish — English borrowed it unchanged. It comes from 'armado' meaning armored."},
-"buffalo":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Nearly identical! Count syllables together: Buf-fa-lo (3) / Bú-fa-lo (3). The accent mark over ú tells you exactly where to stress — your built-in pronunciation guide.","act":"Stomp 3 times for each syllable: BUF — fa — lo / BOO — fa — lo. Hear the BUF vs BOO difference!","fact":"From Greek 'boubalos.' The accent mark in Spanish is doing the job that word-stress does automatically in English."},
-"baboon":{"sim":72,"badge":"Near cognate","badgeClass":"badge-near","tip":"Listen for the shared 'ba' at the start! English ends with 'boon,' Spanish adds 'wee-no': ba-bwee-NO. Can your child hear the 'ba' hiding in both words?","act":"Make a funny baboon chatter sound between syllables — ba-BOON! ba-bwee-NO!","fact":"Both come from the French 'babouin.' Spanish transformed the ending with the common '-ino' suffix found in many animal names."},
-"crocodile":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"Point out the shared letters C-R-O-C / C-O-C-O — they got rearranged! Clap syllables: Croc-o-dile / Co-co-dri-lo. Both have 4 syllables. Same animal, letters just shuffled.","act":"Snap hands like crocodile jaws for each syllable: Co — co — dri — lo!","fact":"From Greek 'krokodilos' meaning 'pebble worm.' Both languages borrowed the same Greek word on slightly different journeys."},
-"camel":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spot the double L in 'camello' — it sounds like 'y': ka-MEY-yo! How many humps on a camel? 1 or 2? Count the Ls in camello: 2! A great memory hook for the double-L rule.","act":"Sway like a camel while saying ka-MEY-yo. The double-L gives the word a beautiful rolling sound.","fact":"The double-L (ll) producing a 'y' sound is one of Spanish's most iconic features — you'll see it in ella, llamar, silla, and hundreds more words."},
-"dinosaur":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'io' at the end! Cover the 'io' in dinosaurio with your finger — the English word is hiding inside. This -o/-io ending swap is one of the most useful patterns to teach.","act":"Cover the 'io' at the end of dinosaurio — what do you see? Di-no-saur! The English word is hiding inside!","fact":"From Greek 'deinos' (terrible) + 'sauros' (lizard). Both languages borrowed from the same scientific Greek when fossils were discovered in the 1800s."},
-"dolphin":{"sim":70,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark over í tells you to say 'FEEN' — long, clear vowel! English: DOL-fin; Spanish: del-FEEN. Great moment to practice the long 'ee' sound the accent mark signals.","act":"Make dolphin clicking sounds! Then say del-FEEN — stretch that FEEN sound like a dolphin's call.","fact":"The accent mark in Spanish isn't decoration — it's a pronunciation instruction. Spanish is always telling you exactly how to say it!"},
-"elephant":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both start with 'ele' — point that out! The 'ph' in English makes an 'f' sound, and Spanish spells it with a plain F. Same sound, more logical spelling! Count syllables: English 3, Spanish 4.","act":"Swing your arm like an elephant's trunk while saying each word slowly. Trunk swings on the stressed syllable!","fact":"Spanish consistently uses F where English uses PH (from Greek). You'll see this in pharmacy/farmacia, phone/fono, photo/foto."},
-"flamingo":{"sim":75,"badge":"Near cognate","badgeClass":"badge-near","tip":"Cultural treasure: in Spanish 'flamenco' means BOTH the bird AND the famous dance! The dance was named after the bird's graceful elegance. Modern Spanish also uses 'flamingo' for the bird.","act":"Do a little flamenco dance pose — arms out, head tilted — while saying fla-MEN-ko. You're a flamingo!","fact":"The dance 'flamenco' shares its name with the bird — an extraordinary double meaning hiding in a coloring page."},
-"giraffe":{"sim":72,"badge":"Near cognate","badgeClass":"badge-near","tip":"IMPORTANT RULE: Spanish J sounds like English H! So 'Jirafa' = hee-RAH-fah, not ji-RAH-fah. Once your child knows J=H, they can read dozens of Spanish words with new confidence.","act":"Reach arms way up high like a giraffe neck while saying hee-RAH-fah. The tall second syllable gets the stress!","fact":"J=H applies to: jugo, jardín, joven, julio, jefe — and hundreds more. Teach this rule early — it's one of the biggest unlocks for young Spanish readers."},
-"gorilla":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"English has double L; Spanish has single L — but they sound almost the same! Great for showing spelling differences don't always change pronunciation. These words are clearly siblings.","act":"Beat your chest gently like a gorilla — one thump per syllable: go-RIL-la / go-REE-la. Same rhythm!","fact":"English doubled the L while Spanish kept one. The meaning and sound are the same — only the spelling memory trick differs."},
-"hippopotamus":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both are 5 syllables — count them on fingers! Hip-po-pot-a-mus / Hi-po-pó-ta-mo. Same rhythm, same number of beats. Great for showing long cognates keep their structure across languages.","act":"Stomp 5 heavy hippo stomps — one per syllable. English and Spanish have exactly the same number!","fact":"From Greek 'hippos' (horse) + 'potamos' (river) = 'river horse.' Both languages preserved all five syllables faithfully over 2,000 years."},
-"iguana":{"sim":98,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Barely any difference. English: ih-GWAH-na; Spanish: ee-GWAH-nah. This is one of those magical words that needs zero translation. Only the starting vowel length differs slightly.","act":"Say it slowly in English, then Spanish. Challenge: can anyone hear the difference? It's so tiny!","fact":"From Arawak 'iwana' (a Caribbean indigenous language). Both borrowed it so similarly that it stayed almost identical — a rare and wonderful treat."},
-"insect":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'o': in-sect + o = insecto! Many English words ending in a consonant become Spanish words ending in '-o.' Ask your child: what other words might follow this pattern?","act":"Count 6 legs on the grasshopper — insects always have 6! In-sec-to has 3 syllables. 3 pairs of legs, 3 syllables!","fact":"From Latin 'insectum' (notched). The '-o' ending is Spanish keeping the original Latin vowel that English dropped over centuries."},
-"jaguar":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE — same spelling! English J sounds hard; Spanish J = H, so: hah-GWAR. This word came from a South American indigenous language (Tupi-Guaraní) and both languages borrowed it.","act":"Draw jaguar spots while saying both versions: JAG-war / hah-GWAR. Spot the J=H rule in action!","fact":"From Tupi-Guaraní 'yaguareté' meaning 'the true beast.' Both languages borrowed it from the indigenous peoples of South America."},
-"koala":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Absolutely identical in both languages. From the Dharug Aboriginal language of Australia. When both languages borrow from the same third language, they often end up identical.","act":"Hug a stuffed animal tight like a koala hugs its tree while saying the word — identical in both languages!","fact":"From Dharug 'gula.' Both English and Spanish borrowed directly from Australian Aboriginal language around the same time — arriving at the exact same word."},
-"lion":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark (ó) tells you to stress the LAST syllable: le-ON. English stresses the first: LYE-un. Same animal, very different musical rhythm. A great lesson in how accent marks change the feel of a word.","act":"ROAR after each version! LYE-un — ROAR! le-ON — ROAR! Which roar feels more royal?","fact":"Without the accent mark, 'leon' could be a person's name. The mark turns it into the king of the jungle — one small mark, big difference."},
-"monkey":{"sim":20,"badge":"Different words","badgeClass":"badge-related","tip":"DIFFERENT WORDS — an important lesson! 'Mono' is used across most of Latin America; 'Mico' is common in Colombia and other regions. Not every animal is a cognate, and that's just as valuable to know.","act":"Make a monkey sound to remember this special word: EE-EE, it's a MONO! This one needs to be memorized.","fact":"Regional variation in Spanish (mico vs mono) opens a conversation: Spanish is spoken by 500 million people across 20+ countries — it's not all the same!"},
-"ocelot":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'e': ocelot → ocelote. Say them back-to-back: O-se-lot / o-se-LO-te. The added 'e' shifts stress to the third syllable. Very common near-cognate pattern.","act":"Trace the ocelot's beautiful spotted pattern while saying o-se-LO-te slowly.","fact":"From Nahuatl 'ōcēlōtl' (Aztec). Spanish kept an extra vowel — actually closer to the original Nahuatl form than English is."},
-"panther":{"sim":83,"badge":"Near cognate","badgeClass":"badge-near","tip":"English 'th' becomes 't' in Spanish — very common! PAN-ther → pan-TE-ra. Count syllables: English 2, Spanish 3. Spanish added a syllable and shifted the stress.","act":"Prowl softly around the room while whispering both words. Panthers — and their names — have quiet grace.","fact":"From Greek 'panthēr.' Spanish replaced Greek 'th' with 't': theater/teatro, theme/tema, theory/teoría. One rule, hundreds of cognates!"},
-"penguin":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The ü (u with two dots, called diéresis) tells you to pronounce the U: pin-GWEE-no. Without those dots, 'gu' before 'i' would be silent. The dots are doing critical grammatical work!","act":"Waddle like a penguin between both words — pen-GWIN, pin-GWEE-no — both words have a waddle in their rhythm!","fact":"The ü is one of the only diacritical marks in Spanish that changes pronunciation rather than just stress. Point it out proudly!"},
-"rhinoceros":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"English uses 'rh' at the start; Spanish uses plain 'r' — Spanish never uses 'rh.' Both clearly come from the same Greek word about horns.","act":"Point to the horn while saying both words — the horn is the same; the names nearly are too!","fact":"From Greek 'rhinokerōs' = rhinos (nose) + keras (horn). Different Latin endings survived in each language from the same root."},
-"salamander":{"sim":92,"badge":"Near cognate","badgeClass":"badge-near","tip":"Almost perfect! English ends in '-er'; Spanish ends in '-ra': sala-MAN-der / sala-MAN-dra. Just the last two letters swapped order. Both have 4 syllables with stress in the same place!","act":"Count the salamander's 4 legs, then count the 4 syllables in sala-man-dra! A perfectly satisfying match.","fact":"The -er/-ra ending swap is a classic indicator of shared Latin origin — the root is identical, only the ending form differs."},
-"tiger":{"sim":87,"badge":"Near cognate","badgeClass":"badge-near","tip":"Consonants T-G-R stay in both words. In Spanish every letter is pronounced — that final 'e' in tigre is always spoken. No silent letters in Spanish!","act":"Let out a soft growl between syllables: Tee — GRRR — eh! The growl lives in the middle of the Spanish word!","fact":"In Spanish, no letter is ever silent — the final 'e' in tigre is spoken clearly. This consistency is one of Spanish's greatest strengths for young readers learning phonics."},
-"tortoise":{"sim":45,"badge":"Related words","badgeClass":"badge-related","tip":"Not strong cognates — different paths from Latin. But 'Tortuga' is the famous pirate island name! A great cultural conversation. Point out the shared 'tor' sound at the beginning.","act":"Move veeery slowly like a tortoise between the words. Tor-toise… tor-TOO-gah… slow and steady.","fact":"The pirate island 'Tortuga' off Haiti shows how Spanish explorer names shaped Caribbean geography. History is hiding in this word!"},
-"uakari":{"sim":92,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from a Brazilian indigenous language! Both pronounced nearly identically. The accent in Spanish shifts stress to the last syllable. Celebrates indigenous linguistic heritage!","act":"This is a rare and special word — celebrate discovering it together! Say it 3 times: Uakari, Uacarí, Uakari!","fact":"From Tupi or another Amazonian language. Many South American animals have names borrowed from indigenous languages into both Spanish and English."},
-"viper":{"sim":60,"badge":"Related words","badgeClass":"badge-related","tip":"Both trace to Latin 'vipera.' Spanish 'v' is very soft — almost like a 'b' sound: VEE-bo-rah. Latin 'vipera' is actually closer to Spanish 'víbora' — Spanish preserved more of the original!","act":"Make a long ssssss sound between the words like a viper. VYE-per… ssss… VEE-bo-rah!","fact":"From Latin 'vipera' = vivus (alive) + parere (give birth) — vipers bear live young! Spanish kept 3 of the original Latin syllables; English compressed to 2."},
-"yak":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Identical spelling and pronunciation in both languages. Borrowed from Tibetan unchanged. Say it once — you've said it in both languages!","act":"Make a low, gruff YAK grunt — exactly the same in English and Spanish. One sound, two languages!","fact":"From Tibetan 'g.yag.' Short words from distant languages often stay identical because there's no pressure to modify them."},
-"cactus":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Same spelling, nearly same pronunciation. English: KAK-tus; Spanish: KAHK-toos. The final S is pronounced more clearly in Spanish. A great confidence builder!","act":"Count the cactus spines on the page. Prickly in English AND Spanish — some things need no translation!","fact":"From Greek 'kaktos.' Scientific names from Latin/Greek often become perfect cognates because both languages borrowed from the same academic source."},
-"canyon":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"English borrowed 'canyon' FROM Spanish 'cañón'! The ñ (eñe) makes the 'ny' sound. Spanish explorers named canyons across the American West, and English kept their word.","act":"Cup hands around your mouth and call into the canyon: ka-NYOHN! Does the echo come back in Spanish?","fact":"Words like canyon, bronco, ranch, rodeo, lasso all entered English from Spanish in the 1800s as settlers encountered Spanish-named landscapes."},
-"island":{"sim":65,"badge":"Related words","badgeClass":"badge-related","tip":"Both come from Latin 'insula.' Fascinating: English 'island' has a SILENT S — added in the 1500s to look more Latin! Spanish 'isla' is actually more phonetic and closer to the original Latin.","act":"Draw a tiny island circle on paper — la ISLA, the island. Same concept, different journeys to get here.","fact":"The S in English 'island' is entirely silent and was added by scribes wanting the word to look Latin. Spanish 'isla' simply kept Latin directly — often easier to spell!"},
-"desert":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"English: DEZ-ert (2 syllables); Spanish: de-SYEHR-to (4 syllables). The 'ie' in Spanish is a diphthong — two vowels gliding together. This gliding vowel is a hallmark of many Spanish words.","act":"Fan yourself dramatically from the heat while saying de-SYEHR-to. Feel how the word stretches like a long hot desert!","fact":"Spanish preserves a Latin 'ie' diphthong unique to Spanish among the Latin languages — a sign of its ancient vowel evolution."},
-"meteor":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'o': meteor + o = meteoro! The -or → -oro pattern is very common. Science words especially follow this rule: motor/motor, reactor/reactor, sensor/sensor.","act":"Whoosh one hand across the sky like a shooting meteor while saying me-te-OH-ro — feel the speed!","fact":"From Greek 'meteōros' (suspended in air). The added Spanish 'o' keeps the Greek '-os' ending that English dropped."},
-"palm":{"sim":87,"badge":"Near cognate","badgeClass":"badge-near","tip":"English 'palm' often has a silent L. Spanish 'palma' always pronounces it: PAL-mah. Spanish also adds 'a' making it feminine (la palma). Same root, same shape, great example of noun gender!","act":"Hold up your palm (of your hand) while saying both words — they share the same Latin root!","fact":"From Latin 'palma' meaning BOTH the flat of the hand AND the palm tree — Romans noticed the fronds look like an open hand."},
-"ocean":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"English smooshes 'ocean' into 2 syllables (OH-shun). Spanish opens it to 4 clear syllables: o-SEH-ah-no. Accent mark on é tells you where to stress. Beautiful example of Spanish speaking every letter.","act":"Make wave motions with arms — one wave per syllable: o — SEH — ah — no. Four waves for the ocean!","fact":"From Greek 'okeanos.' Spanish keeps all 4 syllables of the original Greek; English compressed it dramatically."},
-"planet":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'a': planet + a = planeta! Both from Greek 'planetes' (wanderer). The -et/-eta pattern appears in many science and astronomy words shared between both languages.","act":"Point to a planet in a picture and say: el Planeta Tierra = Planet Earth!","fact":"Ancient Greeks called planets 'planetai' (wanderers) because they moved differently from stars. Both languages kept almost identical versions of this 2,000-year-old word."},
-"safari":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Arabic 'safar' (journey)! Both languages borrowed it identically. Great springboard to discuss how languages borrow words from all around the world.","act":"Look through pretend binoculars while saying safari in both languages. Same word, same adventure!","fact":"From Arabic 'safar' through Swahili. The word traveled through East Africa into English and Spanish — languages borrow from everywhere!"},
-"tornado":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! English borrowed 'tornado' FROM Spanish! English: tor-NEI-do; Spanish: tor-NAH-do. The A vowel sounds different — Spanish always keeps that clear 'ah' sound.","act":"Spin around slowly while saying both versions. Stop and listen — can you hear the 'nay' vs 'nah' difference?","fact":"From Spanish 'tronada' (thunderstorm). English borrowed it from Spanish explorers describing weather on the American plains."},
-"volcano":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Unusual reverse pattern: English ADDS 'o'; Spanish is SHORTER! vol-KAY-no vs vol-KAHN. The accent on á tells you the last syllable gets the stress.","act":"Build excitement with each syllable like lava rising: vol… KAY… no! vol… KAHN! Erupt on the final beat!","fact":"Named for Vulcanus, the Roman god of fire. English kept the Latin '-o'; Spanish dropped it and added the accent mark instead."},
-"banana":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Identical in both languages — one of the most recognized words on the planet. From West African languages through Portuguese. Three syllables, same stress everywhere.","act":"Peel an imaginary banana while saying ba-NA-na / ba-NA-na. Can you find ANY difference?","fact":"From Wolof or Mandinka (West African languages) through Portuguese trade routes. By the time English and Spanish borrowed it, both got the same established version."},
-"broccoli":{"sim":93,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both borrowed from Italian 'broccoli'! The accent mark (ó) just marks the first-syllable stress. Nearly identical — great example of English and Spanish agreeing on Italian food words.","act":"Make little tree shapes with your fingers while saying BROC-o-lee / BRO-ko-lee. Broccoli looks like tiny trees!","fact":"From Italian 'broccolo.' English, Spanish, and Italian all share this word because Italian food spread vegetables — and their names — across the world."},
-"cacao":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Nahuatl (Aztec)! ka-KAH-oh in both languages. This word has barely changed in hundreds of years. Chocolate comes from cacao!","act":"If you have chocolate or cocoa powder, smell it together while practicing ka-KAH-oh. This plant changed world history!","fact":"From Nahuatl 'cacahuatl.' Aztec cacao was used as currency. Spanish explorers borrowed the word in the 1500s; English borrowed from Spanish shortly after."},
-"cereal":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Same spelling, different rhythm. English: SEER-ee-ul. Spanish: se-re-AHL. The accent mark on á tells you to stress the LAST syllable — very different feel, same word!","act":"Pour pretend cereal into a bowl while saying both versions. SEER-ee-ul pour… se-re-AHL pour!","fact":"From the Roman goddess Ceres, goddess of grain. When you eat cereal, you're honoring an ancient Roman goddess — 2,000 years of linguistic history in one bowl!"},
-"chocolate":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Nahuatl! English: CHOC-o-lit (3 syllables). Spanish: cho-ko-LA-te (4 syllables). Spanish speaks every syllable — that final 'te' is fully pronounced.","act":"Hold up fingers: English 3, Spanish 4. How can one more syllable make it sound so different?","fact":"From Nahuatl 'xocolatl' — the Aztec bitter cacao drink. Spanish explorers brought chocolate to Europe in the 1500s. Arguably the most important word Nahuatl gave the world."},
-"coconut":{"sim":75,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish uses just 'coco'! 'Coconut' in English = 'coco' in Spanish. The 'nut' part is implied. Sometimes one language is more concise than the other — that's a valuable lesson!","act":"Knock knuckles like knocking a coconut shell: KO-ko! KO-ko-nut! Which sounds more like the knock?","fact":"'Coco' comes from Portuguese/Spanish for 'goblin face' — explorers saw the three holes in the shell as a funny face. English added 'nut' to clarify."},
-"fruit":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both from Latin 'fructus.' Spanish adds 'a' — making it feminine (la fruta). The vowel sounds are nearly identical: FROOT / FROO-tah. Point to all the fruits on the page and name them!","act":"Point to each fruit on the page and say: '¡Es una fruta!' (It's a fruit!) Name each one in Spanish.","fact":"From Latin 'fructus' (enjoyment, fruit). Fruta, fruto, fructose all share this ancient ancestor — connecting food, pleasure, and language across 2,000 years."},
-"hamburger":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both named after Hamburg, Germany! English: 3 syllables; Spanish: ahm-boor-GEH-sah (4 syllables). Find 'hambur' in both — that's your shared root. Same city, same food!","act":"Build an imaginary hamburger layer by layer, naming each layer as a syllable: ahm — boor — GEH — sah!","fact":"Named for Hamburg, Germany. Both languages borrowed the city name but added their own culinary suffixes — a delicious reminder that food spreads language."},
-"kiwi":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Māori (New Zealand's indigenous language)! KEE-wee in both languages. Both English and Spanish borrowed the Māori name for the bird, then used it for the fruit.","act":"Point to the beautiful star-burst cross-section pattern on the kiwi! el Kiwi / the Kiwi — one word!","fact":"From Māori 'kiwi.' The fruit was named after the bird because both are small, brown, and fuzzy. The Māori word traveled to both languages completely unchanged."},
-"lemon":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark shows last-syllable stress: lee-MOHN. English: LEM-un (first syllable). Both from Arabic 'laymun' — Arabic contributed many food words to both languages via trade routes.","act":"Make a sour face together while saying both words! LEM-un — sour face! lee-MOHN — sour face! Equally tart!","fact":"From Arabic 'laymūn,' through Persian and Sanskrit. Arabic traders spread citrus fruits and their names across the Mediterranean."},
-"mango":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Tamil/Sanskrit! Identical in both languages. Originally from South India, traveled through Portuguese trade routes to both English and Spanish.","act":"Draw a mango shape — that beautiful golden curve — while saying MAN-go. One word, two languages!","fact":"From Tamil 'māṅkāy' through Portuguese 'manga.' Portuguese explorers in India brought both the fruit and its name to Europe in the 1400s."},
-"melon":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Accent on the last syllable in Spanish: me-LOHN. English: MEL-on (first syllable). Same letters, completely different stress pattern — and the accent mark is always your guide!","act":"Tap an imaginary melon for each syllable. MEL-on: 2 taps. Me-LOHN: 2 taps. Same number, different music!","fact":"The accent mark changed the word's rhythm entirely — a single mark transforms how a word feels in the mouth. That's the power of diacritics."},
-"papaya":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Taíno — a Caribbean indigenous language! Many tropical fruit names are perfect cognates because both languages borrowed from the same Caribbean peoples.","act":"Say it 3 times fast: papaya, papaya, papaya! Now try: pa-PAH-yah, pa-PAH-yah, pa-PAH-yah!","fact":"From Taíno 'papáia.' When Columbus arrived in the Caribbean, the Taíno people introduced Europeans to this fruit and its name — honoring Taíno heritage."},
-"pasta":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Italian! PAS-ta in both languages. Both borrowed identically from Italian food vocabulary. Food words from Italy almost always become perfect cognates.","act":"Stir an imaginary pasta pot while counting syllables: PAS — ta! Two syllables, the same in both!","fact":"From Italian 'pasta' from Greek 'pastē.' When Italian food spread across the Americas, it brought its vocabulary unchanged — a delicious linguistic gift."},
-"salmon":{"sim":83,"badge":"Near cognate","badgeClass":"badge-near","tip":"IMPORTANT: The L is completely SILENT in English — SAM-un! Spanish pronounces every letter clearly: sal-MOHN. This perfectly illustrates why Spanish phonics is more consistent than English.","act":"Swim upstream like a salmon while saying both words. SAM-un glide… sal-MOHN splash! The L appears in the jump!","fact":"English developed the silent L in the 1500s (same as 'calm,' 'palm,' 'half'). Spanish kept pronouncing it — what you see is what you say."},
-"soup":{"sim":65,"badge":"Related words","badgeClass":"badge-related","tip":"Less obvious cognate — but look: both share S-P at their core! SouP / SoPa. Both from Latin 'suppa.' Finding the shared core is a great metalinguistic skill to develop.","act":"Slurp an imaginary spoonful between each word. SOOP… slurp… SO-pah! Warm and comforting in both languages.","fact":"From late Latin 'suppa' (bread soaked in broth). English compressed it; Spanish kept two clear syllables. The S-P core reveals their shared ancestry."},
-"tomato":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"From Nahuatl 'tomatl'! English: to-MAY-to; Spanish: to-MAH-te. The vowel difference (MAY vs MAH) is what inspired the famous song 'You say to-MAY-to, I say to-MAH-to!'","act":"Sing it together: 'You say to-MAY-to, I say to-MAH-to!' That famous song is literally about this cognate pair!","fact":"From Nahuatl 'tomatl.' Spanish explorers brought tomatoes from Mexico to Europe in the 1500s. The famous song celebrates this exact cognate pair!"},
-"vanilla":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"Two rules at once! Spanish 'v' sounds like 'b' (bai…) AND double-ll sounds like 'y' (…NEE-ya). So: bai-NEE-ya. Also from Nahuatl! Spanish got it first from Mexico, then English borrowed from Spanish.","act":"Smell vanilla extract if you have some — this incredible scent comes from an orchid pod from Mexico! la Vainilla.","fact":"From Nahuatl 'tlilxochitl' (black flower). Spanish borrowed it as 'vainilla' (little pod) in the 1500s. You can see the Spanish root in the English word!"},
-"yogurt":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish drops the final 't': yogurt → yogur! yo-GOOR. Both from Turkish. Interestingly, Spanish pronunciation is actually closer to the Turkish original!","act":"Stir an imaginary yogurt cup while saying both. YO-gert stir… yo-GOOR stir! Which feels smoother?","fact":"From Turkish 'yoğurt.' Spanish dropped the final consonant giving 'yogur' — ironically closer to the Turkish original than English 'yogurt' is."}
+"buffalo":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Nearly identical! Count syllables together: Buf-fa-lo (3) / Bú-fa-lo (3). The accent mark over ú tells you exactly where to stress.","act":"Stomp 3 times for each syllable: BUF — fa — lo / BOO — fa — lo.","fact":"From Greek 'boubalos.' The accent mark in Spanish is doing the job that word-stress does automatically in English."},
+"baboon":{"sim":72,"badge":"Near cognate","badgeClass":"badge-near","tip":"Listen for the shared 'ba' at the start! English ends with 'boon,' Spanish adds 'wee-no': ba-bwee-NO. Can your child hear the 'ba' hiding in both words?","act":"Make a funny baboon chatter sound between syllables — ba-BOON! ba-bwee-NO!","fact":"Both come from the French 'babouin.' Spanish transformed the ending with the common '-ino' suffix."},
+"crocodile":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"Point out the shared letters C-R-O-C / C-O-C-O — they got rearranged! Clap syllables: Croc-o-dile / Co-co-dri-lo.","act":"Snap hands like crocodile jaws for each syllable: Co — co — dri — lo!","fact":"From Greek 'krokodilos' meaning 'pebble worm.'"},
+"camel":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spot the double L in 'camello' — it sounds like 'y': ka-MEY-yo! How many humps? Count the Ls in camello: 2!","act":"Sway like a camel while saying ka-MEY-yo.","fact":"The double-L (ll) producing a 'y' sound is one of Spanish's most iconic features."},
+"dinosaur":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'io' at the end! Cover the 'io' in dinosaurio with your finger — the English word is hiding inside.","act":"Cover the 'io' at the end of dinosaurio — Di-no-saur is hiding there!","fact":"From Greek 'deinos' (terrible) + 'sauros' (lizard). Both borrowed from the same scientific Greek in the 1800s."},
+"dolphin":{"sim":70,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark over í tells you to say 'FEEN' — long, clear vowel! English: DOL-fin; Spanish: del-FEEN.","act":"Make dolphin clicking sounds! Then say del-FEEN — stretch that FEEN sound.","fact":"The accent mark in Spanish is always a pronunciation instruction."},
+"elephant":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both start with 'ele'! The 'ph' in English makes an 'f' sound, and Spanish spells it with plain F. Same sound, more logical spelling!","act":"Swing your arm like a trunk while saying each word slowly.","fact":"Spanish consistently uses F where English uses PH (from Greek) — pharmacy/farmacia, phone/fono."},
+"flamingo":{"sim":75,"badge":"Near cognate","badgeClass":"badge-near","tip":"In Spanish 'flamenco' means BOTH the bird AND the famous dance! The dance was named after the bird's graceful elegance.","act":"Do a little flamenco pose — arms out, head tilted — while saying fla-MEN-ko.","fact":"The dance 'flamenco' shares its name with the bird — an extraordinary double meaning."},
+"giraffe":{"sim":72,"badge":"Near cognate","badgeClass":"badge-near","tip":"IMPORTANT RULE: Spanish J sounds like English H! So 'Jirafa' = hee-RAH-fah. Once your child knows J=H, they can read dozens of Spanish words.","act":"Reach arms way up high like a giraffe neck while saying hee-RAH-fah.","fact":"J=H applies to: jugo, jardín, joven, julio — hundreds of words. Teach this rule early."},
+"gorilla":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"English has double L; Spanish has single L — but they sound almost the same! Great for showing spelling differences don't always change pronunciation.","act":"Beat your chest gently — one thump per syllable: go-RIL-la / go-REE-la.","fact":"English doubled the L while Spanish kept one. Same meaning and sound — only spelling differs."},
+"hippopotamus":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both are 5 syllables — count them on fingers! Hip-po-pot-a-mus / Hi-po-pó-ta-mo.","act":"Stomp 5 heavy hippo stomps — one per syllable. Same number in both languages!","fact":"From Greek 'hippos' (horse) + 'potamos' (river) = 'river horse.'"},
+"iguana":{"sim":98,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! English: ih-GWAH-na; Spanish: ee-GWAH-nah. One of those magical words that needs zero translation.","act":"Say it slowly in English, then Spanish. Can anyone hear the difference? It's tiny!","fact":"From Arawak 'iwana' — a Caribbean indigenous language. Both borrowed it almost identically."},
+"insect":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'o': in-sect + o = insecto! Many English words ending in a consonant become Spanish words ending in '-o.'","act":"Count 6 legs — insects always have 6! In-sec-to has 3 syllables. 3 pairs of legs, 3 syllables!","fact":"From Latin 'insectum.' The '-o' ending keeps the original Latin vowel that English dropped."},
+"jaguar":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE — same spelling! English J sounds hard; Spanish J = H, so: hah-GWAR. From South American indigenous language (Tupi-Guaraní).","act":"Draw jaguar spots while saying both: JAG-war / hah-GWAR. Spot the J=H rule in action!","fact":"From Tupi-Guaraní 'yaguareté' meaning 'the true beast.'"},
+"koala":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Absolutely identical in both languages. From the Dharug Aboriginal language of Australia.","act":"Hug a stuffed animal tight like a koala hugs its tree while saying the identical word!","fact":"From Dharug 'gula.' Both borrowed from Australian Aboriginal language around the same time."},
+"lion":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark (ó) tells you to stress the LAST syllable: le-ON. English stresses the first: LYE-un. A great lesson in how accent marks change the feel of a word.","act":"ROAR after each version! LYE-un — ROAR! le-ON — ROAR! Which roar feels more royal?","fact":"Without the accent mark, 'leon' could be a person's name. The mark makes it the king of the jungle."},
+"monkey":{"sim":20,"badge":"Different words","badgeClass":"badge-related","tip":"DIFFERENT WORDS — an important lesson! 'Mono' is used across most of Latin America. Not every animal is a cognate, and that's just as valuable to know.","act":"Make a monkey sound to remember: EE-EE, it's a MONO! This one needs to be memorized.","fact":"Regional variation: 'mico' vs 'mono' opens a conversation — Spanish is spoken by 500 million across 20+ countries."},
+"ocelot":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'e': ocelot → ocelote. Say them: O-se-lot / o-se-LO-te. Very common near-cognate pattern.","act":"Trace the ocelot's beautiful spotted pattern while saying o-se-LO-te slowly.","fact":"From Nahuatl 'ōcēlōtl' (Aztec). Spanish kept an extra vowel — closer to the original Nahuatl."},
+"panther":{"sim":83,"badge":"Near cognate","badgeClass":"badge-near","tip":"English 'th' becomes 't' in Spanish — very common! PAN-ther → pan-TE-ra. Spanish added a syllable and shifted the stress.","act":"Prowl softly around the room while whispering both words.","fact":"From Greek 'panthēr.' Spanish replaced Greek 'th' with 't' — theater/teatro, theme/tema, theory/teoría."},
+"penguin":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The ü (u with two dots, called diéresis) tells you to pronounce the U: pin-GWEE-no. Without those dots, 'gu' before 'i' would be silent.","act":"Waddle like a penguin between both words — pen-GWIN, pin-GWEE-no!","fact":"The ü is one of the only diacritical marks in Spanish that changes pronunciation."},
+"rhinoceros":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"English uses 'rh' at the start; Spanish uses plain 'r' — Spanish never uses 'rh.' Both from the same Greek word about horns.","act":"Point to the horn while saying both words — the horn is the same; the names nearly are too!","fact":"From Greek 'rhinokerōs' = rhinos (nose) + keras (horn)."},
+"salamander":{"sim":92,"badge":"Near cognate","badgeClass":"badge-near","tip":"Almost perfect! English ends in '-er'; Spanish ends in '-ra': sala-MAN-der / sala-MAN-dra. Just the last two letters swapped order.","act":"Count the salamander's 4 legs, then count the 4 syllables in sala-man-dra!","fact":"The -er/-ra ending swap is a classic indicator of shared Latin origin."},
+"tiger":{"sim":87,"badge":"Near cognate","badgeClass":"badge-near","tip":"In Spanish every letter is pronounced — that final 'e' in tigre is always spoken. No silent letters in Spanish!","act":"Let out a soft growl between syllables: Tee — GRRR — eh! The growl lives in the middle.","fact":"In Spanish, no letter is ever silent. This consistency is one of Spanish's greatest strengths for young readers."},
+"tortoise":{"sim":45,"badge":"Related words","badgeClass":"badge-related","tip":"Not strong cognates — different paths from Latin. But 'Tortuga' is the famous pirate island name! A great cultural conversation.","act":"Move veeery slowly like a tortoise between the words. Tor-toise… tor-TOO-gah…","fact":"The pirate island 'Tortuga' off Haiti shows how Spanish explorer names shaped Caribbean geography."},
+"uakari":{"sim":92,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from a Brazilian indigenous language! Both pronounced nearly identically. Celebrates indigenous linguistic heritage!","act":"This is a rare and special word — say it 3 times: Uakari, Uacarí, Uakari!","fact":"From Tupi or another Amazonian language. Many South American animals have names from indigenous languages."},
+"viper":{"sim":60,"badge":"Related words","badgeClass":"badge-related","tip":"Both trace to Latin 'vipera.' Spanish 'v' is very soft — almost like a 'b' sound: VEE-bo-rah. Latin 'vipera' is actually closer to Spanish 'víbora' — Spanish preserved more of the original!","act":"Make a long ssssss sound between the words like a viper. VYE-per… ssss… VEE-bo-rah!","fact":"From Latin 'vipera' = vivus (alive) + parere (give birth) — vipers bear live young!"},
+"yak":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Identical spelling and pronunciation in both languages. From Tibetan unchanged.","act":"Make a low, gruff YAK grunt — exactly the same in English and Spanish!","fact":"From Tibetan 'g.yag.' Short words from distant languages often stay identical."},
+"cactus":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Same spelling, nearly same pronunciation. English: KAK-tus; Spanish: KAHK-toos.","act":"Count the cactus spines on the page. Prickly in English AND Spanish!","fact":"From Greek 'kaktos.' Scientific names from Latin/Greek often become perfect cognates."},
+"canyon":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"English borrowed 'canyon' FROM Spanish 'cañón'! The ñ makes the 'ny' sound. Spanish explorers named canyons across the American West.","act":"Cup hands around your mouth and call into the canyon: ka-NYOHN!","fact":"Words like canyon, bronco, ranch, rodeo, lasso all entered English from Spanish in the 1800s."},
+"island":{"sim":65,"badge":"Related words","badgeClass":"badge-related","tip":"Both come from Latin 'insula.' English 'island' has a SILENT S — added in the 1500s to look more Latin! Spanish 'isla' is more phonetic.","act":"Draw a tiny island circle on paper — la ISLA, the island.","fact":"The S in English 'island' is entirely silent and was added by scribes. Spanish 'isla' kept Latin directly."},
+"desert":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"English: DEZ-ert (2 syllables); Spanish: de-SYEHR-to (4 syllables). The 'ie' in Spanish is a diphthong — two vowels gliding together.","act":"Fan yourself dramatically from the heat while saying de-SYEHR-to.","fact":"Spanish preserves a Latin 'ie' diphthong unique to Spanish among the Latin languages."},
+"meteor":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'o': meteor + o = meteoro! The -or → -oro pattern is very common in science words.","act":"Whoosh one hand across the sky like a shooting meteor while saying me-te-OH-ro.","fact":"From Greek 'meteōros' (suspended in air). The added Spanish 'o' keeps the Greek '-os' ending."},
+"palm":{"sim":87,"badge":"Near cognate","badgeClass":"badge-near","tip":"English 'palm' often has a silent L. Spanish 'palma' always pronounces it: PAL-mah. Spanish also adds 'a' making it feminine.","act":"Hold up your palm (of your hand) while saying both words — same Latin root!","fact":"From Latin 'palma' meaning BOTH the flat of the hand AND the palm tree."},
+"ocean":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"English smooshes 'ocean' into 2 syllables (OH-shun). Spanish opens it to 4 clear syllables: o-SEH-ah-no. Spanish speaks every letter.","act":"Make wave motions with arms — one wave per syllable: o — SEH — ah — no.","fact":"From Greek 'okeanos.' Spanish keeps all 4 syllables; English compressed it dramatically."},
+"planet":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'a': planet + a = planeta! Both from Greek 'planetes' (wanderer).","act":"Point to a planet and say: el Planeta Tierra = Planet Earth!","fact":"Ancient Greeks called planets 'planetai' (wanderers) because they moved differently from stars."},
+"safari":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Arabic 'safar' (journey)! Both languages borrowed it identically.","act":"Look through pretend binoculars while saying safari in both languages. Same word, same adventure!","fact":"From Arabic 'safar' through Swahili. The word traveled through East Africa into English and Spanish."},
+"tornado":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! English borrowed 'tornado' FROM Spanish! English: tor-NEI-do; Spanish: tor-NAH-do.","act":"Spin around slowly while saying both versions. Can you hear the 'nay' vs 'nah' difference?","fact":"From Spanish 'tronada' (thunderstorm). English borrowed it from Spanish explorers on the American plains."},
+"volcano":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"English ADDS 'o'; Spanish is SHORTER! vol-KAY-no vs vol-KAHN. The accent on á tells you the last syllable gets the stress.","act":"Build excitement with each syllable like lava rising: vol… KAY… no! vol… KAHN!","fact":"Named for Vulcanus, the Roman god of fire."},
+"banana":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Identical in both languages. From West African languages through Portuguese.","act":"Peel an imaginary banana while saying ba-NA-na / ba-NA-na. Can you find ANY difference?","fact":"From Wolof or Mandinka (West African languages) through Portuguese trade routes."},
+"broccoli":{"sim":93,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both borrowed from Italian 'broccoli'! Nearly identical — great example of English and Spanish agreeing on Italian food words.","act":"Make little tree shapes with your fingers while saying BROC-o-lee / BRO-ko-lee.","fact":"From Italian 'broccolo.' English, Spanish, and Italian all share this word."},
+"cacao":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Nahuatl (Aztec)! ka-KAH-oh in both languages. Chocolate comes from cacao!","act":"Smell chocolate or cocoa powder together while practicing ka-KAH-oh. This plant changed world history!","fact":"From Nahuatl 'cacahuatl.' Aztec cacao was used as currency. Borrowed into Spanish in the 1500s."},
+"cereal":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Same spelling. English: SEER-ee-ul. Spanish: se-re-AHL. The accent mark on á tells you to stress the LAST syllable.","act":"Pour pretend cereal while saying both versions. SEER-ee-ul pour… se-re-AHL pour!","fact":"From the Roman goddess Ceres, goddess of grain. 2,000 years of linguistic history in one bowl!"},
+"chocolate":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Nahuatl! English: CHOC-o-lit (3 syllables). Spanish: cho-ko-LA-te (4 syllables). Spanish speaks every syllable.","act":"Hold up fingers: English 3, Spanish 4. One more syllable sounds so different!","fact":"From Nahuatl 'xocolatl.' Spanish explorers brought chocolate to Europe in the 1500s."},
+"coconut":{"sim":75,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish uses just 'coco'! The 'nut' part is implied. Sometimes one language is more concise.","act":"Knock knuckles like knocking a coconut shell: KO-ko! KO-ko-nut!","fact":"'Coco' comes from Portuguese/Spanish for 'goblin face' — explorers saw the three holes as a funny face."},
+"fruit":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both from Latin 'fructus.' Spanish adds 'a' — making it feminine (la fruta). Nearly identical vowels: FROOT / FROO-tah.","act":"Point to each fruit on the page and say: '¡Es una fruta!'","fact":"From Latin 'fructus' (enjoyment, fruit). Fruta, fruto, fructose all share this ancient ancestor."},
+"hamburger":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both named after Hamburg, Germany! English: 3 syllables; Spanish: ahm-boor-GEH-sah (4 syllables).","act":"Build an imaginary hamburger layer by layer: ahm — boor — GEH — sah!","fact":"Named for Hamburg, Germany. Both languages borrowed the city name with their own culinary suffixes."},
+"kiwi":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Māori! KEE-wee in both languages. Both borrowed the Māori name for the bird, then used it for the fruit.","act":"Point to the beautiful star-burst cross-section pattern on the kiwi!","fact":"From Māori 'kiwi.' The Māori word traveled to both languages completely unchanged."},
+"lemon":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark shows last-syllable stress: lee-MOHN. English: LEM-un (first syllable). Both from Arabic 'laymun.'","act":"Make a sour face together! LEM-un — sour face! lee-MOHN — equally tart!","fact":"From Arabic 'laymūn.' Arabic traders spread citrus fruits and their names across the Mediterranean."},
+"mango":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Tamil/Sanskrit! Identical in both languages. Originally from South India, via Portuguese.","act":"Draw a mango shape — that beautiful golden curve — while saying MAN-go.","fact":"From Tamil 'māṅkāy' through Portuguese 'manga.' Portuguese explorers brought fruit and name to Europe."},
+"melon":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Accent on the last syllable in Spanish: me-LOHN. English: MEL-on. Same letters, completely different stress — accent mark is always your guide!","act":"Tap an imaginary melon for each syllable. MEL-on: 2 taps. Me-LOHN: 2 taps. Same number, different music!","fact":"A single accent mark transforms how a word feels in the mouth. That's the power of diacritics."},
+"papaya":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Taíno — a Caribbean indigenous language! Many tropical fruit names are perfect cognates.","act":"Say it 3 times fast: pa-PAH-yah, pa-PAH-yah, pa-PAH-yah!","fact":"From Taíno 'papáia.' When Columbus arrived, the Taíno people introduced Europeans to this fruit and name."},
+"pasta":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Italian! PAS-ta in both languages. Italian food words almost always become perfect cognates.","act":"Stir an imaginary pasta pot while counting syllables: PAS — ta!","fact":"From Italian 'pasta' from Greek 'pastē.' Italian food spread across the Americas with its vocabulary unchanged."},
+"salmon":{"sim":83,"badge":"Near cognate","badgeClass":"badge-near","tip":"The L is completely SILENT in English — SAM-un! Spanish pronounces every letter clearly: sal-MOHN. Perfect example of Spanish phonics consistency.","act":"Swim upstream like a salmon while saying both. SAM-un glide… sal-MOHN splash!","fact":"English developed the silent L in the 1500s. Spanish kept pronouncing it — what you see is what you say."},
+"soup":{"sim":65,"badge":"Related words","badgeClass":"badge-related","tip":"Less obvious cognate — but look: both share S-P at their core! SouP / SoPa. Both from Latin 'suppa.'","act":"Slurp an imaginary spoonful between each word. SOOP… slurp… SO-pah!","fact":"From late Latin 'suppa' (bread soaked in broth). English compressed it; Spanish kept two clear syllables."},
+"tomato":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"From Nahuatl 'tomatl'! English: to-MAY-to; Spanish: to-MAH-te. The vowel difference inspired the famous song 'You say to-MAY-to, I say to-MAH-to!'","act":"Sing it together: 'You say to-MAY-to, I say to-MAH-to!' That song is literally about this cognate pair!","fact":"From Nahuatl 'tomatl.' Spanish explorers brought tomatoes from Mexico to Europe in the 1500s."},
+"vanilla":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"Two rules at once! Spanish 'v' sounds like 'b' AND double-ll sounds like 'y' (…NEE-ya). So: bai-NEE-ya. Also from Nahuatl!","act":"Smell vanilla extract — this incredible scent comes from an orchid pod from Mexico! la Vainilla.","fact":"From Nahuatl 'tlilxochitl' (black flower). Spanish borrowed it as 'vainilla' (little pod) in the 1500s."},
+"yogurt":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish drops the final 't': yogurt → yogur! yo-GOOR. Both from Turkish. Spanish pronunciation is actually closer to the Turkish original!","act":"Stir an imaginary yogurt cup: YO-gert stir… yo-GOOR stir! Which feels smoother?","fact":"From Turkish 'yoğurt.' Spanish dropped the final consonant — ironically closer to Turkish than English."}
 };
 
-// Dual-use phonics — English words use Spanish phonetic conventions (for Spanish-speaking parents)
-// Spanish words use English phonetic conventions (for English-speaking parents)
-// Source: Biliteracy Bridge Word Bank & Pronunciation Guide (pages 65-67)
 const PRON = {
-  // ANIMALS
-  "armadillo": {"enP":"ar-ma-DI-lo",    "esP":"el ar-mah-DEE-yoh"},
-  "buffalo":   {"enP":"BA-fa-lo",        "esP":"el BOO-fah-loh"},
-  "baboon":    {"enP":"ba-BUN",          "esP":"el bah-bwee-NOH"},
-  "crocodile": {"enP":"kro-ko-DAIL",     "esP":"el koh-koh-DREE-loh"},
-  "camel":     {"enP":"KEI-mel",         "esP":"el kah-MEY-yoh"},
-  "dinosaur":  {"enP":"DAI-no-sor",      "esP":"el dee-noh-SOW-ree-oh"},
-  "dolphin":   {"enP":"Dol-FIN",         "esP":"el del-FEEN"},
-  "elephant":  {"enP":"E-le-fant",       "esP":"el e-le-FAN-te"},
-  "flamingo":  {"enP":"FLA-min-go",      "esP":"el flah-MEN-koh"},
-  "giraffe":   {"enP":"yi-RAF",          "esP":"la hee-RAH-fah"},
-  "gorilla":   {"enP":"go-RI-la",        "esP":"el goh-REE-lah"},
+  "armadillo":{"enP":"ar-ma-DI-lo","esP":"el ar-mah-DEE-yoh"},
+  "buffalo":{"enP":"BA-fa-lo","esP":"el BOO-fah-loh"},
+  "baboon":{"enP":"ba-BUN","esP":"el bah-bwee-NOH"},
+  "crocodile":{"enP":"kro-ko-DAIL","esP":"el koh-koh-DREE-loh"},
+  "camel":{"enP":"KEI-mel","esP":"el kah-MEY-yoh"},
+  "dinosaur":{"enP":"DAI-no-sor","esP":"el dee-noh-SOW-ree-oh"},
+  "dolphin":{"enP":"Dol-FIN","esP":"el del-FEEN"},
+  "elephant":{"enP":"E-le-fant","esP":"el e-le-FAN-te"},
+  "flamingo":{"enP":"FLA-min-go","esP":"el flah-MEN-koh"},
+  "giraffe":{"enP":"yi-RAF","esP":"la hee-RAH-fah"},
+  "gorilla":{"enP":"go-RI-la","esP":"el goh-REE-lah"},
   "hippopotamus":{"enP":"hi-po-PO-ta-mas","esP":"el ee-poh-PO-tah-moh"},
-  "iguana":    {"enP":"i-GUA-na",        "esP":"la ee-GWAH-nah"},
-  "insect":    {"enP":"In-sek-t",        "esP":"el een-SEK-toh"},
-  "jaguar":    {"enP":"TAI-guer",        "esP":"el hah-GWAR"},
-  "koala":     {"enP":"ko-A-la",         "esP":"el koh-AH-lah"},
-  "lion":      {"enP":"LAI-on",          "esP":"el le-ON"},
-  "monkey":    {"enP":"MAN-ki",          "esP":"el MO-noh"},
-  "ocelot":    {"enP":"O-se-lot",        "esP":"el oh-se-LO-te"},
-  "panther":   {"enP":"PAN-der",         "esP":"la pan-TE-rah"},
-  "penguin":   {"enP":"PEN-guin",        "esP":"el pin-GWEE-noh"},
-  "rhinoceros":{"enP":"rai-NO-se-ros",   "esP":"el ree-noh-se-RON-te"},
-  "salamander":{"enP":"sa-la-MAN-der",   "esP":"la sah-lah-MAN-drah"},
-  "tiger":     {"enP":"TAI-guer",        "esP":"el TEE-greh"},
-  "tortoise":  {"enP":"TOR-t-was",       "esP":"la tor-TOO-gah"},
-  "uakari":    {"enP":"wa-KA-ri",        "esP":"el wah-kah-REE"},
-  "viper":     {"enP":"VAI-per",         "esP":"la VEE-boh-rah"},
-  "yak":       {"enP":"yak",             "esP":"el yak"},
-  // NATURE
-  "cactus":    {"enP":"KAK-tas",         "esP":"el KAHK-toos"},
-  "canyon":    {"enP":"Ka-nyon",         "esP":"el kah-NYOHN"},
-  "island":    {"enP":"AI-land",         "esP":"la EES-lah"},
-  "desert":    {"enP":"De-sert",         "esP":"el deh-SYEHR-toh"},
-  "meteor":    {"enP":"Mi-ti-or",        "esP":"el meh-teh-OH-roh"},
-  "palm":      {"enP":"Palm",            "esP":"la PAHL-mah"},
-  "ocean":     {"enP":"O-shen",          "esP":"el oh-SEH-ah-noh"},
-  "planet":    {"enP":"Pla-net",         "esP":"el plah-NEH-tah"},
-  "safari":    {"enP":"sa-FA-ri",        "esP":"el sah-FAH-ree"},
-  "tornado":   {"enP":"tor-NEI-do",      "esP":"el tor-NAH-doh"},
-  "volcano":   {"enP":"Vol-KEI-no",      "esP":"el vol-KAHN"},
-  // FOOD
-  "banana":    {"enP":"ba-NA-na",        "esP":"la bah-NAH-nah"},
-  "broccoli":  {"enP":"bro-ko-li",       "esP":"el BROH-koh-lee"},
-  "cacao":     {"enP":"ka-KEI-o",        "esP":"el kah-KAH-oh"},
-  "cereal":    {"enP":"Si-ri-al",        "esP":"el seh-reh-AHL"},
-  "chocolate": {"enP":"Cho-ko-lit",      "esP":"el choh-koh-LAH-teh"},
-  "coconut":   {"enP":"Ko-ko-nat",       "esP":"el KOH-koh"},
-  "fruit":     {"enP":"Frut",            "esP":"la FROO-tah"},
-  "hamburger": {"enP":"Ham-ber-ger",     "esP":"la ahm-boor-GEH-sah"},
-  "kiwi":      {"enP":"Ki-wi",           "esP":"el KEE-wee"},
-  "lemon":     {"enP":"Le-mon",          "esP":"el lee-MOHN"},
-  "mango":     {"enP":"Man-go",          "esP":"el MAHN-goh"},
-  "melon":     {"enP":"Me-lon",          "esP":"el meh-LOHN"},
-  "papaya":    {"enP":"pa-PEI-a",        "esP":"la pah-PAH-yah"},
-  "pasta":     {"enP":"Pas-ta",          "esP":"la PAHS-tah"},
-  "salmon":    {"enP":"Sal-mon",         "esP":"el sahl-MOHN"},
-  "soup":      {"enP":"Sup",             "esP":"la SOH-pah"},
-  "tomato":    {"enP":"to-MEI-to",       "esP":"el toh-MAH-teh"},
-  "vanilla":   {"enP":"va-NI-la",        "esP":"la bye-NEE-yah"},
-  "yogurt":    {"enP":"Yo-gert",         "esP":"el yoh-GOOR"}
+  "iguana":{"enP":"i-GUA-na","esP":"la ee-GWAH-nah"},
+  "insect":{"enP":"In-sek-t","esP":"el een-SEK-toh"},
+  "jaguar":{"enP":"TAI-guer","esP":"el hah-GWAR"},
+  "koala":{"enP":"ko-A-la","esP":"el koh-AH-lah"},
+  "lion":{"enP":"LAI-on","esP":"el le-ON"},
+  "monkey":{"enP":"MAN-ki","esP":"el MO-noh"},
+  "ocelot":{"enP":"O-se-lot","esP":"el oh-se-LO-te"},
+  "panther":{"enP":"PAN-der","esP":"la pan-TE-rah"},
+  "penguin":{"enP":"PEN-guin","esP":"el pin-GWEE-noh"},
+  "rhinoceros":{"enP":"rai-NO-se-ros","esP":"el ree-noh-se-RON-te"},
+  "salamander":{"enP":"sa-la-MAN-der","esP":"la sah-lah-MAN-drah"},
+  "tiger":{"enP":"TAI-guer","esP":"el TEE-greh"},
+  "tortoise":{"enP":"TOR-t-was","esP":"la tor-TOO-gah"},
+  "uakari":{"enP":"wa-KA-ri","esP":"el wah-kah-REE"},
+  "viper":{"enP":"VAI-per","esP":"la VEE-boh-rah"},
+  "yak":{"enP":"yak","esP":"el yak"},
+  "cactus":{"enP":"KAK-tas","esP":"el KAHK-toos"},
+  "canyon":{"enP":"Ka-nyon","esP":"el kah-NYOHN"},
+  "island":{"enP":"AI-land","esP":"la EES-lah"},
+  "desert":{"enP":"De-sert","esP":"el deh-SYEHR-toh"},
+  "meteor":{"enP":"Mi-ti-or","esP":"el meh-teh-OH-roh"},
+  "palm":{"enP":"Palm","esP":"la PAHL-mah"},
+  "ocean":{"enP":"O-shen","esP":"el oh-SEH-ah-noh"},
+  "planet":{"enP":"Pla-net","esP":"el plah-NEH-tah"},
+  "safari":{"enP":"sa-FA-ri","esP":"el sah-FAH-ree"},
+  "tornado":{"enP":"tor-NEI-do","esP":"el tor-NAH-doh"},
+  "volcano":{"enP":"Vol-KEI-no","esP":"el vol-KAHN"},
+  "banana":{"enP":"ba-NA-na","esP":"la bah-NAH-nah"},
+  "broccoli":{"enP":"bro-ko-li","esP":"el BROH-koh-lee"},
+  "cacao":{"enP":"ka-KEI-o","esP":"el kah-KAH-oh"},
+  "cereal":{"enP":"Si-ri-al","esP":"el seh-reh-AHL"},
+  "chocolate":{"enP":"Cho-ko-lit","esP":"el choh-koh-LAH-teh"},
+  "coconut":{"enP":"Ko-ko-nat","esP":"el KOH-koh"},
+  "fruit":{"enP":"Frut","esP":"la FROO-tah"},
+  "hamburger":{"enP":"Ham-ber-ger","esP":"la ahm-boor-GEH-sah"},
+  "kiwi":{"enP":"Ki-wi","esP":"el KEE-wee"},
+  "lemon":{"enP":"Le-mon","esP":"el lee-MOHN"},
+  "mango":{"enP":"Man-go","esP":"el MAHN-goh"},
+  "melon":{"enP":"Me-lon","esP":"el meh-LOHN"},
+  "papaya":{"enP":"pa-PEI-a","esP":"la pah-PAH-yah"},
+  "pasta":{"enP":"Pas-ta","esP":"la PAHS-tah"},
+  "salmon":{"enP":"Sal-mon","esP":"el sahl-MOHN"},
+  "soup":{"enP":"Sup","esP":"la SOH-pah"},
+  "tomato":{"enP":"to-MEI-to","esP":"el toh-MAH-teh"},
+  "vanilla":{"enP":"va-NI-la","esP":"la bye-NEE-yah"},
+  "yogurt":{"enP":"Yo-gert","esP":"el yoh-GOOR"}
 };
-
-// ── Navigation ───────────────────────────────────────────────────────────────
 
 function buildDots() {
   const wrap = document.getElementById("pageDots");
@@ -323,7 +298,7 @@ function buildDots() {
   const total = Math.min(NUM_PAGES, 20);
   for (let i = 0; i < total; i++) {
     const d = document.createElement("div");
-    d.className = "dot" + (i === 0 ? " active" : "");
+    d.className = "dot" + (i === currentPage ? " active" : "");
     d.onclick = (function(idx){ return () => goPage(idx); })(i);
     d.title = "Page " + (i + 1);
     wrap.appendChild(d);
@@ -343,24 +318,13 @@ function goPage(idx) {
 
 function updateWords() {
   const page = PAGES[currentPage] || {};
-
-  // Build word list — try every possible data location
   let wordList = [];
-
-  // Option 1: words array with real content
   if (page.words && page.words.length) {
     const real = page.words.filter(w => w.english || w.spanish);
     if (real.length) wordList = real;
   }
-
-  // Option 2: legacy top-level english/spanish fields
   if (!wordList.length && (page.english || page.spanish)) {
-    wordList = [{
-      english:     page.english || "",
-      spanish:     page.spanish || "",
-      en_sentence: page.en_sentence || "",
-      es_sentence: page.es_sentence || ""
-    }];
+    wordList = [{english: page.english||"", spanish: page.spanish||"", en_sentence: page.en_sentence||"", es_sentence: page.es_sentence||""}];
   }
 
   const container = document.getElementById("wordsContainer");
@@ -368,24 +332,24 @@ function updateWords() {
 
   if (!wordList.length) {
     container.innerHTML = '<p class="no-word">No words on this page</p>';
-    updateTips("", "", "", "");
+    updateTips("","","","");
     return;
   }
 
   container.innerHTML = wordList.map((w, i) => {
-    const key  = (w.english || "").toLowerCase().split(/[\s\/]/)[0];
+    const key = (w.english || "").toLowerCase().split(/[\s\/]/)[0];
     const pron = PRON[key] || {};
     const multi = wordList.length > 1;
     return `
-      ${multi ? `<div class="word-num-badge">Word ${i+1}</div>` : ""}
+      ${multi ? `<div style="font-size:11px;font-weight:700;color:#4A6A8A;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Word ${i+1}</div>` : ""}
       <div class="word-card">
         <div class="word-label">🇺🇸 English <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for Spanish speakers)</span></div>
         <div class="word-text">${w.english || "—"}</div>
         ${pron.enP ? `<div class="word-pron">${pron.enP}</div>` : ""}
-        ${w.en_sentence ? `<div class="sentence-text">"${w.en_sentence}"</div>` : ""}
+        ${w.en_sentence ? `<div style="font-size:12px;color:#8BA3C0;margin-bottom:8px;font-style:italic">"${w.en_sentence}"</div>` : ""}
         <div class="play-row">
           <button class="play-btn play-btn-en" onclick="playAudio('en','word',${i})" ${w.english?"":"disabled"}>▶ Word</button>
-          ${w.en_sentence ? `<button class="play-btn play-btn-en" style="opacity:.8" onclick="playAudio('en','sentence',${i})" >▶ Sentence</button>` : ""}
+          ${w.en_sentence ? `<button class="play-btn play-btn-en" style="opacity:.8" onclick="playAudio('en','sentence',${i})">▶ Sentence</button>` : ""}
           <button class="play-btn play-btn-both" onclick="playBothWords(${i})" ${(w.english&&w.spanish)?"":"disabled"}>▶ Both</button>
         </div>
       </div>
@@ -393,25 +357,21 @@ function updateWords() {
         <div class="word-label">🇲🇽 Español <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for English speakers)</span></div>
         <div class="word-text" style="color:#F9C12E">${w.spanish || "—"}</div>
         ${pron.esP ? `<div class="word-pron">${pron.esP}</div>` : ""}
-        ${w.es_sentence ? `<div class="sentence-text">"${w.es_sentence}"</div>` : ""}
+        ${w.es_sentence ? `<div style="font-size:12px;color:#8BA3C0;margin-bottom:8px;font-style:italic">"${w.es_sentence}"</div>` : ""}
         <div class="play-row">
           <button class="play-btn play-btn-es" onclick="playAudio('es','word',${i})" ${w.spanish?"":"disabled"}>▶ Palabra</button>
           ${w.es_sentence ? `<button class="play-btn play-btn-es" style="opacity:.8" onclick="playAudio('es','sentence',${i})">▶ Oración</button>` : ""}
         </div>
       </div>
-      ${multi && i < wordList.length-1 ? '<hr class="word-divider">' : ""}`;
+      ${multi && i < wordList.length-1 ? '<hr style="border:none;border-top:1px solid #1E3A5F;margin:12px 0">' : ""}`;
   }).join("");
 
-  // Tips use first word
   const first = wordList[0];
   const key = (first.english || "").toLowerCase().split(/[\s\/]/)[0];
   updateTips(key, first.english, first.spanish, page.custom_tip || "");
 }
 
-// ── Tips ─────────────────────────────────────────────────────────────────────
-
 let tipsOpen = false;
-
 function toggleTips() {
   tipsOpen = !tipsOpen;
   document.getElementById("tipsPanel").classList.toggle("open", tipsOpen);
@@ -424,7 +384,7 @@ function updateTips(key, enW, esW, customTip) {
   if (!enW) { el.innerHTML = `<p class="no-tip">No teaching tip for this page.</p>`; return; }
   const t = baseTip ? {...baseTip} : {sim:80, badge:"Custom tip", badgeClass:"badge-near", act:"", fact:""};
   if (customTip) t.tip = customTip;
-  if (!t.tip) { el.innerHTML = `<p class="no-tip">No teaching tip for this page. Tips are available for all cognate pages.</p>`; return; }
+  if (!t.tip) { el.innerHTML = `<p class="no-tip">No teaching tip for this page.</p>`; return; }
   const simClass = t.sim >= 95 ? "sim-high" : t.sim >= 80 ? "sim-med" : "sim-low";
   el.innerHTML = `
     <div class="sim-row">
@@ -443,13 +403,10 @@ function updateTips(key, enW, esW, customTip) {
     ${t.fact ? `<div class="tip-section"><div class="tip-head tip-head-fact">🌍 Linguistic fun fact</div><div class="fact-box">${t.fact}</div></div>` : ""}`;
 }
 
-// ── Audio ─────────────────────────────────────────────────────────────────────
-
 function playAudio(lang, type, wordIdx) {
   if (playing) return;
   playing = true;
-  const url = `/speak/${BOOK_ID}/${currentPage}/${lang}?type=${type}&word_idx=${wordIdx}`;
-  const audio = new Audio(url);
+  const audio = new Audio(`/speak/${BOOK_ID}/${currentPage}/${lang}?type=${type}&word_idx=${wordIdx}`);
   audio.onended = () => { playing = false; };
   audio.onerror = () => { playing = false; };
   audio.play().catch(() => { playing = false; });
@@ -473,11 +430,12 @@ function playLang(lang, wordIdx=0) {
   });
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
 buildDots();
-loadPageData();  // fetch word data from API
+loadPageData();
 
-// Keyboard navigation
+// Start on the correct page once data loads (or immediately for nav)
+goPage(currentPage);
+
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") goPage(currentPage + 1);
   if (e.key === "ArrowLeft") goPage(currentPage - 1);
