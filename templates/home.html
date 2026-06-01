@@ -9,7 +9,7 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;color:#fff;min-height:100vh}
 header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .brand{display:flex;align-items:center;gap:14px}
-.brand img{height:52px;width:auto}
+.brand img{height:52px;width:auto;background:transparent}
 .brand-text h1{font-size:20px;font-weight:800;color:#F9C12E;letter-spacing:-.3px}
 .brand-text p{font-size:13px;color:#8BA3C0;margin-top:2px}
 .admin-link{font-size:12px;color:#8BA3C0;text-decoration:none;padding:6px 14px;border:1px solid #1E3A5F;border-radius:20px;transition:all .15s}
@@ -17,17 +17,20 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:16px 24px;disp
 main{max-width:940px;margin:0 auto;padding:40px 20px}
 .hero{text-align:center;margin-bottom:44px}
 .hero-logo{display:flex;justify-content:center;margin-bottom:20px}
-.hero-logo img{height:110px;width:auto;filter:drop-shadow(0 4px 20px rgba(249,193,46,.3))}
+.hero-logo img{height:110px;width:auto;background:transparent}
 .hero h2{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px}
 .hero p{font-size:15px;color:#8BA3C0;max-width:480px;margin:0 auto;line-height:1.6}
 .content-grid{display:grid;grid-template-columns:1fr 240px;gap:28px;align-items:start}
 @media(max-width:680px){.content-grid{grid-template-columns:1fr}}
 .books-section h3{font-size:12px;font-weight:700;color:#8BA3C0;margin-bottom:14px;text-transform:uppercase;letter-spacing:.8px}
-.book-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s}
+.book-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s;text-decoration:none;cursor:pointer}
 .book-card:hover{border-color:#F9C12E;box-shadow:0 4px 24px rgba(249,193,46,.15)}
-.book-icon{font-size:36px;flex-shrink:0}
+/* Cover image */
+.book-cover-img{width:64px;height:86px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1.5px solid #1E3A5F}
+.book-cover-placeholder{width:64px;height:86px;border-radius:8px;background:#0B1F3A;border:1.5px solid #1E3A5F;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
 .book-info{flex:1}
 .book-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px}
+.book-subtitle{font-size:13px;color:#F9C12E;margin-bottom:4px;font-style:italic}
 .book-meta{font-size:13px;color:#8BA3C0}
 .book-action{flex-shrink:0}
 .btn-open{display:inline-block;background:#F9C12E;color:#0B1F3A;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:800;transition:all .15s}
@@ -36,6 +39,23 @@ main{max-width:940px;margin:0 auto;padding:40px 20px}
 .btn-locked:hover{background:#F9C12E;color:#0B1F3A}
 .free-badge{display:inline-block;background:rgba(76,175,80,.2);color:#81C784;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
 .locked-badge{display:inline-block;background:rgba(249,193,46,.15);color:#F9C12E;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+
+/* Word index section */
+.word-index-section{margin-top:28px}
+.word-index-section h3{font-size:12px;font-weight:700;color:#8BA3C0;margin-bottom:14px;text-transform:uppercase;letter-spacing:.8px}
+.word-index-book{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:14px;margin-bottom:14px;overflow:hidden}
+.word-index-book-header{padding:14px 16px;border-bottom:1px solid #1E3A5F;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.word-index-book-title{font-size:14px;font-weight:700;color:#fff}
+.word-index-toggle{background:none;border:1px solid #1E3A5F;color:#8BA3C0;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;transition:all .15s}
+.word-index-toggle:hover{border-color:#F9C12E;color:#F9C12E}
+.word-index-grid{display:none;padding:12px 16px;flex-wrap:wrap;gap:8px}
+.word-index-grid.open{display:flex}
+.word-chip{display:inline-flex;flex-direction:column;align-items:center;background:#0B1F3A;border:1px solid #1E3A5F;border-radius:10px;padding:8px 12px;cursor:pointer;text-decoration:none;transition:all .15s;min-width:80px;text-align:center}
+.word-chip:hover{border-color:#F9C12E;background:#0F2847}
+.word-chip-en{font-size:13px;font-weight:600;color:#fff}
+.word-chip-es{font-size:11px;color:#F9C12E;margin-top:2px}
+.word-chip-pg{font-size:10px;color:#4A6A8A;margin-top:3px}
+
 .qr-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px;padding:22px;text-align:center;position:sticky;top:20px}
 .qr-card h3{font-size:14px;font-weight:700;color:#F9C12E;margin-bottom:4px}
 .qr-card p{font-size:12px;color:#8BA3C0;margin-bottom:16px;line-height:1.4}
@@ -50,7 +70,7 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
 <body>
 <header>
   <div class="brand">
-    <img src="/logo.png" alt="Biliteracy Bridge" onerror="this.style.display='none'">
+    <img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent" onerror="this.style.display='none'">
     <div class="brand-text">
       <h1>Biliteracy Bridge</h1>
       <p>Pronunciation Guide · Guía de Pronunciación</p>
@@ -61,7 +81,7 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
 
 <main>
   <div class="hero">
-    <div class="hero-logo"><img src="/logo.png" alt="Biliteracy Bridge"></div>
+    <div class="hero-logo"><img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent" onerror="this.style.display='none'"></div>
     <h2>Hear Every Word in Both Languages</h2>
     <p>Interactive pronunciation guides for parents and teachers supporting bilingual readers ages 2–6.</p>
   </div>
@@ -71,8 +91,12 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
       <div class="books-section">
         <h3>📚 Available Books</h3>
         {% for book_id, book in books.items() %}
-        <div class="book-card">
-          <div class="book-icon">📖</div>
+        <div class="book-card" onclick="window.location='{% if book.get('free') or not book.get('access_code') %}/book/{{ book_id }}{% else %}/access/{{ book_id }}{% endif %}'">
+          {% if book.get('cover_image') %}
+            <img class="book-cover-img" src="/book-cover/{{ book_id }}" alt="{{ book.title }} cover">
+          {% else %}
+            <div class="book-cover-placeholder">📖</div>
+          {% endif %}
           <div class="book-info">
             <div class="book-title">
               {{ book.title }}
@@ -82,13 +106,16 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
                 <span class="locked-badge">🔒 Code Required</span>
               {% endif %}
             </div>
+            {% if book.get('subtitle') %}
+            <div class="book-subtitle">{{ book.subtitle }}</div>
+            {% endif %}
             <div class="book-meta">{{ book.num_pages }} pages · Biliteracy Bridge Step {{ loop.index }}</div>
           </div>
           <div class="book-action">
             {% if book.get('free') or not book.get('access_code') %}
-              <a href="/book/{{ book_id }}" class="btn-open">Open →</a>
+              <span class="btn-open">Open →</span>
             {% else %}
-              <a href="/access/{{ book_id }}" class="btn-locked">🔑 Enter Code</a>
+              <span class="btn-locked">🔑 Enter Code</span>
             {% endif %}
           </div>
         </div>
@@ -96,6 +123,40 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
         <p style="color:#4A6A8A;font-size:14px;padding:20px 0">No books published yet. Check back soon!</p>
         {% endfor %}
       </div>
+
+      <!-- Word Index -->
+      {% for book_id, book in books.items() %}
+      {% set words = [] %}
+      {% for i in range(book.pages | length) %}
+        {% set pg = book.pages[i] %}
+        {% if pg.get('words') and pg.words[0].get('english') %}
+          {% set _ = words.append({'en': pg.words[0].english, 'es': pg.words[0].spanish, 'page': i}) %}
+        {% elif pg.get('english') %}
+          {% set _ = words.append({'en': pg.english, 'es': pg.spanish, 'page': i}) %}
+        {% endif %}
+      {% endfor %}
+      {% if words %}
+      <div class="word-index-section">
+        <h3>🔍 Jump to a word — {{ book.title }}</h3>
+        <div class="word-index-book">
+          <div class="word-index-book-header">
+            <span class="word-index-book-title">{{ words | length }} words</span>
+            <button class="word-index-toggle" onclick="toggleIndex('idx-{{ book_id }}', this)">Show all words ▼</button>
+          </div>
+          <div class="word-index-grid" id="idx-{{ book_id }}">
+            {% for w in words %}
+            <a class="word-chip" href="/book/{{ book_id }}?page={{ w.page }}" onclick="event.preventDefault();openBookAtPage('{{ book_id }}',{{ w.page }})">
+              <span class="word-chip-en">{{ w.en }}</span>
+              {% if w.es %}<span class="word-chip-es">{{ w.es }}</span>{% endif %}
+              <span class="word-chip-pg">p.{{ w.page + 1 }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+
       <div class="how-box">
         <strong>🔑 How access codes work</strong><br>
         Book 1 is always free! For Books 2 onwards, find your unique <strong>4-digit code</strong> printed inside the front cover of your book. Enter it once and the app remembers your device.
@@ -113,8 +174,20 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
   </div>
 </main>
 <footer>
-  <img src="/logo.png" alt="">
+  <img src="/logo.png" alt="" style="background:transparent">
   © Biliteracy Bridge · biliteracybridge.com · Bridging Languages, Empowering Futures
 </footer>
+
+<script>
+function toggleIndex(id, btn) {
+  const grid = document.getElementById(id);
+  const open = grid.classList.toggle('open');
+  btn.textContent = open ? 'Hide words ▲' : 'Show all words ▼';
+}
+
+function openBookAtPage(bookId, page) {
+  window.location = `/book/${bookId}?startPage=${page}`;
+}
+</script>
 </body>
 </html>
