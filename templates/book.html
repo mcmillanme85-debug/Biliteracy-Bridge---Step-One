@@ -77,6 +77,23 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 .badge-perfect{background:#0F2847;color:#BF360C}
 .badge-near{background:#E8F5E9;color:#1B5E20}
 .badge-related{background:#E3F2FD;color:#0D47A1}
+/* Word finder */
+.word-finder-btn{display:flex;align-items:center;gap:8px;width:100%;background:linear-gradient(135deg,#1E3A5F,#0F2847);border:1.5px solid #F9C12E;border-radius:12px;padding:12px 16px;color:#F9C12E;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:all .2s}
+.word-finder-btn:hover{background:#F9C12E;color:#0B1F3A}
+.word-overlay{display:none;position:fixed;inset:0;background:rgba(11,31,58,.97);z-index:1000;overflow-y:auto;padding:20px 16px}
+.word-overlay.open{display:block}
+.word-overlay-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;position:sticky;top:0;background:rgba(11,31,58,.98);padding:12px 0;border-bottom:1px solid #1E3A5F;z-index:10}
+.word-overlay-title{font-size:18px;font-weight:800;color:#F9C12E}
+.word-overlay-close{background:transparent;border:1.5px solid #1E3A5F;color:#8BA3C0;border-radius:8px;padding:8px 16px;font-size:14px;cursor:pointer}
+.word-overlay-close:hover{border-color:#F9C12E;color:#F9C12E}
+.word-overlay-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.word-overlay-chip{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:12px;padding:12px;cursor:pointer;transition:all .15s;text-align:center}
+.word-overlay-chip:hover,.word-overlay-chip:active{border-color:#F9C12E;background:#1E3A5F}
+.word-overlay-chip-en{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
+.word-overlay-chip-es{font-size:12px;color:#F9C12E}
+.word-overlay-chip-pg{font-size:11px;color:#4A6A8A;margin-top:4px}
+.word-finder-float{display:none}
+@media(max-width:780px){.word-finder-float{display:flex;position:fixed;bottom:24px;right:16px;z-index:500;background:#F9C12E;color:#0B1F3A;border:none;border-radius:50px;padding:14px 22px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 24px rgba(249,193,46,.5);align-items:center;gap:8px}}
 </style>
 </head>
 <body>
@@ -108,6 +125,10 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 
   <div class="sidebar">
     <div class="word-section">
+      <!-- Find a Word button -->
+      <button class="word-finder-btn" onclick="openWordFinder()">
+        🔍 Find a Word · Buscar una Palabra
+      </button>
       <h3>Words on this page</h3>
       <div style="font-size:11px;color:#4A6A8A;line-height:1.4;margin-bottom:10px;padding:8px 10px;background:rgba(249,193,46,.08);border-radius:8px;border-left:3px solid #F9C12E">
         🔤 <strong style="color:#F9C12E">Dual-use phonics:</strong><br>
@@ -160,6 +181,7 @@ async function loadPageData() {
     PAGES = d.pages || [];
     DATA_LOADED = true;
     updateWords();
+    wordFinderBuilt = false; // rebuild with fresh data
     const p = PAGES[currentPage] || {};
     const key = (p.english || (p.words && p.words[0] && p.words[0].english) || '').toLowerCase().split(/[\s\/]/)[0];
     updateTips(key, p.english || (p.words && p.words[0] && p.words[0].english) || '', p.spanish || (p.words && p.words[0] && p.words[0].spanish) || '', p.custom_tip || '');
@@ -439,6 +461,65 @@ document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") goPage(currentPage + 1);
   if (e.key === "ArrowLeft") goPage(currentPage - 1);
 });
+
+// ── Word Finder ───────────────────────────────────────────────────────────────
+let wordFinderBuilt = false;
+
+function openWordFinder() {
+  document.getElementById('wordFinderOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (!wordFinderBuilt) {
+    if (PAGES.length) buildWordFinder();
+    else setTimeout(() => { if (PAGES.length) buildWordFinder(); }, 1500);
+  }
+}
+
+function closeWordFinder() {
+  document.getElementById('wordFinderOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function buildWordFinder() {
+  const words = [];
+  PAGES.forEach((pg, i) => {
+    let en = '', es = '';
+    if (pg.words && pg.words[0] && pg.words[0].english) {
+      en = pg.words[0].english; es = pg.words[0].spanish || '';
+    } else if (pg.english) {
+      en = pg.english; es = pg.spanish || '';
+    }
+    if (en) words.push({en, es, page: i});
+  });
+  const grid = document.getElementById('wordFinderGrid');
+  if (!grid) return;
+  grid.innerHTML = words.map(w => `
+    <div class="word-overlay-chip" onclick="jumpToWord(${w.page})">
+      <div class="word-overlay-chip-en">${w.en}</div>
+      ${w.es ? `<div class="word-overlay-chip-es">${w.es}</div>` : ''}
+      <div class="word-overlay-chip-pg">p.${w.page + 1}</div>
+    </div>`).join('');
+  wordFinderBuilt = true;
+}
+
+function jumpToWord(pageIdx) {
+  closeWordFinder();
+  goPage(pageIdx);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
 </script>
+<!-- Word Finder Overlay -->
+<div class="word-overlay" id="wordFinderOverlay">
+  <div class="word-overlay-header">
+    <span class="word-overlay-title">🔍 Find a Word · Buscar una Palabra</span>
+    <button class="word-overlay-close" onclick="closeWordFinder()">✕ Close</button>
+  </div>
+  <div class="word-overlay-grid" id="wordFinderGrid">
+    <p style="color:#8BA3C0;font-size:14px">Loading words…</p>
+  </div>
+</div>
+
+<!-- Mobile floating button -->
+<button class="word-finder-float" onclick="openWordFinder()">🔍 Find a Word</button>
+
 </body>
 </html>
