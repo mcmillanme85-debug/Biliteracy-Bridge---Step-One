@@ -9,7 +9,7 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;color:#fff;min-height:100vh}
 header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .brand{display:flex;align-items:center;gap:14px}
-.brand img{height:52px;width:auto;background:transparent}
+.brand img{height:52px;width:auto;background:transparent;mix-blend-mode:multiply}
 .brand-text h1{font-size:20px;font-weight:800;color:#F9C12E;letter-spacing:-.3px}
 .brand-text p{font-size:13px;color:#8BA3C0;margin-top:2px}
 .admin-link{font-size:12px;color:#8BA3C0;text-decoration:none;padding:6px 14px;border:1px solid #1E3A5F;border-radius:20px;transition:all .15s}
@@ -17,7 +17,7 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:16px 24px;disp
 main{max-width:940px;margin:0 auto;padding:40px 20px}
 .hero{text-align:center;margin-bottom:44px}
 .hero-logo{display:flex;justify-content:center;margin-bottom:20px}
-.hero-logo img{height:110px;width:auto;background:transparent}
+.hero-logo img{height:110px;width:auto;background:transparent;mix-blend-mode:multiply}
 .hero h2{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px}
 .hero p{font-size:15px;color:#8BA3C0;max-width:480px;margin:0 auto;line-height:1.6}
 .content-grid{display:grid;grid-template-columns:1fr;gap:28px;align-items:start}
@@ -118,37 +118,18 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
         {% endfor %}
       </div>
 
-      <!-- Word Index -->
+      <!-- Word Index — built from API so page numbers are correct -->
       {% for book_id, book in books.items() %}
-      {% set words = [] %}
-      {% for i in range(book.pages | length) %}
-        {% set pg = book.pages[i] %}
-        {% if pg.get('words') and pg.words[0].get('english') %}
-          {% set _ = words.append({'en': pg.words[0].english, 'es': pg.words[0].spanish, 'page': i}) %}
-        {% elif pg.get('english') %}
-          {% set _ = words.append({'en': pg.english, 'es': pg.spanish, 'page': i}) %}
-        {% endif %}
-      {% endfor %}
-      {% if words %}
-      <div class="word-index-section">
+      <div class="word-index-section" id="wi-section-{{ book_id }}">
         <h3>🔍 Jump to a word — {{ book.title }}</h3>
         <div class="word-index-book">
           <div class="word-index-book-header">
-            <span class="word-index-book-title">{{ words | length }} words</span>
-            <button class="word-index-toggle" onclick="toggleIndex('idx-{{ book_id }}', this)">Show all words ▼</button>
+            <span class="word-index-book-title" id="wi-count-{{ book_id }}">Loading…</span>
+            <button class="word-index-toggle" id="wi-btn-{{ book_id }}" onclick="toggleIndex('idx-{{ book_id }}', this)">Show all words ▼</button>
           </div>
-          <div class="word-index-grid" id="idx-{{ book_id }}">
-            {% for w in words %}
-            <a class="word-chip" href="/book/{{ book_id }}?page={{ w.page }}" onclick="event.preventDefault();openBookAtPage('{{ book_id }}',{{ w.page }})">
-              <span class="word-chip-en">{{ w.en }}</span>
-              {% if w.es %}<span class="word-chip-es">{{ w.es }}</span>{% endif %}
-              <span class="word-chip-pg">p.{{ w.page + 1 }}</span>
-            </a>
-            {% endfor %}
-          </div>
+          <div class="word-index-grid" id="idx-{{ book_id }}"></div>
         </div>
       </div>
-      {% endif %}
       {% endfor %}
 
 
@@ -171,6 +152,50 @@ function toggleIndex(id, btn) {
 function openBookAtPage(bookId, page) {
   window.location = `/book/${bookId}?startPage=${page}`;
 }
+
+// Build word index chips from the API (guarantees correct page numbers)
+async function buildWordIndex(bookId) {
+  try {
+    const r = await fetch(`/api/book/${bookId}/pages`);
+    const data = await r.json();
+    if (!data.pages) return;
+
+    const words = [];
+    data.pages.forEach((pg, i) => {
+      let en = '', es = '';
+      if (pg.words && pg.words[0] && pg.words[0].english) {
+        en = pg.words[0].english;
+        es = pg.words[0].spanish || '';
+      } else if (pg.english) {
+        en = pg.english;
+        es = pg.spanish || '';
+      }
+      if (en) words.push({en, es, page: i});
+    });
+
+    const countEl = document.getElementById(`wi-count-${bookId}`);
+    const grid    = document.getElementById(`idx-${bookId}`);
+    if (countEl) countEl.textContent = `${words.length} words`;
+    if (!grid) return;
+
+    grid.innerHTML = words.map(w => `
+      <a class="word-chip" onclick="openBookAtPage('${bookId}',${w.page})">
+        <span class="word-chip-en">${w.en}</span>
+        ${w.es ? `<span class="word-chip-es">${w.es}</span>` : ''}
+        <span class="word-chip-pg">p.${w.page + 1}</span>
+      </a>`).join('');
+  } catch(e) {
+    console.error('Word index error:', e);
+  }
+}
+
+// Load all book indexes on page load
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[id^="idx-"]').forEach(el => {
+    const bookId = el.id.replace('idx-', '');
+    buildWordIndex(bookId);
+  });
+});
 </script>
 </body>
 </html>
