@@ -20,8 +20,7 @@ main{max-width:940px;margin:0 auto;padding:40px 20px}
 .hero-logo img{height:110px;width:auto;background:transparent}
 .hero h2{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px}
 .hero p{font-size:15px;color:#8BA3C0;max-width:480px;margin:0 auto;line-height:1.6}
-.content-grid{display:grid;grid-template-columns:1fr 240px;gap:28px;align-items:start}
-@media(max-width:680px){.content-grid{grid-template-columns:1fr}}
+.content-grid{display:grid;grid-template-columns:1fr;gap:28px;align-items:start}
 .books-section h3{font-size:12px;font-weight:700;color:#8BA3C0;margin-bottom:14px;text-transform:uppercase;letter-spacing:.8px}
 .book-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s;text-decoration:none;cursor:pointer}
 .book-card:hover{border-color:#F9C12E;box-shadow:0 4px 24px rgba(249,193,46,.15)}
@@ -56,13 +55,8 @@ main{max-width:940px;margin:0 auto;padding:40px 20px}
 .word-chip-es{font-size:11px;color:#F9C12E;margin-top:2px}
 .word-chip-pg{font-size:10px;color:#4A6A8A;margin-top:3px}
 
-.qr-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px;padding:22px;text-align:center;position:sticky;top:20px}
-.qr-card h3{font-size:14px;font-weight:700;color:#F9C12E;margin-bottom:4px}
-.qr-card p{font-size:12px;color:#8BA3C0;margin-bottom:16px;line-height:1.4}
-.qr-img{width:176px;height:176px;border-radius:10px;border:2px solid #1E3A5F;background:#fff;padding:6px}
-.qr-url{font-size:11px;color:#4A6A8A;margin-top:10px;word-break:break-all}
-.how-box{background:#0F2847;border:1.5px solid #1E3A5F;border-left:4px solid #F9C12E;border-radius:14px;padding:16px 20px;margin-top:14px;font-size:13px;color:#8BA3C0;line-height:1.6}
-.how-box strong{color:#F9C12E}
+
+
 footer{text-align:center;padding:30px;color:#4A6A8A;font-size:12px;border-top:1px solid #1E3A5F;margin-top:40px}
 footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
 </style>
@@ -157,20 +151,9 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
       {% endif %}
       {% endfor %}
 
-      <div class="how-box">
-        <strong>🔑 How access codes work</strong><br>
-        Book 1 is always free! For Books 2 onwards, find your unique <strong>4-digit code</strong> printed inside the front cover of your book. Enter it once and the app remembers your device.
-      </div>
+
     </div>
 
-    <div class="qr-card">
-      <h3>Scan to Open</h3>
-      <p>Share with parents &amp; teachers</p>
-      <img class="qr-img"
-        src="https://api.qrserver.com/v1/create-qr-code/?size=176x176&color=0B1F3A&bgcolor=FFFFFF&data={{ request.host_url | urlencode }}"
-        alt="QR code">
-      <div class="qr-url">{{ request.host_url }}</div>
-    </div>
   </div>
 </main>
 <footer>
