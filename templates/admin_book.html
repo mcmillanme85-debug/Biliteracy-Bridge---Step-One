@@ -123,6 +123,16 @@ input[type=file]:hover{border-color:#F9C12E}
     <div class="card">
       <div class="card-title">📚 Book Details</div>
 
+      <!-- Book title edit -->
+      <div class="field" style="margin-bottom:20px">
+        <label>Book Title</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="text" id="bookTitleInput" value="{{ book.title }}" style="flex:1;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:8px;font-size:15px;color:#1a1a1a;outline:none">
+          <button onclick="saveTitle()" style="background:#F9C12E;color:#1a1a1a;border:none;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">Save Title</button>
+        </div>
+        <span id="titleStatus" style="font-size:12px;color:#aaa;margin-top:4px;display:block"></span>
+      </div>
+
       <!-- Book cover upload -->
       <div class="cover-row">
         <div class="cover-preview">
@@ -407,6 +417,26 @@ function downloadTemplate() {
   a.href = URL.createObjectURL(new Blob([rows.join("\n")],{type:"text/csv"}));
   a.download = "book_words_template.csv";
   a.click();
+}
+
+async function saveTitle() {
+  const title = document.getElementById("bookTitleInput").value.trim();
+  const st = document.getElementById("titleStatus");
+  if (!title) { st.textContent = "Title cannot be empty."; return; }
+  st.textContent = "Saving…";
+  try {
+    const r = await fetch(`/admin/book/${BOOK_ID}/save-title`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({title})
+    });
+    const d = await r.json();
+    st.textContent = d.success ? "✅ Title saved!" : "❌ " + (d.error || "Error");
+    st.style.color = d.success ? "#2E7D32" : "#C62828";
+  } catch(e) {
+    st.textContent = "❌ Network error";
+    st.style.color = "#C62828";
+  }
 }
 
 wordCount = 1;
