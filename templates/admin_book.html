@@ -5,36 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin · {{ book.title }}</title>
 <style>
-<!-- BOOK NAME + COVER SECTION -->
-<div class="admin-section">
-  <h3 class="section-title">📚 Book Details</h3>
-
-  <!-- Book cover upload -->
-  <div class="cover-row">
-    <div class="cover-preview">
-      {% if book.get('cover_image') %}
-        <img src="/book-cover/{{ book_id }}" alt="Book cover"
-             style="width:100px;height:133px;object-fit:cover;border-radius:8px;border:2px solid #1E3A5F">
-      {% else %}
-        <div style="width:100px;height:133px;background:#0B1F3A;border:2px dashed #1E3A5F;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px">📖</div>
-      {% endif %}
-    </div>
-    <div class="cover-upload">
-      <p style="font-size:13px;color:#8BA3C0;margin-bottom:10px">
-        Upload the book cover image — it appears on the home page so parents can tap it to open the book.
-      </p>
-      <form method="POST" action="/admin/book/{{ book_id }}/upload-cover" enctype="multipart/form-data">
-        <input type="file" name="cover" accept="image/*" required style="font-size:13px;color:#fff;margin-bottom:8px;display:block">
-        <button type="submit" class="btn-secondary">Upload Cover Image</button>
-      </form>
-      {% if msg == 'cover_ok' %}
-        <p style="color:#81C784;font-size:13px;margin-top:6px">✅ Cover uploaded successfully!</p>
-      {% elif msg == 'cover_err' %}
-        <p style="color:#EF9A9A;font-size:13px;margin-top:6px">❌ Error: {{ msg_val }}</p>
-      {% endif %}
-    </div>
-  </div>
-</div>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f4f4;color:#1a1a1a}
 header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
@@ -65,42 +35,21 @@ header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;just
 .code-big{font-size:40px;font-weight:900;letter-spacing:8px;color:#1a1a1a;background:#FFF8E1;padding:12px 24px;border-radius:12px;border:2px solid #F9C12E}
 .locked-badge{font-size:13px;color:#555;background:#f5f5f5;padding:8px 14px;border-radius:8px;border:1px solid #e0e0e0}
 .info-box{background:#E8F4FD;border-radius:8px;padding:11px 14px;font-size:13px;color:#1565C0;line-height:1.5;margin-bottom:16px}
-
-/* ── UPLOAD SECTION — plain and simple ── */
+/* Cover section */
+.cover-row{display:flex;align-items:flex-start;gap:20px;margin-bottom:16px;flex-wrap:wrap}
+.cover-preview{flex-shrink:0}
+.cover-upload{flex:1;min-width:200px}
+/* Upload sections */
 .upload-section{background:#FFFDF5;border:2px solid #F9C12E;border-radius:12px;padding:20px;margin-bottom:16px}
 .upload-section h3{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .upload-section p{font-size:13px;color:#888;margin-bottom:10px;line-height:1.5}
-/* Make the file input BIG and visible */
-input[type=file]{
-  display:block;
-  width:100%;
-  padding:12px;
-  font-size:14px;
-  border:2px solid #ddd;
-  border-radius:8px;
-  background:#fff;
-  cursor:pointer;
-  margin-bottom:10px;
-  color:#1a1a1a;
-}
+input[type=file]{display:block;width:100%;padding:12px;font-size:14px;border:2px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;margin-bottom:10px;color:#1a1a1a}
 input[type=file]:hover{border-color:#F9C12E}
-.btn-upload{
-  display:block;
-  width:100%;
-  background:#1a1a1a;
-  color:#fff;
-  border:none;
-  padding:14px;
-  border-radius:10px;
-  font-size:15px;
-  font-weight:700;
-  cursor:pointer;
-  transition:background .15s;
-  text-align:center;
-}
+.btn-upload{display:block;width:100%;background:#1a1a1a;color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;text-align:center}
 .btn-upload:hover{background:#333}
-
-/* ── Page editor ── */
+.btn-secondary{background:#0F2847;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-secondary:hover{background:#1E3A5F}
+/* Page editor */
 .field{margin-bottom:14px}
 .field label{display:block;font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 .field input,.field textarea{width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:8px;font-size:15px;color:#1a1a1a;outline:none;transition:border-color .15s;font-family:inherit}
@@ -164,12 +113,38 @@ input[type=file]:hover{border-color:#F9C12E}
     <div class="alert alert-ok">✅ Words loaded for {{ msg_val }} pages!</div>
     {% elif msg == 'csv_err' %}
     <div class="alert alert-err">❌ CSV failed: {{ msg_val }}</div>
+    {% elif msg == 'cover_ok' %}
+    <div class="alert alert-ok">✅ Cover uploaded successfully!</div>
+    {% elif msg == 'cover_err' %}
+    <div class="alert alert-err">❌ Cover upload failed: {{ msg_val }}</div>
     {% endif %}
 
+    <!-- ── BOOK DETAILS (cover + code) ── -->
     <div class="card">
-      <div class="card-title">⚙️ Book Setup</div>
+      <div class="card-title">📚 Book Details</div>
 
-      <!-- Code -->
+      <!-- Book cover upload -->
+      <div class="cover-row">
+        <div class="cover-preview">
+          {% if book.get('cover_image') %}
+            <img src="/book-cover/{{ book_id }}" alt="Book cover"
+                 style="width:100px;height:133px;object-fit:cover;border-radius:8px;border:2px solid #1E3A5F">
+          {% else %}
+            <div style="width:100px;height:133px;background:#0B1F3A;border:2px dashed #1E3A5F;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:36px">📖</div>
+          {% endif %}
+        </div>
+        <div class="cover-upload">
+          <p style="font-size:13px;color:#555;margin-bottom:10px;line-height:1.5">
+            <strong>Book cover image</strong> — appears on the home page so parents can tap it to open the book.
+          </p>
+          <form method="POST" action="/admin/book/{{ book_id }}/upload-cover" enctype="multipart/form-data">
+            <input type="file" name="cover" accept="image/*" required style="margin-bottom:8px">
+            <button type="submit" class="btn-secondary">⬆️ Upload Cover Image</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Access code -->
       <div class="field">
         <label>Parent Access Code — permanently locked</label>
         <div class="code-row">
@@ -178,8 +153,12 @@ input[type=file]:hover{border-color:#F9C12E}
         </div>
         <div class="info-box">📋 Print this 4-digit code inside the front cover of your book. Parents type it into the app to unlock the pronunciation guide.</div>
       </div>
+    </div>
 
-      <!-- PDF upload — dead simple form -->
+    <!-- ── SETUP (PDF + CSV) ── -->
+    <div class="card">
+      <div class="card-title">⚙️ Book Setup</div>
+
       <div class="upload-section">
         <h3>📄 Step 1 — Upload Book PDF</h3>
         <p>Select your PDF file, then click the Upload button. The page will refresh when done (may take up to 60 seconds).</p>
@@ -189,7 +168,6 @@ input[type=file]:hover{border-color:#F9C12E}
         </form>
       </div>
 
-      <!-- CSV upload — dead simple form -->
       <div class="upload-section">
         <h3>📊 Step 2 — Upload Words CSV</h3>
         <p>Upload after the PDF. Columns must be: <strong>page, english, spanish</strong></p>
@@ -301,7 +279,7 @@ const TIPS = {
 };
 
 function updatePreview() {
-  const word = (document.getElementById("enWord").value||"").toLowerCase().trim().split(/[\s\/]/)[0];
+  const word = (document.getElementById("enWord_0")?.value||"").toLowerCase().trim().split(/[\s\/]/)[0];
   const el = document.getElementById("builtInPreview");
   if (!el) return;
   const tip = TIPS[word];
@@ -334,8 +312,8 @@ let wordCount = 1;
 
 function getWordTemplate(idx, data={}) {
   return `
-    <div class="word-block" id="wordBlock_${idx}" style="background:#2a2a2a;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #3a3a3a">
-      ${idx > 0 ? `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;font-weight:700;color:#F9C12E">Word ${idx+1}</span><button onclick="removeWord(${idx})" style="background:transparent;border:none;color:#666;cursor:pointer;font-size:12px">✕ Remove</button></div>` : '<div style="font-size:12px;font-weight:700;color:#F9C12E;margin-bottom:10px">Word ${idx+1}</div>'}
+    <div class="word-block" id="wordBlock_${idx}" style="background:#f9f9f9;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #e8e8e8">
+      ${idx > 0 ? `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;font-weight:700;color:#F9C12E">Word ${idx+1}</span><button onclick="removeWord(${idx})" style="background:transparent;border:none;color:#999;cursor:pointer;font-size:12px">✕ Remove</button></div>` : `<div style="font-size:12px;font-weight:700;color:#E65100;margin-bottom:10px">Word ${idx+1}</div>`}
       <div class="two-col">
         <div class="field">
           <label>🇺🇸 English Word</label>
@@ -391,16 +369,6 @@ function collectWords() {
     });
   }
   return words.filter(w => w.english || w.spanish);
-}
-
-function updatePreview() {
-  const word = (document.getElementById("enWord_0")?.value||"").toLowerCase().trim().split(/[\s\/]/)[0];
-  const el = document.getElementById("builtInPreview");
-  if (!el) return;
-  const tip = TIPS[word];
-  if (tip)       el.innerHTML = `<b>Built-in tip:</b> ${tip}`;
-  else if (word) el.innerHTML = `No built-in tip for "${word}" — write a custom one below.`;
-  else           el.innerHTML = `Enter an English word above to preview the built-in teaching tip.`;
 }
 
 async function savePage() {
