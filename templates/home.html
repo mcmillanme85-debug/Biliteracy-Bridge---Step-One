@@ -76,7 +76,9 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
   <div class="hero">
     <div class="hero-logo"><img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent" onerror="this.style.display='none'"></div>
     <h2>Hear Every Word in Both Languages</h2>
-    <p>Interactive pronunciation guides for parents and teachers supporting bilingual readers ages 2–6.</p>
+    <h2 style="font-size:22px;font-weight:700;color:#8BA3C0;margin-top:6px;margin-bottom:14px">Escucha Cada Palabra en Ambos Idiomas</h2>
+    <p>Interactive pronunciation guides for parents and teachers supporting bilingual readers.<br>
+    <span style="color:#8BA3C0;font-size:14px">Guías interactivas de pronunciación para padres y maestros que apoyan a lectores bilingües.</span></p>
   </div>
 
   <div class="content-grid">
@@ -112,36 +114,28 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
             {% endif %}
           </div>
         </div>
-        {% else %}
-        <p style="color:#4A6A8A;font-size:14px;padding:20px 0">No books published yet. Check back soon!</p>
-        {% endfor %}
-
-        <!-- Coming soon teaser -->
-        <div style="background:#0F2847;border:1.5px dashed #1E3A5F;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;opacity:.6">
-          <div style="width:64px;height:86px;border-radius:8px;background:#0B1F3A;border:1.5px solid #1E3A5F;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📘</div>
-          <div>
-            <div style="font-size:15px;font-weight:700;color:#8BA3C0;margin-bottom:4px">More books coming soon…</div>
-            <div style="font-size:13px;color:#4A6A8A">New bilingual titles are on the way!</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Word Index — inside each book card area -->
-      {% for book_id, book in books.items() %}
-      <div class="word-index-section" id="wi-section-{{ book_id }}" style="margin-top:-8px">
-        <div class="word-index-book" style="border-radius:0 0 16px 16px;border-top:none;margin-bottom:14px">
+        <!-- Word index attached directly under this book card -->
+        <div class="word-index-book" style="border-radius:0 0 16px 16px;border-top:1px solid #1E3A5F;margin-bottom:20px">
           <div class="word-index-book-header">
             <span class="word-index-book-title" id="wi-count-{{ book_id }}">Loading…</span>
             <button class="word-index-toggle" id="wi-btn-{{ book_id }}" onclick="toggleIndex('idx-{{ book_id }}', this)">🔍 Show all words ▼</button>
           </div>
           <div class="word-index-grid" id="idx-{{ book_id }}"></div>
         </div>
+        {% else %}
+        <p style="color:#4A6A8A;font-size:14px;padding:20px 0">No books published yet. Check back soon!</p>
+        {% endfor %}
+
+        <!-- Coming soon teaser -->
+        <div style="background:#0F2847;border:1.5px dashed #1E3A5F;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;opacity:.6;margin-top:8px">
+          <div style="width:64px;height:86px;border-radius:8px;background:#0B1F3A;border:1.5px solid #1E3A5F;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📘</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#8BA3C0;margin-bottom:4px">More books coming soon…</div>
+            <div style="font-size:13px;color:#4A6A8A">Más títulos bilingües en camino!</div>
+          </div>
+        </div>
       </div>
-      {% endfor %}
-
-
     </div>
-
   </div>
 </main>
 <footer>
