@@ -519,14 +519,26 @@ def upload_cover(book_id):
     except Exception as e:
         return redirect(url_for("admin_book", book_id=book_id,
                                 msg="cover_err", val=str(e)))
-
-
 @app.route("/book-cover/<book_id>")
 def book_cover(book_id):
     cover_path = DATA_DIR / f"cover_{book_id}.jpg"
     if not cover_path.exists():
         return "Not found", 404
     return send_file(cover_path, mimetype="image/jpeg")
+ 
+@app.route("/admin/book/<book_id>/save-title", methods=["POST"])
+@requires_admin
+def save_title(book_id):
+    books = load_books()
+    if book_id not in books:
+        return jsonify(error="Not found"), 404
+    data = request.get_json()
+    title = (data.get("title") or "").strip()
+    if not title:
+        return jsonify(error="Title cannot be empty"), 400
+    books[book_id]["title"] = title
+    save_books(books)
+    return jsonify(success=True)
 if __name__ == "__main__":
     app.run(debug=True)
 
