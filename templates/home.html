@@ -22,7 +22,7 @@ main{max-width:940px;margin:0 auto;padding:40px 20px}
 .hero p{font-size:15px;color:#8BA3C0;max-width:480px;margin:0 auto;line-height:1.6}
 .content-grid{display:grid;grid-template-columns:1fr;gap:28px;align-items:start}
 .books-section h3{font-size:12px;font-weight:700;color:#8BA3C0;margin-bottom:14px;text-transform:uppercase;letter-spacing:.8px}
-.book-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;transition:all .2s;text-decoration:none;cursor:pointer}
+.book-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px 16px 0 0;padding:20px;margin-bottom:0;display:flex;align-items:center;gap:16px;transition:all .2s;text-decoration:none;cursor:pointer}
 .book-card:hover{border-color:#F9C12E;box-shadow:0 4px 24px rgba(249,193,46,.15)}
 /* Cover image */
 .book-cover-img{width:64px;height:86px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1.5px solid #1E3A5F}
@@ -40,9 +40,8 @@ main{max-width:940px;margin:0 auto;padding:40px 20px}
 .locked-badge{display:inline-block;background:rgba(249,193,46,.15);color:#F9C12E;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
 
 /* Word index section */
-.word-index-section{margin-top:28px}
-.word-index-section h3{font-size:12px;font-weight:700;color:#8BA3C0;margin-bottom:14px;text-transform:uppercase;letter-spacing:.8px}
-.word-index-book{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:14px;margin-bottom:14px;overflow:hidden}
+.word-index-section{margin-top:0}
+.word-index-book{background:#0F2847;border:1.5px solid #1E3A5F;border-top:1px solid #1E3A5F;border-radius:0 0 16px 16px;margin-bottom:20px;overflow:hidden}
 .word-index-book-header{padding:14px 16px;border-bottom:1px solid #1E3A5F;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .word-index-book-title{font-size:14px;font-weight:700;color:#fff}
 .word-index-toggle{background:none;border:1px solid #1E3A5F;color:#8BA3C0;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;transition:all .15s}
@@ -116,16 +115,24 @@ footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
         {% else %}
         <p style="color:#4A6A8A;font-size:14px;padding:20px 0">No books published yet. Check back soon!</p>
         {% endfor %}
+
+        <!-- Coming soon teaser -->
+        <div style="background:#0F2847;border:1.5px dashed #1E3A5F;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;opacity:.6">
+          <div style="width:64px;height:86px;border-radius:8px;background:#0B1F3A;border:1.5px solid #1E3A5F;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📘</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#8BA3C0;margin-bottom:4px">More books coming soon…</div>
+            <div style="font-size:13px;color:#4A6A8A">New bilingual titles are on the way!</div>
+          </div>
+        </div>
       </div>
 
-      <!-- Word Index — built from API so page numbers are correct -->
+      <!-- Word Index — inside each book card area -->
       {% for book_id, book in books.items() %}
-      <div class="word-index-section" id="wi-section-{{ book_id }}">
-        <h3>🔍 Jump to a word — {{ book.title }}</h3>
-        <div class="word-index-book">
+      <div class="word-index-section" id="wi-section-{{ book_id }}" style="margin-top:-8px">
+        <div class="word-index-book" style="border-radius:0 0 16px 16px;border-top:none;margin-bottom:14px">
           <div class="word-index-book-header">
             <span class="word-index-book-title" id="wi-count-{{ book_id }}">Loading…</span>
-            <button class="word-index-toggle" id="wi-btn-{{ book_id }}" onclick="toggleIndex('idx-{{ book_id }}', this)">Show all words ▼</button>
+            <button class="word-index-toggle" id="wi-btn-{{ book_id }}" onclick="toggleIndex('idx-{{ book_id }}', this)">🔍 Show all words ▼</button>
           </div>
           <div class="word-index-grid" id="idx-{{ book_id }}"></div>
         </div>
