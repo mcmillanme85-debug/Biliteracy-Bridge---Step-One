@@ -5,6 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin · {{ book.title }}</title>
 <style>
+  <!-- ═══════════════════════════════════════════════════════════════════
+     ADD THIS BLOCK to admin_book.html, near the top of the page
+     (after the book title heading, before the PDF upload section)
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<!-- BOOK NAME + COVER SECTION -->
+<div class="admin-section">
+  <h3 class="section-title">📚 Book Details</h3>
+
+  <!-- Book cover upload -->
+  <div class="cover-row">
+    <div class="cover-preview">
+      {% if book.get('cover_image') %}
+        <img src="/book-cover/{{ book_id }}" alt="Book cover"
+             style="width:100px;height:133px;object-fit:cover;border-radius:8px;border:2px solid #1E3A5F">
+      {% else %}
+        <div style="width:100px;height:133px;background:#0B1F3A;border:2px dashed #1E3A5F;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px">📖</div>
+      {% endif %}
+    </div>
+    <div class="cover-upload">
+      <p style="font-size:13px;color:#8BA3C0;margin-bottom:10px">
+        Upload the book cover image — it appears on the home page so parents can tap it to open the book.
+      </p>
+      <form method="POST" action="/admin/book/{{ book_id }}/upload-cover" enctype="multipart/form-data">
+        <input type="file" name="cover" accept="image/*" required style="font-size:13px;color:#fff;margin-bottom:8px;display:block">
+        <button type="submit" class="btn-secondary">Upload Cover Image</button>
+      </form>
+      {% if msg == 'cover_ok' %}
+        <p style="color:#81C784;font-size:13px;margin-top:6px">✅ Cover uploaded successfully!</p>
+      {% elif msg == 'cover_err' %}
+        <p style="color:#EF9A9A;font-size:13px;margin-top:6px">❌ Error: {{ msg_val }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f4f4;color:#1a1a1a}
 header{background:#1a1a1a;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
