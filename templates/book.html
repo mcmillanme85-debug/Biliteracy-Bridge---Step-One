@@ -9,7 +9,8 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;color:#fff;min-height:100vh}
 header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:8px}
-.brand img{height:44px;width:auto;background:transparent}
+/* FIX: logo filter makes it render cleanly on dark bg */
+.brand img{height:44px;width:auto;background:transparent;mix-blend-mode:multiply}
 .brand-name{font-size:16px;font-weight:700;color:#F9C12E}
 .header-right{display:flex;align-items:center;gap:10px}
 .page-counter{font-size:13px;color:#8BA3C0;font-weight:500}
@@ -36,7 +37,8 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 .word-section h3{font-size:12px;font-weight:700;color:#4A6A8A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
 .word-card{background:#0B1F3A;border-radius:12px;padding:14px;margin-bottom:10px}
 .word-label{font-size:11px;color:#4A6A8A;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.word-text{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px}@media(max-width:480px){.word-text{font-size:18px}}
+.word-text{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px}
+@media(max-width:480px){.word-text{font-size:18px}}
 .word-pron{font-size:12px;color:#4A6A8A;font-style:italic;margin-bottom:10px}
 .play-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .play-btn{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;min-height:44px}
@@ -44,13 +46,11 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 .play-btn-en:hover{background:#1565C0;color:#fff}
 .play-btn-es{background:rgba(249,193,46,.15);color:#F9C12E}
 .play-btn-es:hover{background:#F9C12E;color:#0B1F3A}
-.play-btn-both{background:rgba(76,175,80,.15);color:#81C784}
-.play-btn-both:hover{background:#2E7D32;color:#fff}
 .play-btn:disabled{opacity:.5;cursor:not-allowed}
 .no-word{font-size:13px;color:#ccc;font-style:italic;padding:8px 0}
-.divider{border:none;border-top:1px solid #f0ede8;margin:16px 0}
-.tips-toggle{width:100%;background:#0F2847;border:none;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;color:#F9C12E;transition:background .15s;margin-bottom:2px}
-.tips-toggle:hover{background:#FFE0B2}
+.divider{border:none;border-top:1px solid #1E3A5F;margin:16px 0}
+.tips-toggle{width:100%;background:#0B1F3A;border:1px solid #1E3A5F;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;color:#F9C12E;transition:all .15s;margin-bottom:2px}
+.tips-toggle:hover{border-color:#F9C12E}
 .tips-toggle .arrow{transition:transform .25s;font-style:normal;font-size:12px}
 .tips-toggle.open .arrow{transform:rotate(180deg)}
 .tips-panel{display:none;background:#0B1F3A;border-radius:12px;border:1px solid #1E3A5F;overflow:hidden;margin-top:4px}
@@ -59,11 +59,11 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 .tip-section:last-child{border-bottom:none}
 .tip-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
 .tip-head-tip{color:#F9C12E}
-.tip-head-act{color:#6A1B9A}
-.tip-head-fact{color:#1565C0}
-.tip-text{font-size:13px;color:#fff;line-height:1.55}
-.act-box{background:rgba(249,193,46,.12);border-left:3px solid #FFC107;padding:8px 10px;border-radius:0 8px 8px 0;font-size:13px;color:#fff;line-height:1.5}
-.fact-box{background:rgba(30,58,95,.9);border-left:3px solid #9C27B0;padding:8px 10px;border-radius:0 8px 8px 0;font-size:12px;color:#fff;line-height:1.5}
+.tip-head-act{color:#A78BFA}
+.tip-head-fact{color:#60A5FA}
+.tip-text{font-size:13px;color:#CBD5E1;line-height:1.55}
+.act-box{background:rgba(249,193,46,.08);border-left:3px solid #F9C12E;padding:8px 10px;border-radius:0 8px 8px 0;font-size:13px;color:#E2E8F0;line-height:1.5}
+.fact-box{background:rgba(96,165,250,.08);border-left:3px solid #60A5FA;padding:8px 10px;border-radius:0 8px 8px 0;font-size:12px;color:#CBD5E1;line-height:1.5}
 .no-tip{font-size:12px;color:#8BA3C0;font-style:italic;padding:14px 16px}
 .sim-row{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#0F2847}
 .sim-label{font-size:11px;color:#8BA3C0;min-width:55px}
@@ -74,35 +74,117 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 .sim-low{background:#42A5F5}
 .sim-pct{font-size:11px;color:#4A6A8A;min-width:32px;text-align:right}
 .cognate-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px}
-.badge-perfect{background:#0F2847;color:#BF360C}
-.badge-near{background:#E8F5E9;color:#1B5E20}
-.badge-related{background:#E3F2FD;color:#0D47A1}
-/* Word finder */
-.word-finder-btn{display:flex;align-items:center;gap:8px;width:100%;background:linear-gradient(135deg,#1E3A5F,#0F2847);border:1.5px solid #F9C12E;border-radius:12px;padding:12px 16px;color:#F9C12E;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:all .2s}
-.word-finder-btn:hover{background:#F9C12E;color:#0B1F3A}
-.word-overlay{display:none;position:fixed;inset:0;background:rgba(11,31,58,.97);z-index:1000;overflow-y:auto;padding:20px 16px}
-.word-overlay.open{display:block}
-.word-overlay-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;position:sticky;top:0;background:rgba(11,31,58,.98);padding:12px 0;border-bottom:1px solid #1E3A5F;z-index:10}
+.badge-perfect{background:rgba(249,193,46,.15);color:#F9C12E}
+.badge-near{background:rgba(134,239,172,.1);color:#86EFAC}
+.badge-related{background:rgba(147,197,253,.1);color:#93C5FD}
+
+/* ── PREMIUM WORD FINDER ── */
+.word-finder-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;
+  background:linear-gradient(135deg,#1a3a6b,#0F2847);
+  border:2px solid #F9C12E;
+  border-radius:14px;
+  padding:14px 16px;
+  color:#F9C12E;
+  font-size:15px;font-weight:800;
+  cursor:pointer;
+  margin-bottom:16px;
+  transition:all .2s;
+  letter-spacing:.2px;
+  box-shadow:0 2px 16px rgba(249,193,46,.12);
+}
+.word-finder-btn:hover{
+  background:#F9C12E;color:#0B1F3A;
+  box-shadow:0 4px 24px rgba(249,193,46,.35);
+  transform:translateY(-1px);
+}
+.word-finder-btn .wf-icon{font-size:18px}
+.word-finder-btn .wf-sub{font-size:11px;opacity:.75;font-weight:500;margin-top:1px}
+
+/* Full-screen overlay */
+.word-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(7,18,35,.97);
+  backdrop-filter:blur(8px);
+  z-index:1000;overflow-y:auto;
+}
+.word-overlay.open{display:flex;flex-direction:column}
+.word-overlay-header{
+  background:#0B1F3A;
+  border-bottom:2px solid #F9C12E;
+  padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+}
 .word-overlay-title{font-size:18px;font-weight:800;color:#F9C12E}
-.word-overlay-close{background:transparent;border:1.5px solid #1E3A5F;color:#8BA3C0;border-radius:8px;padding:8px 16px;font-size:14px;cursor:pointer}
+.word-overlay-subtitle{font-size:12px;color:#8BA3C0;margin-top:2px}
+.word-overlay-close{
+  background:transparent;border:1.5px solid #1E3A5F;
+  color:#8BA3C0;border-radius:10px;padding:10px 18px;
+  font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;
+}
 .word-overlay-close:hover{border-color:#F9C12E;color:#F9C12E}
-.word-overlay-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
-.word-overlay-chip{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:12px;padding:12px;cursor:pointer;transition:all .15s;text-align:center}
-.word-overlay-chip:hover,.word-overlay-chip:active{border-color:#F9C12E;background:#1E3A5F}
-.word-overlay-chip-en{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
-.word-overlay-chip-es{font-size:12px;color:#F9C12E}
-.word-overlay-chip-pg{font-size:11px;color:#4A6A8A;margin-top:4px}
+
+/* Search bar inside overlay */
+.word-overlay-search{padding:14px 20px;background:#0B1F3A;border-bottom:1px solid #1E3A5F}
+.word-overlay-search input{
+  width:100%;background:#0F2847;border:1.5px solid #1E3A5F;
+  border-radius:10px;padding:10px 14px;
+  color:#fff;font-size:14px;outline:none;transition:border .15s;
+}
+.word-overlay-search input:focus{border-color:#F9C12E}
+.word-overlay-search input::placeholder{color:#4A6A8A}
+
+.word-overlay-body{padding:16px 20px;flex:1}
+.word-overlay-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:10px;
+}
+.word-overlay-chip{
+  background:#0F2847;border:1.5px solid #1E3A5F;
+  border-radius:14px;padding:14px 12px;
+  cursor:pointer;transition:all .18s;text-align:center;
+  position:relative;overflow:hidden;
+}
+.word-overlay-chip::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(249,193,46,.06),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.word-overlay-chip:hover{border-color:#F9C12E;background:#162d52;transform:translateY(-2px);box-shadow:0 4px 16px rgba(249,193,46,.15)}
+.word-overlay-chip:hover::before{opacity:1}
+.word-overlay-chip:active{transform:translateY(0)}
+.word-overlay-chip-en{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.word-overlay-chip-es{font-size:12px;color:#F9C12E;font-weight:500}
+.word-overlay-chip-pg{font-size:10px;color:#4A6A8A;margin-top:6px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+
+/* Mobile float button */
 .word-finder-float{display:none}
-@media(max-width:780px){.word-finder-float{display:flex;position:fixed;bottom:24px;right:16px;z-index:500;background:#F9C12E;color:#0B1F3A;border:none;border-radius:50px;padding:14px 22px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 24px rgba(249,193,46,.5);align-items:center;gap:8px}}
+@media(max-width:780px){
+  .word-finder-float{
+    display:flex;position:fixed;bottom:20px;right:16px;z-index:500;
+    background:#F9C12E;color:#0B1F3A;border:none;border-radius:50px;
+    padding:14px 20px;font-size:14px;font-weight:800;cursor:pointer;
+    box-shadow:0 4px 24px rgba(249,193,46,.55);
+    align-items:center;gap:8px;
+    animation:floatPulse 3s ease-in-out infinite;
+  }
+}
+@keyframes floatPulse{
+  0%,100%{box-shadow:0 4px 24px rgba(249,193,46,.45)}
+  50%{box-shadow:0 4px 36px rgba(249,193,46,.75)}
+}
 </style>
 </head>
 <body>
 
 <header>
   <div class="brand">
-    <img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent"
+    <img src="/logo.png" alt="Biliteracy Bridge"
          onerror="this.style.display='none';document.getElementById('brand-fallback').style.display='block'">
-    <span id="brand-fallback" style="display:none;font-size:18px;font-weight:800;color:#F9C12E">Biliteracy Bridge</span>
+    <span id="brand-fallback" style="display:none;font-size:18px;font-weight:800;color:#F9C12E">BB</span>
     <div class="brand-name">Biliteracy Bridge</div>
   </div>
   <div class="header-right">
@@ -125,12 +207,17 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
 
   <div class="sidebar">
     <div class="word-section">
-      <!-- Find a Word button -->
+      <!-- Premium Word Finder Button -->
       <button class="word-finder-btn" onclick="openWordFinder()">
-        🔍 Find a Word · Buscar una Palabra
+        <span class="wf-icon">🔍</span>
+        <span>
+          <div>Find a Word · Buscar Palabra</div>
+          <div class="wf-sub">Jump to any page instantly</div>
+        </span>
       </button>
+
       <h3>Words on this page</h3>
-      <div style="font-size:11px;color:#4A6A8A;line-height:1.4;margin-bottom:10px;padding:8px 10px;background:rgba(249,193,46,.08);border-radius:8px;border-left:3px solid #F9C12E">
+      <div style="font-size:11px;color:#4A6A8A;line-height:1.4;margin-bottom:10px;padding:8px 10px;background:rgba(249,193,46,.06);border-radius:8px;border-left:3px solid #F9C12E">
         🔤 <strong style="color:#F9C12E">Dual-use phonics:</strong><br>
         English shown with Spanish phonetic conventions<br>
         Spanish shown with English phonetic conventions
@@ -152,13 +239,35 @@ header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;disp
   </div>
 </div>
 
+<!-- Word Finder Overlay -->
+<div class="word-overlay" id="wordFinderOverlay">
+  <div class="word-overlay-header">
+    <div>
+      <div class="word-overlay-title">🔍 Find a Word · Buscar una Palabra</div>
+      <div class="word-overlay-subtitle">Tap any word to jump straight to that page</div>
+    </div>
+    <button class="word-overlay-close" onclick="closeWordFinder()">✕ Close</button>
+  </div>
+  <div class="word-overlay-search">
+    <input type="text" id="wordSearchInput" placeholder="Type to filter… e.g. Tomato" oninput="filterWords(this.value)">
+  </div>
+  <div class="word-overlay-body">
+    <div class="word-overlay-grid" id="wordFinderGrid">
+      <p style="color:#8BA3C0;font-size:14px">Loading words…</p>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile floating button -->
+<button class="word-finder-float" onclick="openWordFinder()">🔍 Find a Word</button>
+
 <script>
 const BOOK_ID = "{{ book_id }}";
 const NUM_PAGES = {{ book.num_pages }};
 let PAGES = [];
 let DATA_LOADED = false;
+let ALL_WORDS = []; // for filtering
 
-// Read startPage from URL query param
 const _urlParams = new URLSearchParams(window.location.search);
 let currentPage = parseInt(_urlParams.get('startPage') || _urlParams.get('page') || '0', 10);
 if (isNaN(currentPage) || currentPage < 0 || currentPage >= NUM_PAGES) currentPage = 0;
@@ -181,7 +290,7 @@ async function loadPageData() {
     PAGES = d.pages || [];
     DATA_LOADED = true;
     updateWords();
-    wordFinderBuilt = false; // rebuild with fresh data
+    wordFinderBuilt = false;
     const p = PAGES[currentPage] || {};
     const key = (p.english || (p.words && p.words[0] && p.words[0].english) || '').toLowerCase().split(/[\s\/]/)[0];
     updateTips(key, p.english || (p.words && p.words[0] && p.words[0].english) || '', p.spanish || (p.words && p.words[0] && p.words[0].spanish) || '', p.custom_tip || '');
@@ -433,15 +542,6 @@ function playAudio(lang, type, wordIdx) {
   audio.play().catch(() => { playing = false; });
 }
 
-async function playBothWords(wordIdx) {
-  if (playing) return;
-  playing = true;
-  await playLang("en", wordIdx);
-  await new Promise(r => setTimeout(r, 700));
-  await playLang("es", wordIdx);
-  playing = false;
-}
-
 function playLang(lang, wordIdx=0) {
   return new Promise(resolve => {
     const audio = new Audio(`/speak/${BOOK_ID}/${currentPage}/${lang}?type=word&word_idx=${wordIdx}`);
@@ -453,13 +553,12 @@ function playLang(lang, wordIdx=0) {
 
 buildDots();
 loadPageData();
-
-// Start on the correct page once data loads (or immediately for nav)
 goPage(currentPage);
 
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") goPage(currentPage + 1);
   if (e.key === "ArrowLeft") goPage(currentPage - 1);
+  if (e.key === "Escape") closeWordFinder();
 });
 
 // ── Word Finder ───────────────────────────────────────────────────────────────
@@ -468,9 +567,16 @@ let wordFinderBuilt = false;
 function openWordFinder() {
   document.getElementById('wordFinderOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  // Focus search input
+  setTimeout(() => {
+    const inp = document.getElementById('wordSearchInput');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }, 100);
   if (!wordFinderBuilt) {
     if (PAGES.length) buildWordFinder();
     else setTimeout(() => { if (PAGES.length) buildWordFinder(); }, 1500);
+  } else {
+    filterWords(''); // reset filter
   }
 }
 
@@ -480,7 +586,7 @@ function closeWordFinder() {
 }
 
 function buildWordFinder() {
-  const words = [];
+  ALL_WORDS = [];
   PAGES.forEach((pg, i) => {
     let en = '', es = '';
     if (pg.words && pg.words[0] && pg.words[0].english) {
@@ -488,17 +594,35 @@ function buildWordFinder() {
     } else if (pg.english) {
       en = pg.english; es = pg.spanish || '';
     }
-    if (en) words.push({en, es, page: i});
+    if (en) ALL_WORDS.push({en, es, page: i});
   });
+  renderWordChips(ALL_WORDS);
+  wordFinderBuilt = true;
+}
+
+function renderWordChips(words) {
   const grid = document.getElementById('wordFinderGrid');
   if (!grid) return;
+  if (!words.length) {
+    grid.innerHTML = '<p style="color:#8BA3C0;font-size:14px;grid-column:1/-1">No words match your search.</p>';
+    return;
+  }
   grid.innerHTML = words.map(w => `
     <div class="word-overlay-chip" onclick="jumpToWord(${w.page})">
       <div class="word-overlay-chip-en">${w.en}</div>
       ${w.es ? `<div class="word-overlay-chip-es">${w.es}</div>` : ''}
       <div class="word-overlay-chip-pg">p.${w.page + 1}</div>
     </div>`).join('');
-  wordFinderBuilt = true;
+}
+
+function filterWords(query) {
+  if (!wordFinderBuilt) return;
+  const q = query.trim().toLowerCase();
+  if (!q) { renderWordChips(ALL_WORDS); return; }
+  const filtered = ALL_WORDS.filter(w =>
+    w.en.toLowerCase().includes(q) || w.es.toLowerCase().includes(q)
+  );
+  renderWordChips(filtered);
 }
 
 function jumpToWord(pageIdx) {
@@ -507,19 +631,5 @@ function jumpToWord(pageIdx) {
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 </script>
-<!-- Word Finder Overlay -->
-<div class="word-overlay" id="wordFinderOverlay">
-  <div class="word-overlay-header">
-    <span class="word-overlay-title">🔍 Find a Word · Buscar una Palabra</span>
-    <button class="word-overlay-close" onclick="closeWordFinder()">✕ Close</button>
-  </div>
-  <div class="word-overlay-grid" id="wordFinderGrid">
-    <p style="color:#8BA3C0;font-size:14px">Loading words…</p>
-  </div>
-</div>
-
-<!-- Mobile floating button -->
-<button class="word-finder-float" onclick="openWordFinder()">🔍 Find a Word</button>
-
 </body>
 </html>
