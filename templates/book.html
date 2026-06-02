@@ -3,441 +3,203 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ book.title }} · Biliteracy Bridge</title>
+<title>Biliteracy Bridge · Pronunciation Guide</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1F3A;color:#fff;min-height:100vh}
-header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:8px}
-.brand img{height:44px;width:auto;background:transparent}
-.brand-name{font-size:16px;font-weight:700;color:#F9C12E}
-.header-right{display:flex;align-items:center;gap:10px}
-.page-counter{font-size:13px;color:#8BA3C0;font-weight:500}
-.back-link{font-size:13px;color:#4A6A8A;text-decoration:none}
-.back-link:hover{color:#F9C12E}
-.layout{display:grid;grid-template-columns:1fr 340px;gap:0;min-height:calc(100vh - 60px)}
-@media(max-width:780px){.layout{grid-template-columns:1fr;grid-template-rows:auto auto}}
-.page-viewer{padding:16px;display:flex;flex-direction:column;align-items:center}
-.page-img-wrap{width:100%;max-width:520px;background:#0F2847;border-radius:16px;border:1.5px solid #1E3A5F;overflow:hidden;margin-bottom:12px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center}
-@media(max-width:780px){.page-img-wrap{max-width:340px;aspect-ratio:3/4}}
-.page-img{width:100%;height:100%;object-fit:contain;display:block}
-.page-nav{display:flex;align-items:center;gap:10px;margin-top:4px;width:100%;max-width:520px;justify-content:space-between}
-@media(max-width:780px){.page-nav{max-width:340px}}
-.nav-btn{background:#0F2847;border:1.5px solid #1E3A5F;color:#8BA3C0;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;min-width:90px;min-height:48px}
-.nav-btn:hover:not(:disabled){border-color:#F9C12E;color:#F9C12E}
-.nav-btn:disabled{opacity:.35;cursor:not-allowed}
-.page-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:160px;padding:4px}
-.dot{width:8px;height:8px;border-radius:50%;background:#1E3A5F;transition:background .2s;cursor:pointer}
-.dot:hover{background:#8BA3C0}
-.dot.active{background:#F9C12E}
-.sidebar{background:#0F2847;border-left:1.5px solid #1E3A5F;padding:20px;overflow-y:auto;max-height:calc(100vh - 60px);position:sticky;top:60px}
-@media(max-width:780px){.sidebar{border-left:none;border-top:2px solid #F9C12E;position:static;max-height:none;padding:16px}}
-.word-section{margin-bottom:20px}
-.word-section h3{font-size:12px;font-weight:700;color:#4A6A8A;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
-.word-card{background:#0B1F3A;border-radius:12px;padding:14px;margin-bottom:10px}
-.word-label{font-size:11px;color:#4A6A8A;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.word-text{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px}@media(max-width:480px){.word-text{font-size:18px}}
-.word-pron{font-size:12px;color:#4A6A8A;font-style:italic;margin-bottom:10px}
-.play-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.play-btn{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;min-height:44px}
-.play-btn-en{background:rgba(30,58,95,.8);color:#90CAF9}
-.play-btn-en:hover{background:#1565C0;color:#fff}
-.play-btn-es{background:rgba(249,193,46,.15);color:#F9C12E}
-.play-btn-es:hover{background:#F9C12E;color:#0B1F3A}
-.play-btn-both{background:rgba(76,175,80,.15);color:#81C784}
-.play-btn-both:hover{background:#2E7D32;color:#fff}
-.play-btn:disabled{opacity:.5;cursor:not-allowed}
-.no-word{font-size:13px;color:#ccc;font-style:italic;padding:8px 0}
-.divider{border:none;border-top:1px solid #f0ede8;margin:16px 0}
-.tips-toggle{width:100%;background:#0F2847;border:none;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;color:#F9C12E;transition:background .15s;margin-bottom:2px}
-.tips-toggle:hover{background:#FFE0B2}
-.tips-toggle .arrow{transition:transform .25s;font-style:normal;font-size:12px}
-.tips-toggle.open .arrow{transform:rotate(180deg)}
-.tips-panel{display:none;background:#0B1F3A;border-radius:12px;border:1px solid #1E3A5F;overflow:hidden;margin-top:4px}
-.tips-panel.open{display:block}
-.tip-section{padding:14px 16px;border-bottom:1px solid #1E3A5F}
-.tip-section:last-child{border-bottom:none}
-.tip-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
-.tip-head-tip{color:#F9C12E}
-.tip-head-act{color:#6A1B9A}
-.tip-head-fact{color:#1565C0}
-.tip-text{font-size:13px;color:#fff;line-height:1.55}
-.act-box{background:rgba(249,193,46,.12);border-left:3px solid #FFC107;padding:8px 10px;border-radius:0 8px 8px 0;font-size:13px;color:#fff;line-height:1.5}
-.fact-box{background:rgba(30,58,95,.9);border-left:3px solid #9C27B0;padding:8px 10px;border-radius:0 8px 8px 0;font-size:12px;color:#fff;line-height:1.5}
-.no-tip{font-size:12px;color:#8BA3C0;font-style:italic;padding:14px 16px}
-.sim-row{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#0F2847}
-.sim-label{font-size:11px;color:#8BA3C0;min-width:55px}
-.sim-track{flex:1;height:4px;background:#1E3A5F;border-radius:2px;overflow:hidden}
-.sim-fill{height:100%;border-radius:2px}
-.sim-high{background:#F9C12E}
-.sim-med{background:#FFA726}
-.sim-low{background:#42A5F5}
-.sim-pct{font-size:11px;color:#4A6A8A;min-width:32px;text-align:right}
-.cognate-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px}
-.badge-perfect{background:#0F2847;color:#BF360C}
-.badge-near{background:#E8F5E9;color:#1B5E20}
-.badge-related{background:#E3F2FD;color:#0D47A1}
+header{background:#0B1F3A;border-bottom:3px solid #F9C12E;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{height:52px;width:auto;background:transparent;mix-blend-mode:multiply}
+.brand-text h1{font-size:20px;font-weight:800;color:#F9C12E;letter-spacing:-.3px}
+.brand-text p{font-size:13px;color:#8BA3C0;margin-top:2px}
+.admin-link{font-size:12px;color:#8BA3C0;text-decoration:none;padding:6px 14px;border:1px solid #1E3A5F;border-radius:20px;transition:all .15s}
+.admin-link:hover{color:#F9C12E;border-color:#F9C12E}
+main{max-width:940px;margin:0 auto;padding:40px 20px}
+.hero{text-align:center;margin-bottom:52px}
+.hero-logo{display:flex;justify-content:center;margin-bottom:28px}
+.hero-logo img{height:120px;width:auto;background:transparent;mix-blend-mode:multiply}
+.hero-title-en{font-size:36px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1.1;margin-bottom:6px}
+.hero-title-es{font-size:22px;font-weight:600;color:#F9C12E;letter-spacing:.5px;margin-bottom:20px;font-style:italic;opacity:.85}
+.hero-divider{width:48px;height:3px;background:linear-gradient(90deg,#F9C12E,rgba(249,193,46,0));margin:0 auto 20px;border-radius:2px}
+.hero-sub{font-size:15px;color:#8BA3C0;line-height:1.7;max-width:500px;margin:0 auto}
+.hero-sub-es{font-size:13px;color:#4A6A8A;line-height:1.6;max-width:500px;margin:6px auto 0;font-style:italic}
+.content-grid{display:grid;grid-template-columns:1fr;gap:28px;align-items:start}
+.books-section h3{font-size:12px;font-weight:700;color:#8BA3C0;margin-bottom:14px;text-transform:uppercase;letter-spacing:.8px}
+.book-card{background:#0F2847;border:1.5px solid #1E3A5F;border-radius:16px 16px 0 0;padding:20px;margin-bottom:0;display:flex;align-items:center;gap:16px;transition:all .2s;text-decoration:none;cursor:pointer}
+.book-card:hover{border-color:#F9C12E;box-shadow:0 4px 24px rgba(249,193,46,.15)}
+/* Cover image */
+.book-cover-img{width:90px;height:120px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1.5px solid #1E3A5F}
+.book-cover-placeholder{width:90px;height:120px;border-radius:8px;background:#0B1F3A;border:1.5px solid #1E3A5F;display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0}
+.book-info{flex:1}
+.book-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px}
+.book-subtitle{font-size:13px;color:#F9C12E;margin-bottom:4px;font-style:italic}
+.book-meta{font-size:13px;color:#8BA3C0}
+.book-action{flex-shrink:0}
+.btn-open{display:inline-block;background:#F9C12E;color:#0B1F3A;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:800;transition:all .15s}
+.btn-open:hover{background:#FFD54F;transform:translateY(-1px)}
+.btn-locked{display:inline-flex;align-items:center;gap:6px;background:transparent;color:#F9C12E;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700;border:2px solid #F9C12E;transition:all .15s}
+.btn-locked:hover{background:#F9C12E;color:#0B1F3A}
+.free-badge{display:inline-block;background:rgba(76,175,80,.2);color:#81C784;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+.locked-badge{display:inline-block;background:rgba(249,193,46,.15);color:#F9C12E;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+
+/* Word index section */
+.word-index-section{margin-top:0}
+.word-index-book{background:#0F2847;border:1.5px solid #1E3A5F;border-top:1px solid #1E3A5F;border-radius:0 0 16px 16px;margin-bottom:20px;overflow:hidden}
+.word-index-book-header{padding:14px 16px;border-bottom:1px solid #1E3A5F;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.word-index-book-title{font-size:14px;font-weight:700;color:#fff}
+.word-index-toggle{background:none;border:1px solid #1E3A5F;color:#8BA3C0;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;transition:all .15s}
+.word-index-toggle:hover{border-color:#F9C12E;color:#F9C12E}
+.word-index-grid{display:none;padding:12px 16px;flex-wrap:wrap;gap:8px}
+.word-index-grid.open{display:flex}
+.word-chip{display:inline-flex;flex-direction:column;align-items:center;background:#0B1F3A;border:1px solid #1E3A5F;border-radius:10px;padding:8px 12px;cursor:pointer;text-decoration:none;transition:all .15s;min-width:80px;text-align:center}
+.word-chip:hover{border-color:#F9C12E;background:#0F2847}
+.word-chip-en{font-size:13px;font-weight:600;color:#fff}
+.word-chip-es{font-size:11px;color:#F9C12E;margin-top:2px}
+.word-chip-pg{font-size:10px;color:#4A6A8A;margin-top:3px}
+
+
+
+footer{text-align:center;padding:30px;color:#4A6A8A;font-size:12px;border-top:1px solid #1E3A5F;margin-top:40px}
+footer img{height:24px;vertical-align:middle;margin-right:8px;opacity:.5}
 </style>
 </head>
 <body>
-
 <header>
   <div class="brand">
-    <img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent"
-         onerror="this.style.display='none';document.getElementById('brand-fallback').style.display='block'">
-    <span id="brand-fallback" style="display:none;font-size:18px;font-weight:800;color:#F9C12E">Biliteracy Bridge</span>
-    <div class="brand-name">Biliteracy Bridge</div>
+    <img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent" onerror="this.style.display='none'">
+    <div class="brand-text">
+      <h1>Biliteracy Bridge</h1>
+      <p>Pronunciation Guide · Guía de Pronunciación</p>
+    </div>
   </div>
-  <div class="header-right">
-    <span class="page-counter" id="pageCounter">Page 1 of {{ book.num_pages }}</span>
-    <a href="/" class="back-link">← All Books</a>
-  </div>
+  <a href="/admin/login" class="admin-link">Admin ⚙️</a>
 </header>
 
-<div class="layout">
-  <div class="page-viewer">
-    <div class="page-img-wrap">
-      <img class="page-img" id="pageImg" src="/page-image/{{ book_id }}/0" alt="Book page">
-    </div>
-    <div class="page-nav">
-      <button class="nav-btn" id="prevBtn" onclick="goPage(currentPage - 1)" disabled>← Prev</button>
-      <div class="page-dots" id="pageDots"></div>
-      <button class="nav-btn" id="nextBtn" onclick="goPage(currentPage + 1)">Next →</button>
-    </div>
+<main>
+  <div class="hero">
+    <div class="hero-logo"><img src="/logo.png" alt="Biliteracy Bridge" style="background:transparent" onerror="this.style.display='none'"></div>
+    <div class="hero-title-en">Hear Every Word in Both Languages</div>
+    <div class="hero-title-es">Escucha Cada Palabra en Ambos Idiomas</div>
+    <div class="hero-divider"></div>
+    <div class="hero-sub">Interactive pronunciation guides for parents and teachers supporting bilingual readers.</div>
+    <div class="hero-sub-es">Guías interactivas de pronunciación para padres y maestros que apoyan a lectores bilingües.</div>
   </div>
 
-  <div class="sidebar">
-    <div class="word-section">
-      <h3>Words on this page</h3>
-      <div style="font-size:11px;color:#4A6A8A;line-height:1.4;margin-bottom:10px;padding:8px 10px;background:rgba(249,193,46,.08);border-radius:8px;border-left:3px solid #F9C12E">
-        🔤 <strong style="color:#F9C12E">Dual-use phonics:</strong><br>
-        English shown with Spanish phonetic conventions<br>
-        Spanish shown with English phonetic conventions
-      </div>
-      <div id="wordsContainer">
-        <p style="color:#8BA3C0;font-size:13px;padding:8px 0">⏳ Loading...</p>
-      </div>
-    </div>
+  <div class="content-grid">
+    <div>
+      <div class="books-section">
+        <h3>📚 Available Books</h3>
+        {% for book_id, book in books.items() %}
+        <div class="book-card" onclick="window.location='{% if book.get('free') or not book.get('access_code') %}/book/{{ book_id }}{% else %}/access/{{ book_id }}{% endif %}'">
+          {% if book.get('cover_image') %}
+            <img class="book-cover-img" src="/book-cover/{{ book_id }}" alt="{{ book.title }} cover">
+          {% else %}
+            <div class="book-cover-placeholder">📖</div>
+          {% endif %}
+          <div class="book-info">
+            <div class="book-title">
+              {{ book.title }}
+              {% if book.get('free') or not book.get('access_code') %}
+                <span class="free-badge">FREE</span>
+              {% else %}
+                <span class="locked-badge">🔒 Code Required</span>
+              {% endif %}
+            </div>
+            {% if book.get('subtitle') %}
+            <div class="book-subtitle">{{ book.subtitle }}</div>
+            {% endif %}
+            <div class="book-meta">{{ book.num_pages }} pages · Biliteracy Bridge Step {{ loop.index }}</div>
+          </div>
+          <div class="book-action">
+            {% if book.get('free') or not book.get('access_code') %}
+              <span class="btn-open">Open →</span>
+            {% else %}
+              <span class="btn-locked">🔑 Enter Code</span>
+            {% endif %}
+          </div>
+        </div>
+        <!-- Word index attached directly under this book card -->
+        <div style="background:#0F2847;border:1.5px solid #1E3A5F;border-top:none;border-radius:0 0 16px 16px;margin-bottom:20px">
+          <div class="word-index-book-header">
+            <span class="word-index-book-title" id="wi-count-{{ book_id }}">Loading…</span>
+            <button class="word-index-toggle" id="wi-btn-{{ book_id }}" onclick="toggleIndex('idx-{{ book_id }}', this)">🔍 Show all words ▼</button>
+          </div>
+          <div class="word-index-grid" id="idx-{{ book_id }}"></div>
+        </div>
+        {% else %}
+        <p style="color:#4A6A8A;font-size:14px;padding:20px 0">No books published yet. Check back soon!</p>
+        {% endfor %}
 
-    <hr class="divider">
-
-    <button class="tips-toggle" id="tipsToggle" onclick="toggleTips()">
-      <span>💡 Teaching Tips & Activities</span>
-      <span class="arrow">▼</span>
-    </button>
-    <div class="tips-panel" id="tipsPanel">
-      <div id="tipsContent"></div>
+        <!-- Coming soon teaser -->
+        <div style="background:#0F2847;border:1.5px dashed #1E3A5F;border-radius:16px;padding:20px;display:flex;align-items:center;gap:16px;opacity:.6;margin-top:8px">
+          <div style="width:64px;height:86px;border-radius:8px;background:#0B1F3A;border:1.5px solid #1E3A5F;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📘</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#8BA3C0;margin-bottom:4px">More books coming soon…</div>
+            <div style="font-size:13px;color:#4A6A8A">Más títulos bilingües en camino!</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</main>
+<footer>
+  <img src="/logo.png" alt="" style="background:transparent">
+  © Biliteracy Bridge · biliteracybridge.com · Bridging Languages, Empowering Futures
+</footer>
 
 <script>
-const BOOK_ID = "{{ book_id }}";
-const NUM_PAGES = {{ book.num_pages }};
-let PAGES = [];
-let DATA_LOADED = false;
+function toggleIndex(id, btn) {
+  const grid = document.getElementById(id);
+  const open = grid.classList.toggle('open');
+  btn.textContent = open ? 'Hide words ▲' : 'Show all words ▼';
+}
 
-// Read startPage from URL query param
-const _urlParams = new URLSearchParams(window.location.search);
-let currentPage = parseInt(_urlParams.get('startPage') || _urlParams.get('page') || '0', 10);
-if (isNaN(currentPage) || currentPage < 0 || currentPage >= NUM_PAGES) currentPage = 0;
+function openBookAtPage(bookId, page) {
+  window.location = `/book/${bookId}?startPage=${page}`;
+}
 
-async function loadPageData() {
-  const container = document.getElementById("wordsContainer");
-  if (container) container.innerHTML = '<p style="color:#8BA3C0;font-size:13px">⏳ Loading word data...</p>';
+// Build word index chips from the API (guarantees correct page numbers)
+async function buildWordIndex(bookId) {
   try {
-    const r = await fetch(`/api/book/${BOOK_ID}/pages`);
-    const text = await r.text();
-    let d;
-    try { d = JSON.parse(text); } catch(e) {
-      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ API parse error</p>`;
-      return;
-    }
-    if (!r.ok || d.error) {
-      if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ ${d.error || 'Error'}</p>`;
-      return;
-    }
-    PAGES = d.pages || [];
-    DATA_LOADED = true;
-    updateWords();
-    const p = PAGES[currentPage] || {};
-    const key = (p.english || (p.words && p.words[0] && p.words[0].english) || '').toLowerCase().split(/[\s\/]/)[0];
-    updateTips(key, p.english || (p.words && p.words[0] && p.words[0].english) || '', p.spanish || (p.words && p.words[0] && p.words[0].spanish) || '', p.custom_tip || '');
+    const r = await fetch(`/api/book/${bookId}/pages`);
+    const data = await r.json();
+    if (!data.pages) return;
+
+    const words = [];
+    data.pages.forEach((pg, i) => {
+      let en = '', es = '';
+      if (pg.words && pg.words[0] && pg.words[0].english) {
+        en = pg.words[0].english;
+        es = pg.words[0].spanish || '';
+      } else if (pg.english) {
+        en = pg.english;
+        es = pg.spanish || '';
+      }
+      if (en) words.push({en, es, page: i});
+    });
+
+    const countEl = document.getElementById(`wi-count-${bookId}`);
+    const grid    = document.getElementById(`idx-${bookId}`);
+    if (countEl) countEl.textContent = `${words.length} words`;
+    if (!grid) return;
+
+    grid.innerHTML = words.map(w => `
+      <a class="word-chip" onclick="openBookAtPage('${bookId}',${w.page})">
+        <span class="word-chip-en">${w.en}</span>
+        ${w.es ? `<span class="word-chip-es">${w.es}</span>` : ''}
+        <span class="word-chip-pg">p.${w.page + 1}</span>
+      </a>`).join('');
   } catch(e) {
-    if (container) container.innerHTML = `<p style="color:#EF9A9A;font-size:12px">❌ ${e.message}</p>`;
+    console.error('Word index error:', e);
   }
 }
 
-let playing = false;
-
-const TIPS = {
-"armadillo":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"The double L in Spanish makes a 'y' sound: ar-ma-DEE-yo. Tell your child 'armadillo' means 'little armored one' in Spanish — tap fingers along your arm like armor plates!","act":"Tap fingertips across your arm like armadillo scales while saying both words slowly together.","fact":"'Armadillo' is pure Spanish — English borrowed it unchanged. It comes from 'armado' meaning armored."},
-"buffalo":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Nearly identical! Count syllables together: Buf-fa-lo (3) / Bú-fa-lo (3). The accent mark over ú tells you exactly where to stress.","act":"Stomp 3 times for each syllable: BUF — fa — lo / BOO — fa — lo.","fact":"From Greek 'boubalos.' The accent mark in Spanish is doing the job that word-stress does automatically in English."},
-"baboon":{"sim":72,"badge":"Near cognate","badgeClass":"badge-near","tip":"Listen for the shared 'ba' at the start! English ends with 'boon,' Spanish adds 'wee-no': ba-bwee-NO. Can your child hear the 'ba' hiding in both words?","act":"Make a funny baboon chatter sound between syllables — ba-BOON! ba-bwee-NO!","fact":"Both come from the French 'babouin.' Spanish transformed the ending with the common '-ino' suffix."},
-"crocodile":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"Point out the shared letters C-R-O-C / C-O-C-O — they got rearranged! Clap syllables: Croc-o-dile / Co-co-dri-lo.","act":"Snap hands like crocodile jaws for each syllable: Co — co — dri — lo!","fact":"From Greek 'krokodilos' meaning 'pebble worm.'"},
-"camel":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spot the double L in 'camello' — it sounds like 'y': ka-MEY-yo! How many humps? Count the Ls in camello: 2!","act":"Sway like a camel while saying ka-MEY-yo.","fact":"The double-L (ll) producing a 'y' sound is one of Spanish's most iconic features."},
-"dinosaur":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'io' at the end! Cover the 'io' in dinosaurio with your finger — the English word is hiding inside.","act":"Cover the 'io' at the end of dinosaurio — Di-no-saur is hiding there!","fact":"From Greek 'deinos' (terrible) + 'sauros' (lizard). Both borrowed from the same scientific Greek in the 1800s."},
-"dolphin":{"sim":70,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark over í tells you to say 'FEEN' — long, clear vowel! English: DOL-fin; Spanish: del-FEEN.","act":"Make dolphin clicking sounds! Then say del-FEEN — stretch that FEEN sound.","fact":"The accent mark in Spanish is always a pronunciation instruction."},
-"elephant":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both start with 'ele'! The 'ph' in English makes an 'f' sound, and Spanish spells it with plain F. Same sound, more logical spelling!","act":"Swing your arm like a trunk while saying each word slowly.","fact":"Spanish consistently uses F where English uses PH (from Greek) — pharmacy/farmacia, phone/fono."},
-"flamingo":{"sim":75,"badge":"Near cognate","badgeClass":"badge-near","tip":"In Spanish 'flamenco' means BOTH the bird AND the famous dance! The dance was named after the bird's graceful elegance.","act":"Do a little flamenco pose — arms out, head tilted — while saying fla-MEN-ko.","fact":"The dance 'flamenco' shares its name with the bird — an extraordinary double meaning."},
-"giraffe":{"sim":72,"badge":"Near cognate","badgeClass":"badge-near","tip":"IMPORTANT RULE: Spanish J sounds like English H! So 'Jirafa' = hee-RAH-fah. Once your child knows J=H, they can read dozens of Spanish words.","act":"Reach arms way up high like a giraffe neck while saying hee-RAH-fah.","fact":"J=H applies to: jugo, jardín, joven, julio — hundreds of words. Teach this rule early."},
-"gorilla":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"English has double L; Spanish has single L — but they sound almost the same! Great for showing spelling differences don't always change pronunciation.","act":"Beat your chest gently — one thump per syllable: go-RIL-la / go-REE-la.","fact":"English doubled the L while Spanish kept one. Same meaning and sound — only spelling differs."},
-"hippopotamus":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both are 5 syllables — count them on fingers! Hip-po-pot-a-mus / Hi-po-pó-ta-mo.","act":"Stomp 5 heavy hippo stomps — one per syllable. Same number in both languages!","fact":"From Greek 'hippos' (horse) + 'potamos' (river) = 'river horse.'"},
-"iguana":{"sim":98,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! English: ih-GWAH-na; Spanish: ee-GWAH-nah. One of those magical words that needs zero translation.","act":"Say it slowly in English, then Spanish. Can anyone hear the difference? It's tiny!","fact":"From Arawak 'iwana' — a Caribbean indigenous language. Both borrowed it almost identically."},
-"insect":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'o': in-sect + o = insecto! Many English words ending in a consonant become Spanish words ending in '-o.'","act":"Count 6 legs — insects always have 6! In-sec-to has 3 syllables. 3 pairs of legs, 3 syllables!","fact":"From Latin 'insectum.' The '-o' ending keeps the original Latin vowel that English dropped."},
-"jaguar":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE — same spelling! English J sounds hard; Spanish J = H, so: hah-GWAR. From South American indigenous language (Tupi-Guaraní).","act":"Draw jaguar spots while saying both: JAG-war / hah-GWAR. Spot the J=H rule in action!","fact":"From Tupi-Guaraní 'yaguareté' meaning 'the true beast.'"},
-"koala":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Absolutely identical in both languages. From the Dharug Aboriginal language of Australia.","act":"Hug a stuffed animal tight like a koala hugs its tree while saying the identical word!","fact":"From Dharug 'gula.' Both borrowed from Australian Aboriginal language around the same time."},
-"lion":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark (ó) tells you to stress the LAST syllable: le-ON. English stresses the first: LYE-un. A great lesson in how accent marks change the feel of a word.","act":"ROAR after each version! LYE-un — ROAR! le-ON — ROAR! Which roar feels more royal?","fact":"Without the accent mark, 'leon' could be a person's name. The mark makes it the king of the jungle."},
-"monkey":{"sim":20,"badge":"Different words","badgeClass":"badge-related","tip":"DIFFERENT WORDS — an important lesson! 'Mono' is used across most of Latin America. Not every animal is a cognate, and that's just as valuable to know.","act":"Make a monkey sound to remember: EE-EE, it's a MONO! This one needs to be memorized.","fact":"Regional variation: 'mico' vs 'mono' opens a conversation — Spanish is spoken by 500 million across 20+ countries."},
-"ocelot":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'e': ocelot → ocelote. Say them: O-se-lot / o-se-LO-te. Very common near-cognate pattern.","act":"Trace the ocelot's beautiful spotted pattern while saying o-se-LO-te slowly.","fact":"From Nahuatl 'ōcēlōtl' (Aztec). Spanish kept an extra vowel — closer to the original Nahuatl."},
-"panther":{"sim":83,"badge":"Near cognate","badgeClass":"badge-near","tip":"English 'th' becomes 't' in Spanish — very common! PAN-ther → pan-TE-ra. Spanish added a syllable and shifted the stress.","act":"Prowl softly around the room while whispering both words.","fact":"From Greek 'panthēr.' Spanish replaced Greek 'th' with 't' — theater/teatro, theme/tema, theory/teoría."},
-"penguin":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The ü (u with two dots, called diéresis) tells you to pronounce the U: pin-GWEE-no. Without those dots, 'gu' before 'i' would be silent.","act":"Waddle like a penguin between both words — pen-GWIN, pin-GWEE-no!","fact":"The ü is one of the only diacritical marks in Spanish that changes pronunciation."},
-"rhinoceros":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"English uses 'rh' at the start; Spanish uses plain 'r' — Spanish never uses 'rh.' Both from the same Greek word about horns.","act":"Point to the horn while saying both words — the horn is the same; the names nearly are too!","fact":"From Greek 'rhinokerōs' = rhinos (nose) + keras (horn)."},
-"salamander":{"sim":92,"badge":"Near cognate","badgeClass":"badge-near","tip":"Almost perfect! English ends in '-er'; Spanish ends in '-ra': sala-MAN-der / sala-MAN-dra. Just the last two letters swapped order.","act":"Count the salamander's 4 legs, then count the 4 syllables in sala-man-dra!","fact":"The -er/-ra ending swap is a classic indicator of shared Latin origin."},
-"tiger":{"sim":87,"badge":"Near cognate","badgeClass":"badge-near","tip":"In Spanish every letter is pronounced — that final 'e' in tigre is always spoken. No silent letters in Spanish!","act":"Let out a soft growl between syllables: Tee — GRRR — eh! The growl lives in the middle.","fact":"In Spanish, no letter is ever silent. This consistency is one of Spanish's greatest strengths for young readers."},
-"tortoise":{"sim":45,"badge":"Related words","badgeClass":"badge-related","tip":"Not strong cognates — different paths from Latin. But 'Tortuga' is the famous pirate island name! A great cultural conversation.","act":"Move veeery slowly like a tortoise between the words. Tor-toise… tor-TOO-gah…","fact":"The pirate island 'Tortuga' off Haiti shows how Spanish explorer names shaped Caribbean geography."},
-"uakari":{"sim":92,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from a Brazilian indigenous language! Both pronounced nearly identically. Celebrates indigenous linguistic heritage!","act":"This is a rare and special word — say it 3 times: Uakari, Uacarí, Uakari!","fact":"From Tupi or another Amazonian language. Many South American animals have names from indigenous languages."},
-"viper":{"sim":60,"badge":"Related words","badgeClass":"badge-related","tip":"Both trace to Latin 'vipera.' Spanish 'v' is very soft — almost like a 'b' sound: VEE-bo-rah. Latin 'vipera' is actually closer to Spanish 'víbora' — Spanish preserved more of the original!","act":"Make a long ssssss sound between the words like a viper. VYE-per… ssss… VEE-bo-rah!","fact":"From Latin 'vipera' = vivus (alive) + parere (give birth) — vipers bear live young!"},
-"yak":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Identical spelling and pronunciation in both languages. From Tibetan unchanged.","act":"Make a low, gruff YAK grunt — exactly the same in English and Spanish!","fact":"From Tibetan 'g.yag.' Short words from distant languages often stay identical."},
-"cactus":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Same spelling, nearly same pronunciation. English: KAK-tus; Spanish: KAHK-toos.","act":"Count the cactus spines on the page. Prickly in English AND Spanish!","fact":"From Greek 'kaktos.' Scientific names from Latin/Greek often become perfect cognates."},
-"canyon":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"English borrowed 'canyon' FROM Spanish 'cañón'! The ñ makes the 'ny' sound. Spanish explorers named canyons across the American West.","act":"Cup hands around your mouth and call into the canyon: ka-NYOHN!","fact":"Words like canyon, bronco, ranch, rodeo, lasso all entered English from Spanish in the 1800s."},
-"island":{"sim":65,"badge":"Related words","badgeClass":"badge-related","tip":"Both come from Latin 'insula.' English 'island' has a SILENT S — added in the 1500s to look more Latin! Spanish 'isla' is more phonetic.","act":"Draw a tiny island circle on paper — la ISLA, the island.","fact":"The S in English 'island' is entirely silent and was added by scribes. Spanish 'isla' kept Latin directly."},
-"desert":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"English: DEZ-ert (2 syllables); Spanish: de-SYEHR-to (4 syllables). The 'ie' in Spanish is a diphthong — two vowels gliding together.","act":"Fan yourself dramatically from the heat while saying de-SYEHR-to.","fact":"Spanish preserves a Latin 'ie' diphthong unique to Spanish among the Latin languages."},
-"meteor":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'o': meteor + o = meteoro! The -or → -oro pattern is very common in science words.","act":"Whoosh one hand across the sky like a shooting meteor while saying me-te-OH-ro.","fact":"From Greek 'meteōros' (suspended in air). The added Spanish 'o' keeps the Greek '-os' ending."},
-"palm":{"sim":87,"badge":"Near cognate","badgeClass":"badge-near","tip":"English 'palm' often has a silent L. Spanish 'palma' always pronounces it: PAL-mah. Spanish also adds 'a' making it feminine.","act":"Hold up your palm (of your hand) while saying both words — same Latin root!","fact":"From Latin 'palma' meaning BOTH the flat of the hand AND the palm tree."},
-"ocean":{"sim":80,"badge":"Near cognate","badgeClass":"badge-near","tip":"English smooshes 'ocean' into 2 syllables (OH-shun). Spanish opens it to 4 clear syllables: o-SEH-ah-no. Spanish speaks every letter.","act":"Make wave motions with arms — one wave per syllable: o — SEH — ah — no.","fact":"From Greek 'okeanos.' Spanish keeps all 4 syllables; English compressed it dramatically."},
-"planet":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish adds 'a': planet + a = planeta! Both from Greek 'planetes' (wanderer).","act":"Point to a planet and say: el Planeta Tierra = Planet Earth!","fact":"Ancient Greeks called planets 'planetai' (wanderers) because they moved differently from stars."},
-"safari":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Arabic 'safar' (journey)! Both languages borrowed it identically.","act":"Look through pretend binoculars while saying safari in both languages. Same word, same adventure!","fact":"From Arabic 'safar' through Swahili. The word traveled through East Africa into English and Spanish."},
-"tornado":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! English borrowed 'tornado' FROM Spanish! English: tor-NEI-do; Spanish: tor-NAH-do.","act":"Spin around slowly while saying both versions. Can you hear the 'nay' vs 'nah' difference?","fact":"From Spanish 'tronada' (thunderstorm). English borrowed it from Spanish explorers on the American plains."},
-"volcano":{"sim":88,"badge":"Near cognate","badgeClass":"badge-near","tip":"English ADDS 'o'; Spanish is SHORTER! vol-KAY-no vs vol-KAHN. The accent on á tells you the last syllable gets the stress.","act":"Build excitement with each syllable like lava rising: vol… KAY… no! vol… KAHN!","fact":"Named for Vulcanus, the Roman god of fire."},
-"banana":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Identical in both languages. From West African languages through Portuguese.","act":"Peel an imaginary banana while saying ba-NA-na / ba-NA-na. Can you find ANY difference?","fact":"From Wolof or Mandinka (West African languages) through Portuguese trade routes."},
-"broccoli":{"sim":93,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both borrowed from Italian 'broccoli'! Nearly identical — great example of English and Spanish agreeing on Italian food words.","act":"Make little tree shapes with your fingers while saying BROC-o-lee / BRO-ko-lee.","fact":"From Italian 'broccolo.' English, Spanish, and Italian all share this word."},
-"cacao":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Nahuatl (Aztec)! ka-KAH-oh in both languages. Chocolate comes from cacao!","act":"Smell chocolate or cocoa powder together while practicing ka-KAH-oh. This plant changed world history!","fact":"From Nahuatl 'cacahuatl.' Aztec cacao was used as currency. Borrowed into Spanish in the 1500s."},
-"cereal":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE! Same spelling. English: SEER-ee-ul. Spanish: se-re-AHL. The accent mark on á tells you to stress the LAST syllable.","act":"Pour pretend cereal while saying both versions. SEER-ee-ul pour… se-re-AHL pour!","fact":"From the Roman goddess Ceres, goddess of grain. 2,000 years of linguistic history in one bowl!"},
-"chocolate":{"sim":95,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Nahuatl! English: CHOC-o-lit (3 syllables). Spanish: cho-ko-LA-te (4 syllables). Spanish speaks every syllable.","act":"Hold up fingers: English 3, Spanish 4. One more syllable sounds so different!","fact":"From Nahuatl 'xocolatl.' Spanish explorers brought chocolate to Europe in the 1500s."},
-"coconut":{"sim":75,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish uses just 'coco'! The 'nut' part is implied. Sometimes one language is more concise.","act":"Knock knuckles like knocking a coconut shell: KO-ko! KO-ko-nut!","fact":"'Coco' comes from Portuguese/Spanish for 'goblin face' — explorers saw the three holes as a funny face."},
-"fruit":{"sim":85,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both from Latin 'fructus.' Spanish adds 'a' — making it feminine (la fruta). Nearly identical vowels: FROOT / FROO-tah.","act":"Point to each fruit on the page and say: '¡Es una fruta!'","fact":"From Latin 'fructus' (enjoyment, fruit). Fruta, fruto, fructose all share this ancient ancestor."},
-"hamburger":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"Both named after Hamburg, Germany! English: 3 syllables; Spanish: ahm-boor-GEH-sah (4 syllables).","act":"Build an imaginary hamburger layer by layer: ahm — boor — GEH — sah!","fact":"Named for Hamburg, Germany. Both languages borrowed the city name with their own culinary suffixes."},
-"kiwi":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Māori! KEE-wee in both languages. Both borrowed the Māori name for the bird, then used it for the fruit.","act":"Point to the beautiful star-burst cross-section pattern on the kiwi!","fact":"From Māori 'kiwi.' The Māori word traveled to both languages completely unchanged."},
-"lemon":{"sim":78,"badge":"Near cognate","badgeClass":"badge-near","tip":"The accent mark shows last-syllable stress: lee-MOHN. English: LEM-un (first syllable). Both from Arabic 'laymun.'","act":"Make a sour face together! LEM-un — sour face! lee-MOHN — equally tart!","fact":"From Arabic 'laymūn.' Arabic traders spread citrus fruits and their names across the Mediterranean."},
-"mango":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Tamil/Sanskrit! Identical in both languages. Originally from South India, via Portuguese.","act":"Draw a mango shape — that beautiful golden curve — while saying MAN-go.","fact":"From Tamil 'māṅkāy' through Portuguese 'manga.' Portuguese explorers brought fruit and name to Europe."},
-"melon":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Accent on the last syllable in Spanish: me-LOHN. English: MEL-on. Same letters, completely different stress — accent mark is always your guide!","act":"Tap an imaginary melon for each syllable. MEL-on: 2 taps. Me-LOHN: 2 taps. Same number, different music!","fact":"A single accent mark transforms how a word feels in the mouth. That's the power of diacritics."},
-"papaya":{"sim":97,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Taíno — a Caribbean indigenous language! Many tropical fruit names are perfect cognates.","act":"Say it 3 times fast: pa-PAH-yah, pa-PAH-yah, pa-PAH-yah!","fact":"From Taíno 'papáia.' When Columbus arrived, the Taíno people introduced Europeans to this fruit and name."},
-"pasta":{"sim":100,"badge":"★ Perfect cognate","badgeClass":"badge-perfect","tip":"PERFECT COGNATE from Italian! PAS-ta in both languages. Italian food words almost always become perfect cognates.","act":"Stir an imaginary pasta pot while counting syllables: PAS — ta!","fact":"From Italian 'pasta' from Greek 'pastē.' Italian food spread across the Americas with its vocabulary unchanged."},
-"salmon":{"sim":83,"badge":"Near cognate","badgeClass":"badge-near","tip":"The L is completely SILENT in English — SAM-un! Spanish pronounces every letter clearly: sal-MOHN. Perfect example of Spanish phonics consistency.","act":"Swim upstream like a salmon while saying both. SAM-un glide… sal-MOHN splash!","fact":"English developed the silent L in the 1500s. Spanish kept pronouncing it — what you see is what you say."},
-"soup":{"sim":65,"badge":"Related words","badgeClass":"badge-related","tip":"Less obvious cognate — but look: both share S-P at their core! SouP / SoPa. Both from Latin 'suppa.'","act":"Slurp an imaginary spoonful between each word. SOOP… slurp… SO-pah!","fact":"From late Latin 'suppa' (bread soaked in broth). English compressed it; Spanish kept two clear syllables."},
-"tomato":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"From Nahuatl 'tomatl'! English: to-MAY-to; Spanish: to-MAH-te. The vowel difference inspired the famous song 'You say to-MAY-to, I say to-MAH-to!'","act":"Sing it together: 'You say to-MAY-to, I say to-MAH-to!' That song is literally about this cognate pair!","fact":"From Nahuatl 'tomatl.' Spanish explorers brought tomatoes from Mexico to Europe in the 1500s."},
-"vanilla":{"sim":82,"badge":"Near cognate","badgeClass":"badge-near","tip":"Two rules at once! Spanish 'v' sounds like 'b' AND double-ll sounds like 'y' (…NEE-ya). So: bai-NEE-ya. Also from Nahuatl!","act":"Smell vanilla extract — this incredible scent comes from an orchid pod from Mexico! la Vainilla.","fact":"From Nahuatl 'tlilxochitl' (black flower). Spanish borrowed it as 'vainilla' (little pod) in the 1500s."},
-"yogurt":{"sim":90,"badge":"Near cognate","badgeClass":"badge-near","tip":"Spanish drops the final 't': yogurt → yogur! yo-GOOR. Both from Turkish. Spanish pronunciation is actually closer to the Turkish original!","act":"Stir an imaginary yogurt cup: YO-gert stir… yo-GOOR stir! Which feels smoother?","fact":"From Turkish 'yoğurt.' Spanish dropped the final consonant — ironically closer to Turkish than English."}
-};
-
-const PRON = {
-  "armadillo":{"enP":"ar-ma-DI-lo","esP":"el ar-mah-DEE-yoh"},
-  "buffalo":{"enP":"BA-fa-lo","esP":"el BOO-fah-loh"},
-  "baboon":{"enP":"ba-BUN","esP":"el bah-bwee-NOH"},
-  "crocodile":{"enP":"kro-ko-DAIL","esP":"el koh-koh-DREE-loh"},
-  "camel":{"enP":"KEI-mel","esP":"el kah-MEY-yoh"},
-  "dinosaur":{"enP":"DAI-no-sor","esP":"el dee-noh-SOW-ree-oh"},
-  "dolphin":{"enP":"Dol-FIN","esP":"el del-FEEN"},
-  "elephant":{"enP":"E-le-fant","esP":"el e-le-FAN-te"},
-  "flamingo":{"enP":"FLA-min-go","esP":"el flah-MEN-koh"},
-  "giraffe":{"enP":"yi-RAF","esP":"la hee-RAH-fah"},
-  "gorilla":{"enP":"go-RI-la","esP":"el goh-REE-lah"},
-  "hippopotamus":{"enP":"hi-po-PO-ta-mas","esP":"el ee-poh-PO-tah-moh"},
-  "iguana":{"enP":"i-GUA-na","esP":"la ee-GWAH-nah"},
-  "insect":{"enP":"In-sek-t","esP":"el een-SEK-toh"},
-  "jaguar":{"enP":"TAI-guer","esP":"el hah-GWAR"},
-  "koala":{"enP":"ko-A-la","esP":"el koh-AH-lah"},
-  "lion":{"enP":"LAI-on","esP":"el le-ON"},
-  "monkey":{"enP":"MAN-ki","esP":"el MO-noh"},
-  "ocelot":{"enP":"O-se-lot","esP":"el oh-se-LO-te"},
-  "panther":{"enP":"PAN-der","esP":"la pan-TE-rah"},
-  "penguin":{"enP":"PEN-guin","esP":"el pin-GWEE-noh"},
-  "rhinoceros":{"enP":"rai-NO-se-ros","esP":"el ree-noh-se-RON-te"},
-  "salamander":{"enP":"sa-la-MAN-der","esP":"la sah-lah-MAN-drah"},
-  "tiger":{"enP":"TAI-guer","esP":"el TEE-greh"},
-  "tortoise":{"enP":"TOR-t-was","esP":"la tor-TOO-gah"},
-  "uakari":{"enP":"wa-KA-ri","esP":"el wah-kah-REE"},
-  "viper":{"enP":"VAI-per","esP":"la VEE-boh-rah"},
-  "yak":{"enP":"yak","esP":"el yak"},
-  "cactus":{"enP":"KAK-tas","esP":"el KAHK-toos"},
-  "canyon":{"enP":"Ka-nyon","esP":"el kah-NYOHN"},
-  "island":{"enP":"AI-land","esP":"la EES-lah"},
-  "desert":{"enP":"De-sert","esP":"el deh-SYEHR-toh"},
-  "meteor":{"enP":"Mi-ti-or","esP":"el meh-teh-OH-roh"},
-  "palm":{"enP":"Palm","esP":"la PAHL-mah"},
-  "ocean":{"enP":"O-shen","esP":"el oh-SEH-ah-noh"},
-  "planet":{"enP":"Pla-net","esP":"el plah-NEH-tah"},
-  "safari":{"enP":"sa-FA-ri","esP":"el sah-FAH-ree"},
-  "tornado":{"enP":"tor-NEI-do","esP":"el tor-NAH-doh"},
-  "volcano":{"enP":"Vol-KEI-no","esP":"el vol-KAHN"},
-  "banana":{"enP":"ba-NA-na","esP":"la bah-NAH-nah"},
-  "broccoli":{"enP":"bro-ko-li","esP":"el BROH-koh-lee"},
-  "cacao":{"enP":"ka-KEI-o","esP":"el kah-KAH-oh"},
-  "cereal":{"enP":"Si-ri-al","esP":"el seh-reh-AHL"},
-  "chocolate":{"enP":"Cho-ko-lit","esP":"el choh-koh-LAH-teh"},
-  "coconut":{"enP":"Ko-ko-nat","esP":"el KOH-koh"},
-  "fruit":{"enP":"Frut","esP":"la FROO-tah"},
-  "hamburger":{"enP":"Ham-ber-ger","esP":"la ahm-boor-GEH-sah"},
-  "kiwi":{"enP":"Ki-wi","esP":"el KEE-wee"},
-  "lemon":{"enP":"Le-mon","esP":"el lee-MOHN"},
-  "mango":{"enP":"Man-go","esP":"el MAHN-goh"},
-  "melon":{"enP":"Me-lon","esP":"el meh-LOHN"},
-  "papaya":{"enP":"pa-PEI-a","esP":"la pah-PAH-yah"},
-  "pasta":{"enP":"Pas-ta","esP":"la PAHS-tah"},
-  "salmon":{"enP":"Sal-mon","esP":"el sahl-MOHN"},
-  "soup":{"enP":"Sup","esP":"la SOH-pah"},
-  "tomato":{"enP":"to-MEI-to","esP":"el toh-MAH-teh"},
-  "vanilla":{"enP":"va-NI-la","esP":"la bye-NEE-yah"},
-  "yogurt":{"enP":"Yo-gert","esP":"el yoh-GOOR"}
-};
-
-function buildDots() {
-  const wrap = document.getElementById("pageDots");
-  wrap.innerHTML = "";
-  const total = Math.min(NUM_PAGES, 20);
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement("div");
-    d.className = "dot" + (i === currentPage ? " active" : "");
-    d.onclick = (function(idx){ return () => goPage(idx); })(i);
-    d.title = "Page " + (i + 1);
-    wrap.appendChild(d);
-  }
-}
-
-function goPage(idx) {
-  if (idx < 0 || idx >= NUM_PAGES) return;
-  currentPage = idx;
-  document.getElementById("pageImg").src = `/page-image/${BOOK_ID}/${idx}`;
-  document.getElementById("pageCounter").textContent = `Page ${idx + 1} of ${NUM_PAGES}`;
-  document.getElementById("prevBtn").disabled = idx === 0;
-  document.getElementById("nextBtn").disabled = idx === NUM_PAGES - 1;
-  document.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === idx));
-  updateWords();
-}
-
-function updateWords() {
-  const page = PAGES[currentPage] || {};
-  let wordList = [];
-  if (page.words && page.words.length) {
-    const real = page.words.filter(w => w.english || w.spanish);
-    if (real.length) wordList = real;
-  }
-  if (!wordList.length && (page.english || page.spanish)) {
-    wordList = [{english: page.english||"", spanish: page.spanish||"", en_sentence: page.en_sentence||"", es_sentence: page.es_sentence||""}];
-  }
-
-  const container = document.getElementById("wordsContainer");
-  if (!container) return;
-
-  if (!wordList.length) {
-    container.innerHTML = '<p class="no-word">No words on this page</p>';
-    updateTips("","","","");
-    return;
-  }
-
-  container.innerHTML = wordList.map((w, i) => {
-    const key = (w.english || "").toLowerCase().split(/[\s\/]/)[0];
-    const pron = PRON[key] || {};
-    const multi = wordList.length > 1;
-    return `
-      ${multi ? `<div style="font-size:11px;font-weight:700;color:#4A6A8A;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Word ${i+1}</div>` : ""}
-      <div class="word-card">
-        <div class="word-label">🇺🇸 English <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for Spanish speakers)</span></div>
-        <div class="word-text">${w.english || "—"}</div>
-        ${pron.enP ? `<div class="word-pron">${pron.enP}</div>` : ""}
-        ${w.en_sentence ? `<div style="font-size:12px;color:#8BA3C0;margin-bottom:8px;font-style:italic">"${w.en_sentence}"</div>` : ""}
-        <div class="play-row">
-          <button class="play-btn play-btn-en" onclick="playAudio('en','word',${i})" ${w.english?"":"disabled"}>▶ Pronunciación</button>
-          ${w.en_sentence ? `<button class="play-btn play-btn-en" style="opacity:.8" onclick="playAudio('en','sentence',${i})">▶ Sentence</button>` : ""}
-        </div>
-      </div>
-      <div class="word-card" style="margin-top:10px">
-        <div class="word-label">🇲🇽 Español <span style="font-size:10px;color:#4A6A8A;font-weight:400">(for English speakers)</span></div>
-        <div class="word-text" style="color:#F9C12E">${w.spanish || "—"}</div>
-        ${pron.esP ? `<div class="word-pron">${pron.esP}</div>` : ""}
-        ${w.es_sentence ? `<div style="font-size:12px;color:#8BA3C0;margin-bottom:8px;font-style:italic">"${w.es_sentence}"</div>` : ""}
-        <div class="play-row">
-          <button class="play-btn play-btn-es" onclick="playAudio('es','word',${i})" ${w.spanish?"":"disabled"}>▶ Pronunciation</button>
-          ${w.es_sentence ? `<button class="play-btn play-btn-es" style="opacity:.8" onclick="playAudio('es','sentence',${i})">▶ Oración</button>` : ""}
-        </div>
-      </div>
-      ${multi && i < wordList.length-1 ? '<hr style="border:none;border-top:1px solid #1E3A5F;margin:12px 0">' : ""}`;
-  }).join("");
-
-  const first = wordList[0];
-  const key = (first.english || "").toLowerCase().split(/[\s\/]/)[0];
-  updateTips(key, first.english, first.spanish, page.custom_tip || "");
-}
-
-let tipsOpen = false;
-function toggleTips() {
-  tipsOpen = !tipsOpen;
-  document.getElementById("tipsPanel").classList.toggle("open", tipsOpen);
-  document.getElementById("tipsToggle").classList.toggle("open", tipsOpen);
-}
-
-function updateTips(key, enW, esW, customTip) {
-  const baseTip = TIPS[key];
-  const el = document.getElementById("tipsContent");
-  if (!enW) { el.innerHTML = `<p class="no-tip">No teaching tip for this page.</p>`; return; }
-  const t = baseTip ? {...baseTip} : {sim:80, badge:"Custom tip", badgeClass:"badge-near", act:"", fact:""};
-  if (customTip) t.tip = customTip;
-  if (!t.tip) { el.innerHTML = `<p class="no-tip">No teaching tip for this page.</p>`; return; }
-  const simClass = t.sim >= 95 ? "sim-high" : t.sim >= 80 ? "sim-med" : "sim-low";
-  el.innerHTML = `
-    <div class="sim-row">
-      <span class="sim-label">Similarity</span>
-      <div class="sim-track"><div class="${simClass} sim-fill" style="width:${t.sim}%"></div></div>
-      <span class="sim-pct">${t.sim}%</span>
-    </div>
-    <div style="padding:10px 16px 0">
-      <span class="cognate-badge ${t.badgeClass}">${customTip ? "✏️ Custom tip" : t.badge}</span>
-    </div>
-    <div class="tip-section">
-      <div class="tip-head tip-head-tip">💡 Parent & teacher tip</div>
-      <div class="tip-text">${t.tip}</div>
-    </div>
-    ${t.act ? `<div class="tip-section"><div class="tip-head tip-head-act">🎯 Activity</div><div class="act-box">${t.act}</div></div>` : ""}
-    ${t.fact ? `<div class="tip-section"><div class="tip-head tip-head-fact">🌍 Linguistic fun fact</div><div class="fact-box">${t.fact}</div></div>` : ""}`;
-}
-
-function playAudio(lang, type, wordIdx) {
-  if (playing) return;
-  playing = true;
-  const audio = new Audio(`/speak/${BOOK_ID}/${currentPage}/${lang}?type=${type}&word_idx=${wordIdx}`);
-  audio.onended = () => { playing = false; };
-  audio.onerror = () => { playing = false; };
-  audio.play().catch(() => { playing = false; });
-}
-
-async function playBothWords(wordIdx) {
-  if (playing) return;
-  playing = true;
-  await playLang("en", wordIdx);
-  await new Promise(r => setTimeout(r, 700));
-  await playLang("es", wordIdx);
-  playing = false;
-}
-
-function playLang(lang, wordIdx=0) {
-  return new Promise(resolve => {
-    const audio = new Audio(`/speak/${BOOK_ID}/${currentPage}/${lang}?type=word&word_idx=${wordIdx}`);
-    audio.onended = resolve;
-    audio.onerror = resolve;
-    audio.play().catch(resolve);
+// Load all book indexes on page load
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[id^="idx-"]').forEach(el => {
+    const bookId = el.id.replace('idx-', '');
+    buildWordIndex(bookId);
   });
-}
-
-buildDots();
-loadPageData();
-
-// Start on the correct page once data loads (or immediately for nav)
-goPage(currentPage);
-
-document.addEventListener("keydown", e => {
-  if (e.key === "ArrowRight") goPage(currentPage + 1);
-  if (e.key === "ArrowLeft") goPage(currentPage - 1);
 });
 </script>
 </body>
