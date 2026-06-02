@@ -493,7 +493,40 @@ def debug_book(book_id):
         "books_file_exists": BOOKS_FILE.exists(),
         "sample_pages": sample
     })
+# ── Book cover image ──────────────────────────────────────────────────────────
 
+@app.route("/admin/book/<book_id>/upload-cover", methods=["POST"])
+@requires_admin
+def upload_cover(book_id):
+    books = load_books()
+    if book_id not in books:
+        return redirect(url_for("admin_book", book_id=book_id,
+                                msg="cover_err", val="Book not found"))
+    f = request.files.get("cover")
+    if not f or not f.filename:
+        return redirect(url_for("admin_book", book_id=book_id,
+                                msg="cover_err", val="No file selected"))
+    try:
+        img = Image.open(f.stream)
+        img = img.convert("RGB")
+        img.thumbnail((600, 800), Image.LANCZOS)
+        cover_path = DATA_DIR / f"cover_{book_id}.jpg"
+        img.save(cover_path, "JPEG", quality=85)
+        books[book_id]["cover_image"] = True
+        save_books(books)
+        return redirect(url_for("admin_book", book_id=book_id,
+                                msg="cover_ok", val="Cover uploaded"))
+    except Exception as e:
+        return redirect(url_for("admin_book", book_id=book_id,
+                                msg="cover_err", val=str(e)))
+
+
+@app.route("/book-cover/<book_id>")
+def book_cover(book_id):
+    cover_path = DATA_DIR / f"cover_{book_id}.jpg"
+    if not cover_path.exists():
+        return "Not found", 404
+    return send_file(cover_path, mimetype="image/jpeg")
 if __name__ == "__main__":
     app.run(debug=True)
 
