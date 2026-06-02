@@ -348,9 +348,8 @@ function updateWords() {
         ${pron.enP ? `<div class="word-pron">${pron.enP}</div>` : ""}
         ${w.en_sentence ? `<div style="font-size:12px;color:#8BA3C0;margin-bottom:8px;font-style:italic">"${w.en_sentence}"</div>` : ""}
         <div class="play-row">
-          <button class="play-btn play-btn-en" onclick="playAudio('en','word',${i})" ${w.english?"":"disabled"}>▶ Word</button>
+          <button class="play-btn play-btn-en" onclick="playAudio('en','word',${i})" ${w.english?"":"disabled"}>▶ Pronunciación</button>
           ${w.en_sentence ? `<button class="play-btn play-btn-en" style="opacity:.8" onclick="playAudio('en','sentence',${i})">▶ Sentence</button>` : ""}
-          <button class="play-btn play-btn-both" onclick="playBothWords(${i})" ${(w.english&&w.spanish)?"":"disabled"}>▶ Both</button>
         </div>
       </div>
       <div class="word-card" style="margin-top:10px">
@@ -359,7 +358,7 @@ function updateWords() {
         ${pron.esP ? `<div class="word-pron">${pron.esP}</div>` : ""}
         ${w.es_sentence ? `<div style="font-size:12px;color:#8BA3C0;margin-bottom:8px;font-style:italic">"${w.es_sentence}"</div>` : ""}
         <div class="play-row">
-          <button class="play-btn play-btn-es" onclick="playAudio('es','word',${i})" ${w.spanish?"":"disabled"}>▶ Palabra</button>
+          <button class="play-btn play-btn-es" onclick="playAudio('es','word',${i})" ${w.spanish?"":"disabled"}>▶ Pronunciation</button>
           ${w.es_sentence ? `<button class="play-btn play-btn-es" style="opacity:.8" onclick="playAudio('es','sentence',${i})">▶ Oración</button>` : ""}
         </div>
       </div>
