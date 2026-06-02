@@ -11,13 +11,8 @@ from functools import wraps
 app = Flask(__name__)
 
 @app.route('/logo.png')
-def logo():
-    return send_file('logo.png', ...)
-@app.route("/logo.png")
 def serve_logo():
-    import base64
-    img_data = base64.b64decode(LOGO_B64)
-    return send_file(io.BytesIO(img_data), mimetype="image/png")
+    return send_file('logo.png', mimetype='image/png')
 
 app.secret_key = os.environ.get('SECRET_KEY', 'biliteracy-dev-2025')
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024   # 100 MB — handles large PDFs
