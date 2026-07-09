@@ -1,53 +1,88 @@
 page,word_num,english,spanish,en_sentence,es_sentence
-14,1,ANACONDA,ANACONDA,The anaconda is long. 🔤 uh-NAH-kon-duh,La anaconda es larga. 🔤 ah-nah-KON-dah
-15,1,ANACONDA,ANACONDA,Trace the letter A — uh-NAH-kon-duh,Traza la letra A — ah-nah-KON-dah
-16,1,BABOON,BABUINO,The baboon rides a bike. 🔤 buh-BOON,El babuino monta la bicicleta. 🔤 bah-BOO-ee-noh
-17,1,BABOON,BABUINO,Trace the letter B — buh-BOON,Traza la letra B — bah-BOO-ee-noh
-18,1,CROCODILE,COCODRILO,The crocodile is long. 🔤 KROK-oh-dile,El cocodrilo es largo. 🔤 koh-koh-DREE-loh
-19,1,CROCODILE,COCODRILO,Trace the letter C — KROK-oh-dile,Traza la letra C — koh-koh-DREE-loh
-20,1,DINOSAUR,DINOSAURIO,The dinosaur is dancing. 🔤 DY-noh-sor,El dinosaurio está bailando. 🔤 dee-noh-SOW-ree-oh
-21,1,DINOSAUR,DINOSAURIO,Trace the letter D — DY-noh-sor,Traza la letra D — dee-noh-SOW-ree-oh
-22,1,ELEPHANT,ELEFANTE,The elephant is grey. 🔤 EL-uh-funt,El elefante es gris. 🔤 eh-leh-FAHN-teh
-23,1,ELEPHANT,ELEFANTE,Trace the letter E — EL-uh-funt,Traza la letra E — eh-leh-FAHN-teh
-24,1,FLAMINGO,FLAMENCO,The flamingo plays football. 🔤 fluh-MIN-go,El flamenco juega fútbol. 🔤 flah-MEN-koh
-25,1,FLAMINGO,FLAMENCO,Trace the letter F — fluh-MIN-go,Traza la letra F — flah-MEN-koh
-29,1,GORILLA,GORILA,The gorilla grabs grapes. 🔤 guh-RIL-uh,El gorila agarra uvas. 🔤 go-REE-lah
-30,1,GORILLA,GORILA,Trace the letter G — guh-RIL-uh,Traza la letra G — go-REE-lah
-31,1,HIPPOPOTAMUS,HIPOPÓTAMO,The hippo is in the river. 🔤 hip-oh-POT-uh-mus,El hipopótamo está en el río. 🔤 ee-poh-POH-tah-moh
-32,1,HIPPOPOTAMUS,HIPOPÓTAMO,Trace the letter H — Spanish H is always silent! 🔤 ee-poh-POH-tah-moh,Traza la letra H — ¡La H es silenciosa! 🔤 ee-poh-POH-tah-moh
-33,1,IGUANA,IGUANA,The iguana is green. 🔤 ih-GWAH-nuh,La iguana es verde. 🔤 ee-GWAH-nah
-34,1,IGUANA,IGUANA,Trace the letter I — ih-GWAH-nuh,Traza la letra I — ee-GWAH-nah
-35,1,JAGUAR,JAGUAR,The jaguar has spots. 🔤 JAG-wahr,El jaguar tiene manchas. 🔤 hah-GWAHR
-36,1,JAGUAR,JAGUAR,Trace the letter J — Spanish J sounds like H! 🔤 hah-GWAHR,Traza la letra J — ¡La J suena como H! 🔤 hah-GWAHR
-37,1,KINKAJOU,KINKAJÚ,The kinkajou is small. 🔤 KIN-kuh-joo,El kinkajú es pequeño. 🔤 kin-kah-HOO
-38,1,KINKAJOU,KINKAJÚ,Trace the letter K — KIN-kuh-joo,Traza la letra K — kin-kah-HOO
-39,1,LEOPARD,LEOPARDO,The leopard has spots. 🔤 LEP-urd,El leopardo tiene manchas. 🔤 leh-oh-PAHR-doh
-40,1,LEOPARD,LEOPARDO,Trace the letter L — LEP-urd,Traza la letra L — leh-oh-PAHR-doh
-44,1,MANDRILL,MANDRIL,The mandrill is smart. 🔤 MAN-dril,El mandril es inteligente. 🔤 mahn-DREEL
-45,1,MANDRILL,MANDRIL,Trace the letter M — MAN-dril,Traza la letra M — mahn-DREEL
-46,1,NATURE,NATURALEZA,Nature is beautiful. 🔤 NAY-chur,La naturaleza es hermosa. 🔤 nah-too-rah-LEH-sah
-47,1,NATURE,NATURALEZA,Trace the letter N — NAY-chur,Traza la letra N — nah-too-rah-LEH-sah
-49,1,OCELOT,OCELOTE,The ocelot has spots. 🔤 OH-suh-lot,El ocelote tiene manchas. 🔤 oh-seh-LOH-teh
-50,1,OCELOT,OCELOTE,Trace the letter O — OH-suh-lot,Traza la letra O — oh-seh-LOH-teh
-51,1,PYTHON,PITÓN,The python plays. 🔤 PY-thon,El pitón juega. 🔤 pee-TOHN
-52,1,PYTHON,PITÓN,Trace the letter P — PY-thon,Traza la letra P — pee-TOHN
-53,1,QUETZAL,QUETZAL,The quetzal wants calm. 🔤 KETS-al,El quetzal quiere calma. 🔤 ket-SAHL
-54,1,QUETZAL,QUETZAL,Trace the letter Q — QU makes the K sound! 🔤 ket-SAHL,Traza la letra Q — ¡QU suena como K! 🔤 ket-SAHL
-55,1,RHINOCEROS,RINOCERONTE,The rhinoceros has a horn. 🔤 rhy-NOS-er-us,El rinoceronte tiene un cuerno. 🔤 ree-noh-seh-RON-teh
-56,1,RHINOCEROS,RINOCERONTE,Trace the letter R — try a rolling R! 🔤 ree-noh-seh-RON-teh,Traza la letra R — ¡intenta la R rodada! 🔤 ree-noh-seh-RON-teh
-60,1,SALAMANDER,SALAMANDRA,The salamander is slippery. 🔤 SAL-uh-man-der,La salamandra es resbaladiza. 🔤 sah-lah-MAHN-drah
-61,1,SALAMANDER,SALAMANDRA,Trace the letter S — SAL-uh-man-der,Traza la letra S — sah-lah-MAHN-drah
-62,1,TIGER,TIGRE,The tiger is fast. 🔤 TY-ger,El tigre es rápido. 🔤 TEE-greh
-63,1,TIGER,TIGRE,Trace the letter T — TY-ger,Traza la letra T — TEE-greh
-64,1,UNICORN,UNICORNIO,The unicorn is smiling. 🔤 YOO-nih-korn,El unicornio está sonriendo. 🔤 oo-nee-KOR-nee-oh
-65,1,UNICORN,UNICORNIO,Trace the letter U — YOO-nih-korn,Traza la letra U — oo-nee-KOR-nee-oh
-66,1,VIPER,VÍBORA,The viper slithers. 🔤 VY-per,La víbora se desliza. 🔤 VEE-boh-rah
-67,1,VIPER,VÍBORA,Trace the letter V — in Spanish V sounds like B! 🔤 VEE-boh-rah,Traza la letra V — ¡en español V suena como B! 🔤 VEE-boh-rah
-68,1,WALLABY,UALABÍ,The wallaby jumps far. 🔤 WAH-luh-bee,El ualabí salta lejos. 🔤 wah-lah-BEE
-69,1,WALLABY,UALABÍ,Trace the letter W — WAH-luh-bee,Traza la letra W — wah-lah-BEE
-70,1,X-RAY FISH,PEZ RAYO X,The X-ray fish glows. 🔤 EKS-ray fish,El pez rayo X brilla. 🔤 pez RAH-yoh EH-kees
-71,1,X-RAY FISH,PEZ RAYO X,Trace the letter X — called EQUIS in Spanish! 🔤 EH-kees,Traza la letra X — ¡se llama EQUIS! 🔤 EH-kees
-75,1,YAK,YAK,The yak is strong and sturdy. 🔤 YAK,El yak es fuerte y robusto. 🔤 YAK
-76,1,YAK,YAK,Trace the letter Y — YAK,Traza la letra Y — YAK
-77,1,ZOO,ZOOLÓGICO,Jungle animals live at the zoo. 🔤 ZOO,Los animales de la selva viven en el zoológico. 🔤 soh-oh-LOH-hee-koh
-78,1,ZOO,ZOOLÓGICO,Trace the letter Z — in Spanish Z sounds like S! 🔤 soh-oh-LOH-hee-koh,Traza la letra Z — ¡en español Z suena como S! 🔤 soh-oh-LOH-hee-koh
+2,1,This Book Belongs To,Este libro pertenece a,This Book Belongs To,Este libro pertenece a
+3,1,Welcome,Bienvenido,Welcome to Biliteracy Bridge! Early learning books that intentionally build biliteracy.,Bienvenido a Biliteracy Bridge. Libros de aprendizaje temprano que construyen la lectoescritura bilingue de manera intencional.
+4,1,Welcome,Bienvenido,Parent Guide: How to use this book.,Guia para padres: Como usar este libro.
+5,1,Trace the Jungle Paths,Traza los caminos de la jungla,Trace the lines from top to bottom.,Traza las líneas de arriba hacia abajo.
+6,1,Trace the Curvy Jungle Lines,Traza las lineas curvas de la jungla,Trace the curvy lines from top to bottom.,Traza las líneas curvas de arriba hacia abajo.
+7,1,Trace the Zigzag Jungle Lines,Traza las lineas en zigzag de la jungla,Trace the zigzag lines from top to bottom.,Traza las líneas en zigzag de arriba hacia abajo.
+8,1,Trace the Loopy Jungle Lines,Traza las lineas con bucles de la jungla,Trace the loopy lines from top to bottom.,Traza las líneas con bucles de arriba hacia abajo.
+9,1,Trace the Jungle Circles,Traza los circulos de la jungla,Trace the circles and color the jungle snake.,Traza los círculos y colorea la serpiente de la jungla.
+10,1,Trace the Jungle Squares,Traza los cuadrados de la jungla,Trace the squares and color the jungle monkey.,Traza los cuadrados y colorea el mono de la jungla.
+11,1,Trace the Jungle Triangles,Traza los triángulos de la jungla,Trace the triangles and color the jungle tiger.,Traza los triángulos y colorea el tigre de la jungla.
+12,1,Trace the Jungle Rectangles,Traza los rectángulos de la jungla,Trace the rectangles and color the jungle parrot.,Traza los rectángulos y colorea el loro de la jungla.
+13,1,Trace the Jungle Ovals,Traza los óvalos de la jungla,Trace the ovals and color the jungle turtle.,Traza los óvalos y colorea la tortuga de la jungla.
+14,1,Anaconda,Anaconda,A is for Anaconda | The anaconda is long. | 🔤 á-na-CON-da,A es de Anaconda | La anaconda es larga. | 🔤 ah-NAH-kon-dah
+15,1,A — lowercase tracing,a — trazar minúscula,a is for armadillo | Trace. Color the letter. Trace and color the picture.,a es de armadillo | Trazar. Colorea la letra. Traza y colorea el dibujo.
+16,1,Baboon,Babuino,B is for Baboon | The Baboon rides a bike. | 🔤 ba-BÚN,B es de Babuino | El babuino monta la bicicleta. | 🔤 bah-bwee-NOH
+17,1,B — lowercase tracing,b — trazar minúscula,b is for binturong | Trace. Color the letter. Trace and color the picture.,b es de binturong | Trazar. Colorea la letra. Traza y colorea el dibujo.
+18,1,Crocodile,Cocodrilo,C is for Crocodile | The crocodile is long. | 🔤 CRÓ-co-dail,C es de Cocodrilo | El cocodrilo es largo. | 🔤 ko-ko-DREE-loh
+19,1,C — lowercase tracing,c — trazar minúscula,c is for coconut | Trace. Color the letter. Trace and color the picture.,c es de coco | Trazar. Colorea la letra. Traza y colorea el dibujo.
+20,1,Dinosaur,Dinosaurio,D is for Dinosaur | The dinosaur is dancing. | 🔤 Dái-no-sor,D es de Dinosaurio | El dinosaurio está bailando. | 🔤 dee-noh-SOW-ree-oh
+21,1,D — lowercase tracing,d — trazar minúscula,d is for dingo | Trace. Color the letter. Trace and color the picture.,d es de dingo | Trazar. Colorea la letra. Traza y colorea el dibujo.
+22,1,Elephant,Elefante,E is for Elephant | The elephant is grey. | 🔤 É-le-fant,E es de Elefante | El elefante es gris. | 🔤 eh-leh-FAHN-teh
+23,1,E — lowercase tracing,e — trazar minúscula,e is for explorer | Trace. Color the letter. Trace and color the picture.,e es de explorador | Trazar. Colorea la letra. Traza y colorea el dibujo.
+24,1,Flamingo,Flamenco,F is for Flamingo | The flamingo plays football. | 🔤 fla-MÍN-go,F es de Flamenco | El flamenco juega fútbol. | 🔤 flah-MEN-ko
+25,1,F — lowercase tracing,f — trazar minúscula,f is for flora and fauna | Trace. Color the letter. Trace and color the picture.,f es de flora y fauna | Trazar. Colorea la letra. Traza y colorea el dibujo.
+26,1,Match English to Spanish,Une inglés con español,"Draw a line from the English word to the picture, then match it to the Spanish translation.",Traza una línea desde la palabra en inglés hasta la imagen y luego únela con la traducción en español.
+27,1,Butterfly Maze,Laberinto de la mariposa,Help the butterfly reach the flower.,Ayuda a la mariposa a llegar a la flor.
+28,1,Big or Small?,¿Grande o pequeño?,Draw a line to sort the animals into BIG and SMALL.,Traza una línea para clasificar los animales en GRANDES y PEQUEÑOS.
+29,1,Gorilla,Gorila,G is for Gorilla | The gorilla grabs grapes. | 🔤 gü-REL-uh,G es de Gorila | El gorila agarra uvas. | 🔤 go-REE-lah
+30,1,G — lowercase tracing,g — trazar minúscula,g is for gecko | Trace. Color the letter. Trace and color the picture.,g es de gecko | Trazar. Colorea la letra. Traza y colorea el dibujo.
+31,1,Hippopotamus,Hipopótamo,H is for Hippopotamus | The hippopotamus is in the river. | 🔤 ji-po-PÓ-ta-mas,H es de Hipopótamo | El hipopótamo está en el río. | 🔤 ee-poh-POH-tah-moh
+32,1,H — lowercase tracing,h — trazar minúscula,h is for habitat | Trace. Color the letter. Trace and color the picture.,h es de habitat | Trazar. Colorea la letra. Traza y colorea el dibujo.
+33,1,Iguana,Iguana,I is for Iguana | The iguana is green. | 🔤 eh-GWAH-nuh | 💡 The Spanish I makes the ee sound in English,I es de Iguana | La iguana es verde. | 🔤 ee-GWAH-nah
+34,1,I — lowercase tracing,i — trazar minúscula,i is for insect | Trace. Color the letter. Trace and color the picture.,i es de insecto | Trazar. Colorea la letra. Traza y colorea el dibujo.
+35,1,Jaguar,Jaguar,J is for Jaguar | The jaguar has spots. | 🔤 DYÁG-uar | 💡 The Spanish J makes the 'H' sound in English,J es de Jaguar | El jaguar tiene manchas. | 🔤 hah-GWAHR
+36,1,J — lowercase tracing,j — trazar minúscula,j is for jungle | Trace. Color the letter. Trace and color the picture.,j es de jungla | Trazar. Colorea la letra. Traza y colorea el dibujo.
+37,1,Kinkajou,Kinkajú,K is for Kinkajou | The kinkajou is small. | 🔤 QUÍN-ka-yu,K es de Kinkajú | El kinkajú es pequeño. | 🔤 keen-kah-HOO
+38,1,K — lowercase tracing,k — trazar minúscula,k is for koala | Trace. Color the letter. Trace and color the picture.,k es de koala | Trazar. Colorea la letra. Traza y colorea el dibujo.
+39,1,Leopard,Leopardo,L is for Leopard | The leopard has spots. | 🔤 LÉ-pard,L es de Leopardo | El leopardo tiene manchas. | 🔤 leh-oh-PAR-do
+40,1,L — lowercase tracing,l — trazar minúscula,l is for lion | Trace. Color the letter. Trace and color the picture.,l es de león | Trazar. Colorea la letra. Traza y colorea el dibujo.
+41,1,Match the Jungle Animals,Une los animales de la jungla,"Draw a line from the English word to the picture, then match it to the Spanish translation.",Traza una línea desde la palabra en inglés hasta la imagen y luego únela con la traducción en español.
+42,1,Jungle Maze,Laberinto de la jungla,Help the jaguar find its way through the jungle maze.,Ayuda al jaguar a encontrar el camino a través del laberinto de la jungla.
+43,1,Fast or Slow?,¿Rápido o lento?,Draw a line to sort the animals into FAST and SLOW.,Traza una línea para clasificar los animales en RÁPIDOS y LENTOS.
+44,1,Mandrill,Mandril,M is for Mandrill | The mandrill is smart. | 🔤 MÁN-drell,M es de Mandril | El mandril es inteligente. | 🔤 mahn-DREEL
+45,1,M — lowercase tracing,m — trazar minúscula,m is for moss | Trace. Color the letter. Trace and color the picture.,m es de musgo | Trazar. Colorea la letra. Traza y colorea el dibujo.
+46,1,Nature,Naturaleza,N is for Nature | Nature is beautiful. | 🔤 Nay-tcher,N es de Naturaleza | La naturaleza es hermosa. | 🔤 nah-too-rah-LEH-sah
+47,1,N — lowercase tracing,n — trazar minúscula,n is for nest | Trace. Color the letter. Trace and color the picture.,n es de nido | Trazar. Colorea la letra. Traza y colorea el dibujo.
+48,1,Cabin/Pineapple,Cabaña/Piña,"Meet the letter Ñ! | Look at the beautiful cabin and the sweet pineapple! | 🔤 CÁ-bin / PÁIN-a-poll | 💡 English doesn't have the letter Ñ, but we sometimes make this sound in words like canyon or onion! This special letter is found in words like Cabaña (Cabin) and Piña (Pineapple).","¡Conoce la letra Ñ! | ¡Mira la hermosa cabaña y la dulce piña! | 🔤 ka-BA-nya / PEE-nya | 💡 El inglés no tiene la letra Ñ, pero a veces hacemos este sonido en palabras como canyon u onion en inglés. Esta letra especial se encuentra en palabras como Cabaña y Piña."
+49,1,Ocelot,Ocelote,O is for Ocelot | The ocelot has spots. | 🔤 Ó-se-lot,O es de Ocelote | El ocelote tiene manchas. | 🔤 oh-seh-LOH-teh
+50,1,O — lowercase tracing,o — trazar minúscula,o is for orchid | Trace. Color the letter. Trace and color the picture.,o es de orquidea | Trazar. Colorea la letra. Traza y colorea el dibujo.
+51,1,Python,Pitón,P is for Python | The python plays. | 🔤 PÁI-thon,P es para Pitón | El pitón juega. | 🔤 pee-TON
+52,1,P — lowercase tracing,p — trazar minúscula,p is for plant | Trace. Color the letter. Trace and color the picture.,p es de planta | Trazar. Colorea la letra. Traza y colorea el dibujo.
+53,1,Quetzal,Quetzal,Q is for Quetzal | The quetzal wants calm. | 🔤 QUET-zal,Q es de Quetzal | El quetzal quiere calma. | 🔤 ket-SAHL
+54,1,Q — lowercase tracing,q — trazar minúscula,q is for quinoa | Trace. Color the letter. Trace and color the picture.,q es de quinoa | Trazar. Colorea la letra. Traza y colorea el dibujo.
+55,1,Rhinoceros,Rinoceronte,R is for Rhinoceros | The rhinoceros has a horn. | 🔤 rai-NÓ-se-ras,R es de Rinoceronte | El rinoceronte tiene un cuerno. | 🔤 ree-no-seh-ROHN-teh
+56,1,R — lowercase tracing,r — trazar minúscula,r is for rodent | Trace. Color the letter. Trace and color the picture.,r es de roedor | Trazar. Colorea la letra. Traza y colorea el dibujo.
+57,1,Match the Jungle Words,Une las palabras de la jungla,"Draw a line from the English word to the picture, then match it to the Spanish translation.",Traza una línea desde la palabra en inglés hasta la imagen y luego únela con la traducción en español.
+58,1,Find the Differences,Encuentra las diferencias,Look carefully and circle the 5 differences between the two jungle pictures.,Mira cuidadosamente y encierra en un círculo las 5 diferencias entre las dos imágenes de la jungla.
+59,1,Horns or No Horns?,¿Con cuernos o sin cuernos?,Draw a line to sort the animals into HORNS and NO HORNS.,Traza una línea para clasificar los animales en CON CUERNOS y SIN CUERNOS.
+60,1,Salamander,Salamandra,S is for Salamander | The salamander is slippery. | 🔤 SÁ-la-man-der,S es de Salamandra | La salamandra es resbaladiza. | 🔤 sah-lah-MAN-drah
+61,1,S — lowercase tracing,s — trazar minúscula,s is for sun | Trace. Color the letter. Trace and color the picture.,s es de sol | Trazar. Colorea la letra. Traza y colorea el dibujo.
+62,1,Tiger,Tigre,T is for Tiger | The tiger is fast. | 🔤 TÁI-guer,T es de Tigre | El tigre es rápido. | 🔤 TEE-greh
+63,1,T — lowercase tracing,t — trazar minúscula,t is for turtle | Trace. Color the letter. Trace and color the picture.,t es de tortuga | Trazar. Colorea la letra. Traza y colorea el dibujo.
+64,1,Unicorn,Unicornio,U is for Unicorn | The unicorn is smiling. | 🔤 iú-ni-corn | 💡 The Spanish U makes the 'oo' sound in English,U es de Unicornio | El unicornio está sonriendo. | 🔤 oo-nee-KOHR-nyoh
+65,1,U — lowercase tracing,u — trazar minúscula,u is for Uniform | Trace. Color the letter. Trace and color the picture. | 💡 Ranger,u es de Uniforme | Trazar. Colorea la letra. Traza y colorea el dibujo. | 💡 Guardabosques de la selva
+66,1,Viper,Víbora,V is for Viper | The viper slithers. | 🔤 Vai-per,V es de Víbora | La víbora se desliza. | 🔤 VEE-bo-ra
+67,1,V — lowercase tracing,v — trazar minúscula,v is for vegetation | Trace. Color the letter. Trace and color the picture.,v es de vegetación | Trazar. Colorea la letra. Traza y colorea el dibujo.
+68,1,Wallaby,Walabi,W is for Wallaby | The wallaby jumps far. | 🔤 ÜÓ-la-bi,W es de Walabi | El walabi salta lejos. | 🔤 wah-LAH-bee
+69,1,W — lowercase tracing,w — trazar minúscula,w is for wapiti | Trace. Color the letter. Trace and color the picture.,w es de wapiti | Trazar. Colorea la letra. Traza y colorea el dibujo.
+70,1,X-ray Fish,Pez Rayo X,X is for X-ray Fish | The X-ray fish glows. | 🔤 écs-rei-fich,X es de Pez Rayo X | El pez rayo X brilla. | 🔤 pess RAH-yo EH-kees
+71,1,X — lowercase tracing,x — trazar minúscula,x is for xylophone | Trace. Color the letter. Trace and color the picture.,x es de xilófono | Trazar. Colorea la letra. Traza y colorea el dibujo.
+72,1,Match the Jungle Words,Une las palabras de la jungla,"Draw a line from the English word to the picture, then match it to the Spanish translation.",Traza una línea desde la palabra en inglés hasta la imagen y luego únela con la traducción en español.
+73,1,Find the Differences,Encuentra las diferencias,Look carefully and circle the 5 differences between the two jungle pictures.,Mira cuidadosamente y encierra en un círculo las 5 diferencias entre las dos imágenes de la jungla.
+74,1,Can Swim or Cannot Swim?,¿Puede nadar o no puede nadar?,Draw a line to sort the animals into CAN SWIM and CANNOT SWIM.,Traza una línea para clasificar los animales en PUEDE NADAR y NO PUEDE NADAR.
+75,1,Yak,Yak,"Y is for Yak | The yak is strong and sturdy. | 🔤 YAC | 💡 In both English and Spanish, the letter Y can act as a consonant or a vowel, making a few different sounds!",Y es de Yak | El yak es fuerte y robusto. | 🔤 YAHK
+76,1,Y — lowercase tracing,y — trazar minúscula,y is for yucca | Trace. Color the letter. Trace and color the picture.,y es de yuca | Trazar. Colorea la letra. Traza y colorea el dibujo.
+77,1,Zoo,Zoológico,Z is for Zoo | Jungle animals live at the zoo. | 🔤 ZU | 💡 In Spain the Z is pronounced like an English th - but not in Latin America,Z es de Zoológico | Los animales de la selva viven en el zoológico. | 🔤 soh-oh-LOH-hee-koh
+78,1,Z — lowercase tracing,z — trazar minúscula,z is for zinnia | Trace. Color the letter. Trace and color the picture. | 💡 Wild zinnias grow near the warm Mexican jungle!,z es de zinnia | Trazar. Colorea la letra. Traza y colorea el dibujo.
+79,1,Match the Jungle Words,Une las palabras de la jungla,"Draw a line from the English word to the picture, then match it to the Spanish translation.",Traza una línea desde la palabra en inglés hasta la imagen y luego únela con la traducción en español.
+80,1,Count the Bananas,Cuenta los plátanos,Count the bananas the monkey is holding and color the correct number.,Cuenta los plátanos que sostiene el mono y colorea el número correcto.
+81,1,Count the Leaves,Cuenta las hojas,Count the leaves and color the correct number.,Cuenta las hojas y colorea el número correcto.
+82,1,Count the Footprints,Cuenta las huellas,Count the footprints and color the correct number.,Cuenta las huellas y colorea el número correcto.
+83,1,Jungle Banana Maze,Laberinto de bananas en la jungla,Help the monkey find the bananas through the jungle maze.,Ayuda al mono a encontrar los plátanos a través del laberinto de la jungla.
+84,1,Frog Pond Maze,Laberinto del estanque de la rana,Help the frog hop through the jungle maze to reach the pond.,Ayuda a la rana a saltar por el laberinto de la jungla para llegar al estanque.
+85,1,Parrot Tree Maze,Laberinto del loro y el árbol,Help the parrot fly through the jungle maze to reach the tree.,Ayuda al loro a volar por el laberinto de la jungla para llegar al árbol.
+86,1,Match the Jungle Fruit Shadows,Une las sombras de las frutas de la jungla,Draw a line to match each jungle fruit to its shadow.,Traza una línea para unir cada fruta de la jungla con su sombra.
+87,1,Match the Jungle Shadows,Une las sombras de la jungla,Draw a line to match each jungle animal to its shadow.,Traza una línea para unir cada animal de la jungla con su sombra.
+89,1,Thank you,Gracias,"Thank you for choosing this book. Whether you used it at home or in the classroom, you gave a child something that will stay with them — the early sense that two languages aren't a burden to manage, but a world to explore. If this book has been useful to you, please consider leaving a review on Amazon. It takes two minutes and helps other parents and teachers find it. We read every one. Take it further at biliteracybridge.com The website is built to support everything in this book and beyond. Yo","Gracias por elegir este libro. Ya sea que lo hayas usado en casa o en el salón de clases, le diste a un niño algo que le quedará para siempre — la sensación temprana de que dos idiomas no son una carga, sino un mundo por explorar. Si este libro te ha sido útil, considera dejar una reseña en Amazon. Toma dos minutos y ayuda a otros padres y maestros a encontrarlo. Leemos cada una de ellas. El sitio web está diseñado para apoyar todo lo que hay en este libro y mucho más. Encontrarás: Audio de cada"

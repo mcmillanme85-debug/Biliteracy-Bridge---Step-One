@@ -338,6 +338,9 @@ def upload_csv(book_id):
         content = f.read().decode("utf-8-sig").splitlines()
         reader  = csv.DictReader(content)
         pages   = books[book_id].get("pages", [])
+        if not pages:
+            return redirect(url_for("admin_book", book_id=book_id,
+                                    msg="csv_err", val="Upload the PDF first — no pages found yet (pages list is empty)"))
         filled  = 0
         # Group rows by page, then word_num
         page_words = {}
@@ -371,8 +374,9 @@ def upload_csv(book_id):
                 filled += 1
         books[book_id]["pages"] = pages
         save_books(books)
+        total = len(pages)
         return redirect(url_for("admin_book", book_id=book_id,
-                                msg="csv_ok", val=str(filled)))
+                                msg="csv_ok", val=f"{filled} of {total}"))
     except Exception as e:
         print(f"CSV upload error: {e}")
         return redirect(url_for("admin_book", book_id=book_id,
